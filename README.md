@@ -1,3 +1,9 @@
+## ProZell Kostenrechner
+
+Das vorliegende Programm umfasst ein Frontend (react) und ein Backend (python), die beide parallel laufen müssen. Zum starten des Backen in den Programmordner navigieren (cd /prozell-app) und yarn start-api eingeben. Eventuell muss Python aktiviert werden, sofern python nicht in den Pfadvariablen hinterlegt ist (z.B. durch "conda activate base"). Zum starten des Frontends in den Programmordner navigieren (mit einem zweiten cmd Fenster) und yarn start eingeben.
+
+Vorraussetzung vor dem Start: python & node müssen installiert sein. Die node modules sind nicht in der app, es muss separat in den Ordner navigiert und "yarn install" eingegeben werden, die module werden dann herunter geladen.
+
 ## Carbon Tutorial
 
 This tutorial will guide you in creating a React app with the [Carbon Design System](https://www.carbondesignsystem.com/). We’ll teach you the ins and outs of using Carbon components, while introducing web development best practices along the way.
