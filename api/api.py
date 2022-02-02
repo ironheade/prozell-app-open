@@ -21,6 +21,17 @@ def get_Zellformate():
     
     return {'Zellformate': Zellformate}
 
+@app.route('/Zellmaterialien')
+def get_Zellmaterialien():
+    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+    df = pd.read_sql_query('''SELECT * FROM materialien''', db)
+
+    Zellmaterialien = df.to_json(orient='records')
+    db.commit()
+    db.close()
+    
+    return {'Zellmaterialien': Zellmaterialien}
+
 @app.route('/Zellwahl',methods=['POST'])
 def get_Zellwahl():
     Dateiname = request.get_json()["Zelle"]

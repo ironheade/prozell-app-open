@@ -114,19 +114,23 @@ export default function Zellformate() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {JSON.parse(Zellinfo).map(item => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.Beschreibung}</TableCell>
-                    <TableCell>
-                      <input
-                        value={item.Werte}
-                        onChange={handleChange}
-                        id={item.id}
-                      />
-                    </TableCell>
-                    <TableCell>{item.Werte}</TableCell>
-                  </TableRow>
-                ))}
+                {JSON.parse(Zellinfo).map(item =>
+                  item.Werte == null ? (
+                    <TableRow key={item.id} hidden />
+                  ) : (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.Beschreibung}</TableCell>
+                      <TableCell>
+                        <input
+                          value={item.Werte}
+                          onChange={handleChange}
+                          id={item.id}
+                        />
+                      </TableCell>
+                      <TableCell>{item.Einheit}</TableCell>
+                    </TableRow>
+                  )
+                )}
               </TableBody>
             </Table>
           )}

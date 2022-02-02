@@ -2,6 +2,7 @@ import React from 'react';
 import { Breadcrumb, BreadcrumbItem } from 'carbon-components-react';
 
 import Zellformate from './components/zellformate';
+import Zellchemie from './components/zellchemie';
 
 export default function Zellauslegung() {
   return (
@@ -20,7 +21,12 @@ export default function Zellauslegung() {
         </div>
       </div>
       <div className="bx--row">
-        <Zellformate />
+        <div className="bx--col-lg-8">
+          <Zellformate />
+        </div>
+        <div className="bx--col-lg-8">
+          <Zellchemie />
+        </div>
       </div>
     </div>
   );
