@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableBody,
   TableCell,
+  NumberInput,
 } from 'carbon-components-react';
 //import './../_zellauslegung.scss'
 
@@ -14,9 +15,11 @@ export default function Zellformate() {
   //Liste der aktuell auswählbaren Zellen
   const [currentCells, setCurrentCells] = useState(null);
   //Liste aller Möglichen Zellformate
-  const [currentZellformat, setCurrentZellformat] = useState('Pouchzelle');
+  const [currentZellformate, setCurrentZellformate] = useState('Pouchzelle');
   //Infos zur aktuell ausgewählten Zelle (Maße, etc.)
   const [Zellinfo, setZellinfo] = useState(null);
+  //Aktuell ausgewähltes Zellformat
+  const [currentZellformat, setCurrentZellformat] = useState(null);
 
   //ruft die Tabelle aller möglichen Zelltypen aus der Datenbank ab
   useEffect(() => {
@@ -30,6 +33,10 @@ export default function Zellformate() {
   //ruft nach Auswahl der Zelle die Informationen zur Zelle aus der Datenbank ab
   const Zell_handler = event => {
     const value = event.target.value;
+    setCurrentZellformat(
+      JSON.parse(currentCells).filter(item => item.Dateiname == value)[0]
+        .Beschreibung
+    );
     fetch('/Zellwahl', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,7 +47,6 @@ export default function Zellformate() {
       .then(res => res.json())
       .then(data => {
         setZellinfo(data.Zellinfo);
-        console.log(JSON.parse(Zellinfo));
       });
   };
 
@@ -72,15 +78,15 @@ export default function Zellformate() {
                 ),
               ]}
               onChange={({ selectedItem }) =>
-                setCurrentZellformat(selectedItem) & setZellinfo(null)
+                setCurrentZellformate(selectedItem) & setZellinfo(null)
               }
-              selectedItem={currentZellformat}
+              selectedItem={currentZellformate}
             />
           </div>
 
           <div className="zellformate__radiobuttons" onChange={Zell_handler}>
             {JSON.parse(currentCells).map(item =>
-              item.Zellformat == currentZellformat ? (
+              item.Zellformat === currentZellformate ? (
                 <div key={item.id}>
                   <input
                     key={item.id}
@@ -99,40 +105,55 @@ export default function Zellformate() {
           {Zellinfo === null ? (
             <p />
           ) : (
-            <Table useZebraStyles size="compact">
-              <TableHead>
-                <TableRow>
-                  <TableHeader>
-                    <p>Beschreibung</p>
-                  </TableHeader>
-                  <TableHeader>
-                    <p>Wert</p>
-                  </TableHeader>
-                  <TableHeader>
-                    <p>Einheit</p>
-                  </TableHeader>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {JSON.parse(Zellinfo).map(item =>
-                  item.Werte == null ? (
-                    <TableRow key={item.id} hidden />
-                  ) : (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.Beschreibung}</TableCell>
-                      <TableCell>
+            <div>
+              <h3>{currentZellformat}</h3>
+              <Table useZebraStyles size="compact">
+                <TableHead>
+                  <TableRow>
+                    <TableHeader>
+                      <p>Beschreibung</p>
+                    </TableHeader>
+                    <TableHeader>
+                      <p>Wert</p>
+                    </TableHeader>
+                    <TableHeader>
+                      <p>Einheit</p>
+                    </TableHeader>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {JSON.parse(Zellinfo).map(item =>
+                    item.Werte == null ? (
+                      <TableRow key={item.id} hidden />
+                    ) : (
+                      <TableRow key={item.id}>
+                        <TableCell>{item.Beschreibung}</TableCell>
+                        <TableCell key={item.id}>
+                          <NumberInput
+                            size="sm"
+                            id="carbon-number"
+                            //onChange={(e) => props.onChange(props.header, item.Beschreibung, e.imaginaryTarget.value)}
+                            invalidText="Ungültiger Wert"
+                            value={item.Werte}
+                            onChange={handleChange}
+                            //id={item.id}
+                          />
+
+                          {/*
                         <input
                           value={item.Werte}
                           onChange={handleChange}
                           id={item.id}
                         />
-                      </TableCell>
-                      <TableCell>{item.Einheit}</TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
+                      */}
+                        </TableCell>
+                        <TableCell>{item.Einheit}</TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </div>
       )}

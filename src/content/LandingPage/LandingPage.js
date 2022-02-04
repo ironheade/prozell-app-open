@@ -5,8 +5,6 @@ import {
   Button,
   Tabs,
   Tab,
-  Accordion,
-  AccordionItem,
 } from 'carbon-components-react';
 import { InfoSection, InfoCard } from '../../components/Info';
 import PersonFavorite32 from '@carbon/icons-react/lib/person--favorite/32';
@@ -71,42 +69,6 @@ const LandingPage = () => {
                       Prozessschritte und zur weiteren Optimierung der
                       Prozessroute.
                     </p>
-                    {/*
-                    <Accordion>
-                    <AccordionItem title="Section 1 title">
-                      <p >
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </AccordionItem>
-                    <AccordionItem title="Section 2 title">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </AccordionItem>
-                    <AccordionItem title="Section 3 title">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </AccordionItem>
-                    <AccordionItem title="Section 4 title">
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </AccordionItem>
-                  </Accordion>
-                  */}
                     <Button>Anleitung</Button>
                   </div>
                   <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">

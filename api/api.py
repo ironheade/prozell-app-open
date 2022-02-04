@@ -21,16 +21,57 @@ def get_Zellformate():
     
     return {'Zellformate': Zellformate}
 
-@app.route('/Zellmaterialien')
-def get_Zellmaterialien():
-    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
-    df = pd.read_sql_query('''SELECT * FROM materialien''', db)
+#@app.route('/Zellchemien')
+#def get_Zellchemien():
+#    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+#    df = pd.read_sql_query('''SELECT * FROM Zellchemien''', db)
+#
+#    Zellchemien = df.to_json(orient='records')
+#    db.commit()
+#    db.close()
+#    
+#    return {'Zellchemien': Zellchemien}
 
-    Zellmaterialien = df.to_json(orient='records')
+#@app.route('/Zellchemiewahl',methods=['POST'])
+#def get_Zellchemiewahl():
+#    Dateiname = request.get_json()["Zellchemiewahl"]
+#    
+#    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+#    read_order = ('''SELECT * FROM {Dateiname}''')
+#    read_order = read_order.format(Dateiname=Dateiname)
+#    df = pd.read_sql_query(read_order, db)
+#
+#    Zellchemie = df.to_json(orient='records')
+#    db.commit()
+#    db.close()
+#
+#    return {'Zellchemie': Zellchemie}
+
+@app.route('/tabelle_abrufen',methods=['POST'])
+def get_tabelle():
+    Dateiname = request.get_json()["tabelle"]
+    
+    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+    read_order = ('''SELECT * FROM {Dateiname}''')
+    read_order = read_order.format(Dateiname=Dateiname)
+    df = pd.read_sql_query(read_order, db)
+    
+    tabelle = df.to_json(orient='records')
     db.commit()
     db.close()
     
-    return {'Zellmaterialien': Zellmaterialien}
+    return {'tabelle':tabelle}
+
+#@app.route('/Zellmaterialien')
+#def get_Zellmaterialien():
+#    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+#    df = pd.read_sql_query('''SELECT * FROM materialien''', db)
+#
+#    Zellmaterialien = df.to_json(orient='records')
+#    db.commit()
+#    db.close()
+#    
+#    return {'Zellmaterialien': Zellmaterialien}
 
 @app.route('/Zellwahl',methods=['POST'])
 def get_Zellwahl():

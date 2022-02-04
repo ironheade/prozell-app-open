@@ -1,18 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { Dropdown } from 'carbon-components-react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Table,
   TableHead,
   TableRow,
   TableHeader,
-  TableBody,
-  TableCell,
+  Dropdown,
+  Button,
 } from 'carbon-components-react';
+import Zellchemie_TableRow from './zellchemie_tablerow';
+import MaterialInfoTable from './material_info_table';
 
 export default function Zellchemie() {
+  //Liste der aktuell auswählbaren Materiealien
   const [materialien, setmaterialen] = useState(null);
 
-  //ruft die Tabelle aller möglichen Zelltypen aus der Datenbank ab
+  //Liste der aktuell auswählbaren Zellchemien
+  const [currentZellchemien, setCurrentZellchemien] = useState(null);
+
+  //Aktuell ausgewählte Zellchemie
+  const [currentZellchemie, setCurrentZellchemie] = useState(null);
+
+  //Aktuell ausgewählte Zellchemie
+  const [currentZellchemieTitle, setCurrentZellchemieTitle] = useState(null);
+
+  //Informationen zu den ausgewählten Bestandteilen, ein State mit mehreren Tables, jeweils gespeichert direkt als JSON Format
+  const [materialInfos, setMaterialInfos] = useState([]);
+
+  //ruft die Tabelle aller möglichen Zellchemien aus der Datenbank ab
+  tabelle_abrufen('Zellchemien').then(result => setCurrentZellchemien(result));
+  /*
+    useEffect(() => {
+      fetch('/Zellchemien')
+        .then(res => res.json())
+        .then(data => {
+          setCurrentZellchemien(data.Zellchemien);
+        });
+    }, []);
+    */
+
+  //ruft die Tabelle aller möglichen Materialien aus der Datenbank ab
+  tabelle_abrufen('materialien').then(result => setmaterialen(result));
+  /*
   useEffect(() => {
     fetch('/Zellmaterialien')
       .then(res => res.json())
@@ -20,148 +48,256 @@ export default function Zellchemie() {
         setmaterialen(data.Zellmaterialien);
       });
   }, []);
+*/
 
-  function hinzu() {
-    setprobezelle([...probezelle, zusatz[0]]);
-    console.log(JSON.parse(materialien));
+  //Abrufen der Informationen zu einer bestimmten Zellchemie aus der Datenbank
+  /*
+  function auswahl_zellchemie(event){
+    setCurrentZellchemieTitle(event.selectedItem)
+    var Dateiname = JSON.parse(currentZellchemien).filter(item => item.Beschreibung === event.selectedItem)[0].Dateiname
+    fetch('/Zellchemiewahl', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        Zellchemiewahl: Dateiname,
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        setCurrentZellchemie(data.Zellchemie);
+        console.log(JSON.parse(currentZellchemie));
+      });
   }
-  function weg() {
-    console.log(probezelle);
-    var newArray = [...probezelle];
-    console.log(newArray);
-    var index = newArray.findIndex(obj => obj.id === 4);
-    if (index !== -1) {
-      newArray.splice(index, 1);
-      setprobezelle(newArray);
-    }
+  */
+
+  //Abrufen der Informationen zu einer bestimmten Zellchemie aus der Datenbank mithilfe der funtion "tabelle_abrufen"
+  //"result" stellt die Tabelle dar, innerhalb des "then" kann damit gearbeitet werden
+  function auswahl_zellchemie(event) {
+    setCurrentZellchemieTitle(event.selectedItem);
+    var Dateiname = JSON.parse(currentZellchemien).filter(
+      item => item.Beschreibung === event.selectedItem
+    )[0].Dateiname;
+    tabelle_abrufen(Dateiname).then(result => setCurrentZellchemie(result));
   }
 
+  //allgemeine Funktion die eine Tabelle aus der Datenbank abruft und als string zurück gibt
+  async function tabelle_abrufen(tabelle_dateiname) {
+    const res = await fetch('/tabelle_abrufen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tabelle: tabelle_dateiname,
+      }),
+    });
+    const data = await res.json();
+    return data.tabelle;
+  }
+
+  //löscht einzelnes Material (ganzes Object) aus der aktuellen Zellchemie
   function delete_(Beschreibung_delete) {
-    var newArray = [...JSON.parse(materialien)];
-    var index = newArray.findIndex(
-      obj => obj.Beschreibung === Beschreibung_delete
-    );
-    if (index !== -1) {
-      newArray.splice(index, 1);
-      setmaterialen(JSON.stringify(newArray));
-    }
+    var newArray = [
+      ...JSON.parse(currentZellchemie).filter(
+        item => item.Beschreibung !== Beschreibung_delete
+      ),
+    ];
+    setCurrentZellchemie(JSON.stringify(newArray));
   }
 
-  const [zusatz, setzusatz] = useState([
-    {
-      id: 9,
-      Beschreibung: 'NCM 811',
-      Kategorie: 'Aktivmaterial Kathode',
-      Dateiname: 'NCM_811',
-    },
-  ]);
+  //fügt einzelnes Material (ganzes Object) zu der aktuellen Zellchemie hinzu
+  function add_(Beschreibung_add) {
+    var newObject = JSON.parse(materialien).filter(
+      item => item.Beschreibung === Beschreibung_add
+    )[0];
+    var newArray = [...JSON.parse(currentZellchemie), newObject];
+    setCurrentZellchemie(JSON.stringify(newArray));
+  }
 
-  const [probezelle, setprobezelle] = useState([
-    {
-      id: 1,
-      Beschreibung: 'NCM 622',
-      Kategorie: 'Aktivmaterial Kathode',
-      Dateiname: 'NCM_622',
-    },
-    {
-      id: 2,
-      Beschreibung: 'Zusatz 1',
-      Kategorie: 'Zusatzmaterial Kathode',
-      Dateiname: 'zusatz_1',
-    },
-    {
-      id: 3,
-      Beschreibung: 'Zusatz 2',
-      Kategorie: 'Zusatzmaterial Kathode',
-      Dateiname: 'zusatz_2',
-    },
-    {
-      id: 4,
-      Beschreibung: 'Aluminium',
-      Kategorie: 'Folie',
-      Dateiname: 'aluminium',
-    },
-    { id: 5, Beschreibung: 'Elyt', Kategorie: 'Elektrolyt', Dateiname: 'elyt' },
-  ]);
-  const [newmaterial, setnewmaterial] = useState('');
+  //Ersetzt ein Material aus der aktuellen Zellchemie, gilt nur für "unique" Materialien
+  function replace_(Beschreibung_replace) {
+    var newObject = JSON.parse(materialien).filter(
+      item => item.Beschreibung === Beschreibung_replace
+    )[0];
+    var newArray = [
+      ...JSON.parse(currentZellchemie).filter(
+        item => item.Kategorie !== newObject.Kategorie
+      ),
+      newObject,
+    ];
+    setCurrentZellchemie(JSON.stringify(newArray));
+  }
+
+  //Anpassen der Prozentzahl im State unter Beibehaltung der Reihenfolge
+  function Anteil_prozent(Beschreibung, neuerWert) {
+    var prevIndex = JSON.parse(currentZellchemie).findIndex(
+      item => item.Beschreibung === Beschreibung
+    ); //index im State für das zu Ändernde Object
+    let newState = [...JSON.parse(currentZellchemie)]; //shallow copy of old state
+    let newObject = { ...newState[prevIndex] }; //shallow copy of specific Object
+    newObject.Anteil = neuerWert; //Prozentzahl anpassen
+    newState[prevIndex] = newObject; //unter dem gleichen Index im neuen State überschreiben
+    setCurrentZellchemie(JSON.stringify(newState));
+  }
+
+  //Anpassen einzelner Werte der verwendeten Materialien im State, etwas komplizierter da der State verschachtelt ist
+  function material_anpassen(Material, Beschreibung, neuerWert) {
+    var prevIndex = materialInfos.findIndex(
+      item => Object.keys(item)[0] === Material
+    ); //index im State für das zu Änderndn Object
+    let newState = [...materialInfos]; //shallow copy of old state
+    let newObject = { ...newState[prevIndex] }; //shallow copy of specific Object
+    let innderIndex = newObject[Material].findIndex(
+      item => item.Beschreibung === Beschreibung
+    ); //index im neuen Objects für das zu Ändernden Wertes
+    newObject[Material][innderIndex].Wert = neuerWert; //Wert anpassen
+    newState[prevIndex] = newObject; //unter dem gleichen Index im neuen State überschreiben
+    setMaterialInfos(newState);
+    console.log(currentZellchemie);
+    console.log(JSON.stringify(materialInfos));
+  }
+
+  function material_entfernen(Material) {
+    let newState = [...materialInfos].filter(
+      item => Object.keys(item)[0] !== Material
+    );
+    setMaterialInfos(newState);
+  }
 
   return (
     <div>
-      <p>Zellchemie</p>
-      {probezelle.map(item => (
-        <p key={item.id}>{item.Beschreibung}</p>
-      ))}
-      <input
-        value={newmaterial}
-        onChange={evt => setnewmaterial(evt.target.value)}
-      />
-      <button onClick={hinzu}>hinzufügen</button>
-      <button onClick={weg}>entfernen</button>
-
-      {materialien === null ? (
+      {currentZellchemien == null ? (
         <p />
       ) : (
-        <Table useZebraStyles size="compact">
-          <TableHead>
-            <TableRow>
-              <TableHeader>
-                <p>Beschreibung</p>
-              </TableHeader>
-              <TableHeader>
-                <p>Kategorie</p>
-              </TableHeader>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {JSON.parse(materialien).map(item => (
-              <TableRow key={item.id}>
-                <TableCell>{item.Beschreibung}</TableCell>
-                <TableCell>{item.Kategorie}</TableCell>
-                <TableCell>
-                  <button
-                    key={item.id}
-                    onClick={() => delete_(item.Beschreibung)}>
-                    delete
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div style={{ width: 400 }}>
+          <Dropdown
+            className="zellformate__dropdown"
+            id="default"
+            //titleText="Zelltypen"
+            helperText="This is some helper text"
+            label="Dropdown menu options"
+            items={JSON.parse(currentZellchemien).map(
+              item => item.Beschreibung
+            )}
+            onChange={event => auswahl_zellchemie(event)}
+          />
+          {/* 
+            <Button onClick={()=>
+              tabelle_abrufen("NCM_622").then(result => setMaterialInfos([...materialInfos,{"NCM 622":JSON.parse(result)}]))
+            }>NCM 622</Button>
+            <Button onClick={()=>
+              tabelle_abrufen("graphit").then(result => setMaterialInfos([...materialInfos,{"Graphit":JSON.parse(result)}])) 
+            }>Graphipt</Button>
+            <Button onClick={()=>
+              console.log(materialInfos)
+            }>Klick me 3</Button>
+            <Button kind="danger" onClick={()=>
+              material_entfernen("NCM 622")
+            }>remove NCM</Button>
+          */}
+        </div>
       )}
 
-      <br />
+      {currentZellchemie == null ? (
+        <p />
+      ) : (
+        <div>
+          <h3>{currentZellchemieTitle}</h3>
+          <Table useZebraStyles size="compact" className="zellchemie_table">
+            <TableHead>
+              <TableRow>
+                <TableHeader style={{ backgroundColor: 'white' }} />
+                <TableHeader>
+                  <p>Beschreibung</p>
+                </TableHeader>
+                <TableHeader>
+                  <p>Anteil [%]</p>
+                </TableHeader>
+                <TableHeader>
+                  <p>Materialien</p>
+                </TableHeader>
+              </TableRow>
+            </TableHead>
+            <Zellchemie_TableRow
+              Anteil={true}
+              materialien={materialien}
+              filter="Aktivmaterial Kathode"
+              Zellchemie={currentZellchemie}
+              onIncrement={Anteil_prozent}
+              onChange={replace_}
+              onClick={delete_}
+              unique={true}
+            />
+            <Zellchemie_TableRow
+              Anteil={true}
+              materialien={materialien}
+              filter="Zusatzmaterial Kathode"
+              Zellchemie={currentZellchemie}
+              onIncrement={Anteil_prozent}
+              onChange={add_}
+              onClick={delete_}
+              unique={false}
+            />
+            <Zellchemie_TableRow
+              Anteil={true}
+              materialien={materialien}
+              filter="Aktivmaterial Anode"
+              Zellchemie={currentZellchemie}
+              onIncrement={Anteil_prozent}
+              onChange={replace_}
+              onClick={delete_}
+              unique={true}
+            />
+            <Zellchemie_TableRow
+              Anteil={true}
+              materialien={materialien}
+              filter="Zusatzmaterial Anode"
+              Zellchemie={currentZellchemie}
+              onIncrement={Anteil_prozent}
+              onChange={add_}
+              onClick={delete_}
+              unique={false}
+            />
+            <Zellchemie_TableRow
+              Anteil={false}
+              materialien={materialien}
+              filter="Kollektorfolie Kathode"
+              Zellchemie={currentZellchemie}
+              onChange={replace_}
+              onClick={delete_}
+              unique={true}
+            />
+            <Zellchemie_TableRow
+              Anteil={false}
+              materialien={materialien}
+              filter="Kollektorfolie Anode"
+              Zellchemie={currentZellchemie}
+              onChange={replace_}
+              onClick={delete_}
+              unique={true}
+            />
+            <Zellchemie_TableRow
+              Anteil={false}
+              materialien={materialien}
+              filter="Elektrolyt"
+              Zellchemie={currentZellchemie}
+              onChange={replace_}
+              onClick={delete_}
+              unique={true}
+            />
+          </Table>
+        </div>
+      )}
 
-      <Table useZebraStyles size="compact">
-        <TableHead>
-          <TableRow>
-            <TableHeader>
-              <p>Beschreibung</p>
-            </TableHeader>
-            <TableHeader>
-              <p>Kategorie</p>
-            </TableHeader>
-            <TableHeader>
-              <p>Kategorie</p>
-            </TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell>bla</TableCell>
-            <TableCell>bla</TableCell>
-            <TableCell>bla</TableCell>
-          </TableRow>
-          <h4>new bla</h4>
-          <TableRow>
-            <TableCell>bla</TableCell>
-            <TableCell>bla</TableCell>
-            <TableCell>bla</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-
-      <p>{materialien}</p>
+      {materialInfos.length == 0 ? (
+        <p />
+      ) : (
+        materialInfos.map(item => (
+          <MaterialInfoTable
+            header={Object.keys(item)[0]}
+            content={item[Object.keys(item)[0]]}
+            onChange={material_anpassen}
+          />
+        ))
+      )}
     </div>
   );
 }
