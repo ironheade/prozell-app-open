@@ -27,13 +27,13 @@ export default function Zellchemie_TableRow(props) {
       <TableRow>
         <TableCell style={{ backgroundColor: 'white' }} />
         <TableCell>
-          <h4>{props.filter}</h4>
+          <h4>
+            <u>{props.filter}</u>
+          </h4>
         </TableCell>
         <TableCell />
         <TableCell>
-          {items.length == 0 ? (
-            <p />
-          ) : (
+          {items.length !== 0 && (
             <Dropdown
               id={props.filter}
               label="weitere Materialien"
@@ -47,12 +47,10 @@ export default function Zellchemie_TableRow(props) {
         .filter(item => item.Kategorie === props.filter)
         .map(item => (
           <TableRow key={item.id}>
-            <TableCell
-              style={{ backgroundColor: 'white', boder: '2px solid black' }}>
-              {props.unique === true ? (
-                <p />
-              ) : (
+            <TableCell style={{ backgroundColor: 'white' }}>
+              {props.unique === false && (
                 <Button
+                  size="sm"
                   renderIcon={SubtractAlt32}
                   hasIconOnly
                   kind="danger--tertiary"
@@ -65,15 +63,13 @@ export default function Zellchemie_TableRow(props) {
             <TableCell>{item.Beschreibung}</TableCell>
 
             <TableCell key={item.id}>
-              {props.Anteil == false ? (
-                <p />
-              ) : (
+              {props.Anteil === true && (
                 <NumberInput
                   size="sm"
                   id="carbon-number"
                   min={0}
                   max={100}
-                  value={item.Anteil == null ? 0 : item.Anteil}
+                  value={item.Wert == null ? 0 : item.Wert}
                   onChange={e =>
                     props.onIncrement(
                       item.Beschreibung,

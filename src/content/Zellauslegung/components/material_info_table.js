@@ -12,7 +12,7 @@ import {
 export default function MaterialInfoTable(props) {
   return (
     <div>
-      <h3>{props.header}</h3>
+      <h4>{props.header}</h4>
       <Table useZebraStyles size="compact" className="zellchemie_table">
         <TableHead>
           <TableRow>

@@ -63,7 +63,7 @@ export default function Zellformate() {
 
   return (
     <div>
-      {currentCells === null ? null : (
+      {currentCells !== null && (
         <div>
           <div style={{ width: 400 }}>
             <Dropdown
@@ -102,9 +102,7 @@ export default function Zellformate() {
             )}
           </div>
 
-          {Zellinfo === null ? (
-            <p />
-          ) : (
+          {Zellinfo !== null && (
             <div>
               <h3>{currentZellformat}</h3>
               <Table useZebraStyles size="compact">
