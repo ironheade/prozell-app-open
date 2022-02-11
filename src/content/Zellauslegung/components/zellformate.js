@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Dropdown } from 'carbon-components-react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  zellformat_change,
+  zellformat_name_state,
+} from '../../../actions/index';
 import {
   Table,
   TableHead,
@@ -12,8 +17,16 @@ import {
 //import './../_zellauslegung.scss'
 
 export default function Zellformate() {
+  const dispatch = useDispatch();
+  //Infos zur aktuell ausgewählten Zelle (Maße, etc.)
+  const zellformat = useSelector(state => state.zellformat);
+  //Name des aktuell ausgewähltes Zellformates
+  const zellformatName = useSelector(state => state.zellformatName);
+  //alle Zellformate
+  const currentCells = useSelector(state => state.alleZellen);
+
   //Liste der aktuell auswählbaren Zellen
-  const [currentCells, setCurrentCells] = useState(null);
+  //const [currentCells, setCurrentCells] = useState(null);
   //Liste aller Möglichen Zellformate
   const [currentZellformate, setCurrentZellformate] = useState('Pouchzelle');
   //Infos zur aktuell ausgewählten Zelle (Maße, etc.)
@@ -22,6 +35,7 @@ export default function Zellformate() {
   const [currentZellformat, setCurrentZellformat] = useState(null);
 
   //ruft die Tabelle aller möglichen Zelltypen aus der Datenbank ab
+  /*
   useEffect(() => {
     fetch('/Zellformate')
       .then(res => res.json())
@@ -29,14 +43,36 @@ export default function Zellformate() {
         setCurrentCells(data.Zellformate);
       });
   }, []);
+  */
+
+  /*
+  //Wichtige Funktion! Die Funtkion arbeitet immer dann wenn Zellinfo sich ändert -> kann doppelten API Abruf durchführen
+  //Funktion wird immer dann durchgeführt wenn such {Zellinfo} ändert (ausser beim ersten mal, dafür ist didMount da)
+  //wenn Zellinfo = null muss auch didMount = false, verhindert das initiale rendern 
+  const didMount = useRef(false);
+  useEffect(() => {
+    didMount.current ?
+      (JSON.parse(Zellinfo).map(item=> console.log(item)))
+    :
+      didMount.current = true;
+    
+  }, [Zellinfo]);
+  function setMountFalse(){
+    didMount.current = false;
+  }
+*/
 
   //ruft nach Auswahl der Zelle die Informationen zur Zelle aus der Datenbank ab
   const Zell_handler = event => {
     const value = event.target.value;
-    setCurrentZellformat(
-      JSON.parse(currentCells).filter(item => item.Dateiname == value)[0]
-        .Beschreibung
+    //dispatch(zellformat_change(value))
+    dispatch(
+      zellformat_name_state(
+        JSON.parse(currentCells).filter(item => item.Dateiname == value)[0]
+          .Beschreibung
+      )
     );
+
     fetch('/Zellwahl', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -45,26 +81,30 @@ export default function Zellformate() {
       }),
     })
       .then(res => res.json())
-      .then(data => {
-        setZellinfo(data.Zellinfo);
-      });
+      .then(data =>
+        //setZellinfo(data.Zellinfo)
+        dispatch(zellformat_change(data.Zellinfo))
+      );
   };
 
   //aktualisiert den state zur aktuell ausgewählten Zelle
-  function handleChange(event) {
-    const newArr = JSON.parse(Zellinfo).map(obj => {
-      if (obj.id === parseInt(event.target.id)) {
-        return { ...obj, Werte: parseInt(event.target.value) };
+  function handleChange(Beschreibung, neuerWert) {
+    const newArr = JSON.parse(zellformat).map(item => {
+      if (item.Beschreibung === Beschreibung) {
+        return { ...item, Wert: neuerWert };
       }
-      return obj;
+      return item;
     });
-    setZellinfo(JSON.stringify(newArr));
+    //setZellinfo(JSON.stringify(newArr));
+    dispatch(zellformat_change(JSON.stringify(newArr)));
   }
 
   return (
     <div>
       {currentCells !== null && (
         <div>
+          {/*<button onClick={()=> dispatch(zellformat_change(currentCells))}>Klick me</button>*/}
+
           <div style={{ width: 400 }}>
             <Dropdown
               className="zellformate__dropdown"
@@ -77,8 +117,11 @@ export default function Zellformate() {
                   JSON.parse(currentCells).map(item => item.Zellformat)
                 ),
               ]}
-              onChange={({ selectedItem }) =>
-                setCurrentZellformate(selectedItem) & setZellinfo(null)
+              onChange={
+                ({ selectedItem }) =>
+                  setCurrentZellformate(selectedItem) &
+                  dispatch(zellformat_change(null))
+                //& setMountFalse()
               }
               selectedItem={currentZellformate}
             />
@@ -102,9 +145,9 @@ export default function Zellformate() {
             )}
           </div>
 
-          {Zellinfo !== null && (
+          {zellformat !== null && (
             <div>
-              <h3>{currentZellformat}</h3>
+              <h3>{zellformatName}</h3>
               <Table useZebraStyles size="compact">
                 <TableHead>
                   <TableRow>
@@ -120,8 +163,8 @@ export default function Zellformate() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {JSON.parse(Zellinfo).map(item =>
-                    item.Werte == null ? (
+                  {JSON.parse(zellformat).map(item =>
+                    item.Wert == null ? (
                       <TableRow key={item.id} hidden />
                     ) : (
                       <TableRow key={item.id}>
@@ -130,20 +173,15 @@ export default function Zellformate() {
                           <NumberInput
                             size="sm"
                             id="carbon-number"
-                            //onChange={(e) => props.onChange(props.header, item.Beschreibung, e.imaginaryTarget.value)}
                             invalidText="Ungültiger Wert"
-                            value={item.Werte}
-                            onChange={handleChange}
-                            //id={item.id}
+                            value={item.Wert}
+                            onChange={e =>
+                              handleChange(
+                                item.Beschreibung,
+                                e.imaginaryTarget.value
+                              )
+                            }
                           />
-
-                          {/*
-                        <input
-                          value={item.Werte}
-                          onChange={handleChange}
-                          id={item.id}
-                        />
-                      */}
                         </TableCell>
                         <TableCell>{item.Einheit}</TableCell>
                       </TableRow>

@@ -46,15 +46,6 @@ export default function MaterialInfoTable(props) {
                   }
                   invalidText="Ungültiger Wert"
                 />
-
-                {/*
-                            <input
-                                key={item.id}
-                                value={item.Wert}
-                                onChange={(e) => props.onChange(props.header, item.Beschreibung, e.target.value)}
-                                id={item.id}
-                                />
-                            */}
               </TableCell>
               <TableCell>{item.Einheit}</TableCell>
             </TableRow>

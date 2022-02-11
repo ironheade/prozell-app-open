@@ -20,6 +20,7 @@
   "dependencies": {
     "@carbon/grid": "10.17.0",
     "@carbon/icons-react": "10.22.0",
+    "@reduxjs/toolkit": "^1.7.2",
     "apollo-boost": "0.4.2",
     "baseui": "^10.8.0",
     "carbon-components": "10.25.0",
@@ -28,6 +29,7 @@
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.5",
     "graphql": "14.3.1",
+    "history": "^5.2.0",
     "react": "16.10.0",
     "react-apollo": "2.5.6",
     "react-bootstrap": "^2.1.2",
@@ -35,8 +37,12 @@
     "react-dnd-html5-backend": "^14.1.0",
     "react-dnd-list": "^1.2.3",
     "react-dom": "16.10.0",
-    "react-router-dom": "5.0.0",
-    "react-scripts": "4.0.1"
+    "react-keep-alive": "^2.5.2",
+    "react-redux": "^7.2.6",
+    "react-router": "next",
+    "react-router-dom": "5",
+    "react-scripts": "4.0.1",
+    "redux": "^4.1.2"
   },
   "devDependencies": {
     "@commitlint/cli": "7.5.2",

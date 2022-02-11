@@ -57,15 +57,30 @@ def get_Zellwahl():
 def get_zellergebnisse():
     Zellchemie = request.get_json()["Zellchemie"]
     Materialinfos = request.get_json()["Materialinfos"]
+    gebeaude = request.get_json()["gebeaude"]
+    zellformat = request.get_json()["zellformat"]
     
+    #Die Zellchemie abrufen und in ein df umwandeln
     a_json = json.loads(Zellchemie)
-    print(a_json)
     dfItem = pd.DataFrame.from_records(a_json)
     print(dfItem, file=sys.stderr)
-    
+
+    #Die Materialinfos abrufen und in ein df umwandeln
     b_json = json.loads(Materialinfos)
-    df = pd.DataFrame.from_records(b_json[0])
-    print(df, file=sys.stderr)
+    complete_df = []
+    for Material_tabelle in b_json:
+        Material = list(Material_tabelle.keys())[0]
+        for Spalte in Material_tabelle[Material]:
+            Spalte["Material"]=Material
+            complete_df.append(Spalte)
+        
+    print(pd.DataFrame.from_records(complete_df))
+    
+    c_json = json.loads(gebeaude)
+    print(pd.DataFrame.from_records(c_json))
+    
+    d_json = json.loads(zellformat)
+    print(pd.DataFrame.from_records(d_json))
 
     Zellergebnisse = "bla"
     return {'Zellergebnisse': Zellergebnisse}

@@ -1,4 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  zellchemie_state,
+  zellchemie_name_state,
+  materialinfos_state,
+  materialien_state,
+  empty_reducer,
+} from '../../../actions/index';
 import {
   Table,
   TableHead,
@@ -16,10 +24,27 @@ import {
 } from 'carbon-components-react';
 import Zellchemie_TableRow from './zellchemie_tablerow';
 import MaterialInfoTable from './material_info_table';
+import WeitereParameterTablerow from './weitere_parameter_tablerow';
 
 export default function Zellchemie() {
+  const dispatch = useDispatch();
+
+  //redux states nur zum Test, können später raus
+  const zellformat = useSelector(state => state.zellformat);
+  const empty = useSelector(state => state.empty);
+
+  //redux states
+  //Daten der aktuell ausgewählten Zellchemie
+  const zellchemie = useSelector(state => state.zellchemie);
+  //Name der aktuell ausgewählten Zellchemie
+  const zellchemieName = useSelector(state => state.zellchemieName);
+  //Infos zu den Materialien der aktuell ausgewählten Zellchemie
+  const materialInfos = useSelector(state => state.empty);
+  //Alle Materialien
+  const materialien = useSelector(state => state.zellmaterialien);
+
   //Liste der aktuell auswählbaren Materiealien
-  const [materialien, setmaterialen] = useState(null);
+  //const [materialien, setmaterialen] = useState(null);
 
   //Liste der aktuell auswählbaren Zellchemien
   const [currentZellchemien, setCurrentZellchemien] = useState(null);
@@ -31,35 +56,30 @@ export default function Zellchemie() {
   const [currentZellchemieTitle, setCurrentZellchemieTitle] = useState(null);
 
   //Informationen zu den ausgewählten Bestandteilen, ein State mit mehreren Tables, jeweils gespeichert direkt als JSON Format
-  const [materialInfos, setMaterialInfos] = useState([]);
+  //const [materialInfos, setMaterialInfos] = useState([]);
+
+  //Informationen zu den ausgewählten Bestandteilen, alle Tables hintereinander weg in ein JSON mit einem neuen Eintrag: Material
+  const [materialInfosNeu, setMaterialInfosNeu] = useState([]);
 
   //ruft die Tabelle aller möglichen Zellchemien aus der Datenbank ab
   tabelle_abrufen('Zellchemien').then(result => setCurrentZellchemien(result));
   //ruft die Tabelle aller möglichen Materialien aus der Datenbank ab
-  tabelle_abrufen('materialien').then(result => setmaterialen(result));
+  //tabelle_abrufen('materialien').then(result => setmaterialen(result));
 
   //Abrufen der Informationen zu einer bestimmten Zellchemie aus der Datenbank mithilfe der funtion "tabelle_abrufen"
   //"result" stellt die Tabelle dar, innerhalb des "then" kann damit gearbeitet werden
   function auswahl_zellchemie(event) {
-    setCurrentZellchemieTitle(event.selectedItem);
+    //dispatch(materialinfos_state("bas<dggfgdfgsdsdg"))
+    //dispatch(empty_reducer("balfhsldfhlskjf"));
+    console.log('skjdfsdljfh');
+    dispatch(zellchemie_name_state(event.selectedItem));
     var Dateiname = JSON.parse(currentZellchemien).filter(
       item => item.Beschreibung === event.selectedItem
     )[0].Dateiname;
 
-    tabelle_abrufen(Dateiname).then(result => setCurrentZellchemie(result));
-    /*
-    & 
-    (JSON.parse(result)
-    .filter(item => listOfMaterials.includes(item.Beschreibung) ? true:false)
-    .map(item=> liste.push(item.Beschreibung))));
-    
-    var liste2 = ["NCM 622", "Graphit", "A-Binder 2", "A-Binder 1"]
-
-    liste2.map(item=> newState.push(tabelle_abrufen(material_Dateiname(item)).then(result => ({[item]:JSON.parse(result)}))))
-    console.log(newState)
-    Promise.all(newState).then((values) => {
-      setMaterialInfos(values)
-      */
+    tabelle_abrufen(Dateiname).then(result =>
+      dispatch(zellchemie_state(result))
+    );
   }
 
   function fill_materials() {
@@ -69,7 +89,7 @@ export default function Zellchemie() {
     var newState = [];
     var liste = [];
 
-    JSON.parse(currentZellchemie)
+    JSON.parse(zellchemie)
       .filter(item =>
         listOfMaterials.includes(item.Beschreibung) ? true : false
       )
@@ -82,11 +102,47 @@ export default function Zellchemie() {
         }))
       )
     );
-    liste.map(item => console.log(item));
-    console.log(newState);
 
     Promise.all(newState).then(values => {
-      setMaterialInfos(values);
+      dispatch(empty_reducer(values));
+    });
+  }
+
+  //Erweiterung für fill_materials()
+  //Wichtige Funktion! Die Funtkion arbeitet immer dann wenn Zellinfo sich ändert -> kann doppelten API Abruf durchführen
+  //Funktion wird immer dann durchgeführt wenn such {Zellinfo} ändert (ausser beim ersten mal, dafür ist didMount da)
+  //wenn Zellinfo = null muss auch didMount = false, verhindert das initiale rendern
+  const didMount = useRef(false);
+  useEffect(() => {
+    didMount.current ? fill_materials() : (didMount.current = true);
+  }, [zellchemie]);
+  function setMountFalse() {
+    didMount.current = false;
+  }
+
+  function fill_materials2() {
+    var listOfMaterials = JSON.parse(materialien).map(
+      item => item.Beschreibung
+    ); //Auflistung aller genutzten Materialien einer Kategorie, für die Filterung später
+    var newState = [];
+    var liste = [];
+
+    JSON.parse(zellchemie)
+      .filter(item =>
+        listOfMaterials.includes(item.Beschreibung) ? true : false
+      )
+      .map(item => liste.push(item.Beschreibung));
+
+    liste.map(item =>
+      newState.push(
+        tabelle_abrufen(material_Dateiname(item)).then(result =>
+          JSON.parse(result)
+          //.forEach((node) => node.Material = item)
+        )
+      )
+    );
+    Promise.all(newState).then(values => {
+      setMaterialInfosNeu(values);
     });
   }
 
@@ -106,11 +162,11 @@ export default function Zellchemie() {
   //löscht einzelnes Material (ganzes Object) aus der aktuellen Zellchemie
   function delete_(Beschreibung_delete) {
     var newArray = [
-      ...JSON.parse(currentZellchemie).filter(
+      ...JSON.parse(zellchemie).filter(
         item => item.Beschreibung !== Beschreibung_delete
       ),
     ];
-    setCurrentZellchemie(JSON.stringify(newArray));
+    dispatch(zellchemie_state(JSON.stringify(newArray)));
     material_entfernen(Beschreibung_delete);
   }
 
@@ -119,8 +175,8 @@ export default function Zellchemie() {
     var newObject = JSON.parse(materialien).filter(
       item => item.Beschreibung === Beschreibung_add
     )[0];
-    var newArray = [...JSON.parse(currentZellchemie), newObject];
-    setCurrentZellchemie(JSON.stringify(newArray));
+    var newArray = [...JSON.parse(zellchemie), newObject];
+    dispatch(zellchemie_state(JSON.stringify(newArray)));
     material_hinzufügen(Beschreibung_add);
   }
 
@@ -130,48 +186,66 @@ export default function Zellchemie() {
       item => item.Beschreibung === Beschreibung_replace
     )[0];
     var newArray = [
-      ...JSON.parse(currentZellchemie).filter(
+      ...JSON.parse(zellchemie).filter(
         item => item.Kategorie !== newObject.Kategorie
       ),
       newObject,
     ];
-    setCurrentZellchemie(JSON.stringify(newArray));
+    dispatch(zellchemie_state(JSON.stringify(newArray)));
   }
 
   //Anpassen der Prozentzahl im State unter Beibehaltung der Reihenfolge
   function Anteil_prozent(Beschreibung, neuerWert) {
-    var prevIndex = JSON.parse(currentZellchemie).findIndex(
+    var prevIndex = JSON.parse(zellchemie).findIndex(
       item => item.Beschreibung === Beschreibung
     ); //index im State für das zu Ändernde Object
-    let newState = [...JSON.parse(currentZellchemie)]; //shallow copy of old state
+    let newState = [...JSON.parse(zellchemie)]; //shallow copy of old state
     let newObject = { ...newState[prevIndex] }; //shallow copy of specific Object
     newObject.Wert = neuerWert; //Prozentzahl anpassen
     newState[prevIndex] = newObject; //unter dem gleichen Index im neuen State überschreiben
-    setCurrentZellchemie(JSON.stringify(newState));
+    dispatch(zellchemie_state(JSON.stringify(newState)));
   }
 
   //Anpassen einzelner Werte der verwendeten Materialien im State, etwas komplizierter da der State verschachtelt ist
   function material_anpassen(Material, Beschreibung, neuerWert) {
-    var prevIndex = materialInfos.findIndex(
+    console.log(Material, Beschreibung, neuerWert);
+    let newState = [...materialInfos]; //shallow copy of old state
+
+    //var prevIndex = materialInfos.findIndex(
+    var prevIndex = newState.findIndex(
       item => Object.keys(item)[0] === Material
     ); //index im State für das zu Änderndn Object
-    let newState = [...materialInfos]; //shallow copy of old state
-    let newObject = { ...newState[prevIndex] }; //shallow copy of specific Object
-    let innderIndex = newObject[Material].findIndex(
+
+    let newObject = { ...newState[prevIndex] }; //Kopie des Materials als Objec
+
+    let innerIndex = newObject[Material].findIndex(
       item => item.Beschreibung === Beschreibung
     ); //index im neuen Objects für das zu Ändernden Wertes
-    newObject[Material][innderIndex].Wert = neuerWert; //Wert anpassen
-    newState[prevIndex] = newObject; //unter dem gleichen Index im neuen State überschreiben
-    setMaterialInfos(newState);
+
+    let innerObject = [...newObject[Material]]; //Kopie der Eigenschaften des Materials als Liste von Objects
+
+    let innerinnerObject = { ...innerObject[innerIndex] }; //Kopie der betreffenden Spalte
+
+    innerinnerObject.Wert = neuerWert; //Wert Überschreiben
+
+    innerObject[innerIndex] = innerinnerObject; //Alle Spalten des Materials
+
+    newObject[Material] = innerObject;
+
+    newState[prevIndex] = newObject;
+
+    dispatch(empty_reducer(newState));
   }
 
+  //eintfernt ein Material aus dem nested State "materialInfos"
   function material_entfernen(Material) {
     let newState = [...materialInfos].filter(
       item => Object.keys(item)[0] !== Material
     );
-    setMaterialInfos(newState);
+    dispatch(empty_reducer(newState));
   }
 
+  //gleicht den Namen eines Materials in der Materialtabelle ab und gibt den entsprechenden Dateinamen zurück
   function material_Dateiname(Material) {
     var Dateiname = JSON.parse(materialien).filter(
       item => item.Beschreibung === Material
@@ -179,12 +253,15 @@ export default function Zellchemie() {
     return Dateiname;
   }
 
+  //fügt Material zum nested State "materialInfos" hinzu
   async function material_hinzufügen(Material) {
     var Dateiname = JSON.parse(materialien).filter(
       item => item.Beschreibung === Material
     )[0].Dateiname;
     tabelle_abrufen(Dateiname).then(result =>
-      setMaterialInfos([...materialInfos, { [Material]: JSON.parse(result) }])
+      dispatch(
+        empty_reducer([...materialInfos, { [Material]: JSON.parse(result) }])
+      )
     );
   }
 
@@ -194,8 +271,9 @@ export default function Zellchemie() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        Zellchemie: currentZellchemie,
+        Zellchemie: zellchemie,
         Materialinfos: JSON.stringify(materialInfos),
+        zellformat: zellformat,
       }),
     })
       .then(res => res.json())
@@ -203,6 +281,35 @@ export default function Zellchemie() {
         console.log(data.Zellinfo);
       });
   }
+
+  const props = {
+    Zellchemie_TableRow_nicht_unique_Anteil: {
+      Anteil: true,
+      materialien: materialien,
+      Zellchemie: zellchemie,
+      onIncrement: Anteil_prozent,
+      onChange: add_,
+      onClick: delete_,
+      unique: false,
+    },
+    Zellchemie_TableRow_unique_Anteil: {
+      Anteil: true,
+      materialien: materialien,
+      Zellchemie: zellchemie,
+      onIncrement: Anteil_prozent,
+      onChange: replace_,
+      onClick: delete_,
+      unique: true,
+    },
+    Zellchemie_TableRow_unique_kein_Anteil: {
+      Anteil: false,
+      materialien: materialien,
+      Zellchemie: zellchemie,
+      onChange: replace_,
+      onClick: delete_,
+      unique: true,
+    },
+  };
 
   return (
     <div key="d">
@@ -219,14 +326,13 @@ export default function Zellchemie() {
             )}
             onChange={event => auswahl_zellchemie(event)}
           />
-          <Button onClick={() => fill_materials()}>Daten</Button>
           <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
         </div>
       )}
 
-      {currentZellchemie !== null && (
+      {zellchemie !== null && (
         <div key="c">
-          <h3>{currentZellchemieTitle}</h3>
+          <h3>{zellchemieName}</h3>
           <h2>Materialien</h2>
           <Table useZebraStyles size="compact" className="zellchemie_table">
             <TableHead key="b">
@@ -243,127 +349,58 @@ export default function Zellchemie() {
                 </TableHeader>
               </TableRow>
             </TableHead>
-            {/* Parameter Kathode */}
-            <Zellchemie_TableRow
-              Anteil={true}
-              materialien={materialien}
-              filter="Aktivmaterial Kathode"
-              Zellchemie={currentZellchemie}
-              onIncrement={Anteil_prozent}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
-            <Zellchemie_TableRow
-              Anteil={true}
-              materialien={materialien}
-              filter="Additive Kathode"
-              Zellchemie={currentZellchemie}
-              onIncrement={Anteil_prozent}
-              onChange={add_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={false}
-            />
-            <Zellchemie_TableRow
-              Anteil={true}
-              materialien={materialien}
-              filter="Lösemittel Kathode"
-              Zellchemie={currentZellchemie}
-              onIncrement={Anteil_prozent}
-              onChange={add_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={false}
-            />
-            <Zellchemie_TableRow
-              Anteil={false}
-              materialien={materialien}
-              filter="Kollektorfolie Kathode"
-              Zellchemie={currentZellchemie}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
-            {/* Parameter Anode */}
-            <Zellchemie_TableRow
-              Anteil={true}
-              materialien={materialien}
-              filter="Aktivmaterial Anode"
-              Zellchemie={currentZellchemie}
-              onIncrement={Anteil_prozent}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
-            <Zellchemie_TableRow
-              Anteil={true}
-              materialien={materialien}
-              filter="Additive Anode"
-              Zellchemie={currentZellchemie}
-              onIncrement={Anteil_prozent}
-              onChange={add_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={false}
-            />
-            <Zellchemie_TableRow
-              Anteil={true}
-              materialien={materialien}
-              filter="Lösemittel Anode"
-              Zellchemie={currentZellchemie}
-              onIncrement={Anteil_prozent}
-              onChange={add_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={false}
-            />
-            <Zellchemie_TableRow
-              Anteil={false}
-              materialien={materialien}
-              filter="Kollektorfolie Anode"
-              Zellchemie={currentZellchemie}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
-            {/* Parameter Separator */}
-            <Zellchemie_TableRow
-              Anteil={false}
-              materialien={materialien}
-              filter="Separator"
-              Zellchemie={currentZellchemie}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
-            {/* Parameter Elekotrlyt */}
-            <Zellchemie_TableRow
-              Anteil={false}
-              materialien={materialien}
-              filter="Elektrolyt"
-              Zellchemie={currentZellchemie}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
-            {/* Parameter Hülle */}
-            <Zellchemie_TableRow
-              Anteil={false}
-              materialien={materialien}
-              filter="Hülle"
-              Zellchemie={currentZellchemie}
-              onChange={replace_}
-              onClick={delete_}
-              //onAdd={material_hinzufügen}
-              unique={true}
-            />
+            {materialien !== null && (
+              <>
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_unique_Anteil}
+                  filter="Aktivmaterial Kathode"
+                />
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_nicht_unique_Anteil}
+                  filter="Additive Kathode"
+                />
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_nicht_unique_Anteil}
+                  filter="Lösemittel Kathode"
+                />
+                <Zellchemie_TableRow
+                  filter="Kollektorfolie Kathode"
+                  {...props.Zellchemie_TableRow_unique_kein_Anteil}
+                />
+                {/* Parameter Anode */}
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_unique_Anteil}
+                  filter="Aktivmaterial Anode"
+                />
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_nicht_unique_Anteil}
+                  filter="Additive Anode"
+                />
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_nicht_unique_Anteil}
+                  filter="Lösemittel Anode"
+                />
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_unique_kein_Anteil}
+                  filter="Kollektorfolie Anode"
+                />
+                {/* Parameter Separator */}
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_unique_kein_Anteil}
+                  filter="Separator"
+                />
+                {/* Parameter Elekotrlyt */}
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_unique_kein_Anteil}
+                  filter="Elektrolyt"
+                />
+                {/* Parameter Hülle */}
+                <Zellchemie_TableRow
+                  {...props.Zellchemie_TableRow_unique_kein_Anteil}
+                  filter="Hülle"
+                />
+              </>
+            )}
           </Table>
           <h2>Weitere Parameter</h2>
           <Table useZebraStyles size="compact" className="zellchemie_table">
@@ -380,114 +417,28 @@ export default function Zellchemie() {
                 </TableHeader>
               </TableRow>
             </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <h4>
-                    <u>Allgenmeine Parameter</u>
-                  </h4>
-                </TableCell>
-                <TableCell />
-                <TableCell />
-              </TableRow>
-              {JSON.parse(currentZellchemie)
-                .filter(item => item.Kategorie === 'Allgemeine Parameter')
-                .map(item => (
-                  <TableRow>
-                    <TableCell>{item.Beschreibung}</TableCell>
-                    <TableCell key={item.id}>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        id="carbon-number"
-                        invalidText="Ungültiger Wert"
-                        value={item.Wert}
-                        onChange={e =>
-                          Anteil_prozent(
-                            item.Beschreibung,
-                            e.imaginaryTarget.value
-                          )
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>{item.Einheit}</TableCell>
-                  </TableRow>
-                ))}
 
-              <TableRow>
-                <TableCell>
-                  <h4>
-                    <u>Elektrodenparameter Kathode</u>
-                  </h4>
-                </TableCell>
-                <TableCell />
-                <TableCell />
-              </TableRow>
-              {JSON.parse(currentZellchemie)
-                .filter(
-                  item => item.Kategorie === 'Elektrodenparameter Kathode'
-                )
-                .map(item => (
-                  <TableRow>
-                    <TableCell>{item.Beschreibung}</TableCell>
-                    <TableCell key={item.id}>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        id="carbon-number"
-                        invalidText="Ungültiger Wert"
-                        value={item.Wert}
-                        onChange={e =>
-                          Anteil_prozent(
-                            item.Beschreibung,
-                            e.imaginaryTarget.value
-                          )
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>{item.Einheit}</TableCell>
-                  </TableRow>
-                ))}
-
-              <TableRow>
-                <TableCell>
-                  <h4>
-                    <u>Elektrodenparameter Anode</u>
-                  </h4>
-                </TableCell>
-                <TableCell />
-                <TableCell />
-              </TableRow>
-              {JSON.parse(currentZellchemie)
-                .filter(item => item.Kategorie === 'Elektrodenparameter Anode')
-                .map(item => (
-                  <TableRow>
-                    <TableCell>{item.Beschreibung}</TableCell>
-                    <TableCell key={item.id}>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        id="carbon-number"
-                        invalidText="Ungültiger Wert"
-                        value={item.Wert}
-                        onChange={e =>
-                          Anteil_prozent(
-                            item.Beschreibung,
-                            e.imaginaryTarget.value
-                          )
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>{item.Einheit}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
+            <WeitereParameterTablerow
+              onChange={Anteil_prozent}
+              Zellchemie={zellchemie}
+              filter="Allgemeine Parameter"
+            />
+            <WeitereParameterTablerow
+              onChange={Anteil_prozent}
+              Zellchemie={zellchemie}
+              filter="Elektrodenparameter Kathode"
+            />
+            <WeitereParameterTablerow
+              onChange={Anteil_prozent}
+              Zellchemie={zellchemie}
+              filter="Elektrodenparameter Anode"
+            />
           </Table>
         </div>
       )}
 
       {/* Darstellung der verschiedenen Materialien aus "materialinfors" mit der Möglichkeit, die Werte anzupassen
-{JSON.parse(currentZellchemie).map(item=>console.log(item.Beschreibung))}
+{JSON.parse(zellchemie).map(item=>console.log(item.Beschreibung))}
 */}
 
       <h2>Materialien Details</h2>

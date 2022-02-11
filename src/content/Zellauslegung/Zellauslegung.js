@@ -1,6 +1,5 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Tabs, Tab } from 'carbon-components-react';
-
 import Zellformate from './components/zellformate';
 import Zellchemie from './components/zellchemie';
 
