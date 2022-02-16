@@ -20,7 +20,7 @@ export default function Zellformate() {
   const dispatch = useDispatch();
   //Infos zur aktuell ausgewählten Zelle (Maße, etc.)
   const zellformat = useSelector(state => state.zellformat);
-  //Name des aktuell ausgewähltes Zellformates
+  //Object der gerade ausgewählten Zelle (id, Name, Dateiname, Zelltyp)
   const zellformatName = useSelector(state => state.zellformatName);
   //alle Zellformate
   const currentCells = useSelector(state => state.alleZellen);
@@ -68,8 +68,7 @@ export default function Zellformate() {
     //dispatch(zellformat_change(value))
     dispatch(
       zellformat_name_state(
-        JSON.parse(currentCells).filter(item => item.Dateiname == value)[0]
-          .Beschreibung
+        JSON.parse(currentCells).filter(item => item.Dateiname === value)[0]
       )
     );
 
@@ -86,6 +85,17 @@ export default function Zellformate() {
         dispatch(zellformat_change(data.Zellinfo))
       );
   };
+
+  function setGWh_pro_jahr(newValue){
+    var newState = {...zellformatName, GWh_pro_jahr:newValue}
+    dispatch(zellformat_name_state(newState))
+  }
+
+  function setAh_pro_Zelle (newValue){
+    var newState = {...zellformatName, Ah_pro_Zelle:newValue}
+    dispatch(zellformat_name_state(newState))
+  }
+
 
   //aktualisiert den state zur aktuell ausgewählten Zelle
   function handleChange(Beschreibung, neuerWert) {
@@ -147,7 +157,26 @@ export default function Zellformate() {
 
           {zellformat !== null && (
             <div>
-              <h3>{zellformatName}</h3>
+              <h3>{zellformatName.Beschreibung}</h3>
+              
+                <NumberInput
+                  size="sm"
+                  id="carbon-number"
+                  invalidText="Ungültiger Wert"
+                  helperText="GWh/Jahr"
+                  value={0}
+                  onChange={e => setGWh_pro_jahr(e.imaginaryTarget.valueAsNumber)}
+                />
+              {zellformatName.Zellformat === "Pouchzelle" &&
+                <NumberInput
+                size="sm"
+                id="carbon-number"
+                invalidText="Ungültiger Wert"
+                helperText="Ah/Zelle"
+                value={0}
+                onChange={e => setAh_pro_Zelle(e.imaginaryTarget.valueAsNumber)}
+                />
+              }
               <Table useZebraStyles size="compact">
                 <TableHead>
                   <TableRow>
@@ -178,7 +207,7 @@ export default function Zellformate() {
                             onChange={e =>
                               handleChange(
                                 item.Beschreibung,
-                                e.imaginaryTarget.value
+                                e.imaginaryTarget.valueAsNumber
                               )
                             }
                           />

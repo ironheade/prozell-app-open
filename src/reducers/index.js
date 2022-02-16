@@ -10,6 +10,7 @@ import zellchemieNameReducer from './zellchemieNameReducer';
 import materialInfosReducer from './materialInfosReducer';
 import zellmaterialienReducer from './zellmaterialienReducer';
 import emptyReducer from './emptyReducer';
+import prozessRouteReducer from './prozessRouteReducer'
 //import alleZellformateReducer from './alleZellformateReducer'
 import { combineReducers } from 'redux';
 
@@ -27,6 +28,7 @@ const rootreducer = combineReducers({
   materialInfos: materialInfosReducer,
   zellmaterialien: zellmaterialienReducer,
   empty: emptyReducer,
+  prozessRoute: prozessRouteReducer
   //alleZellformate: alleZellformateReducer
 });
 

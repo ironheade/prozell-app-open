@@ -5,6 +5,7 @@ import pandas as pd
 import os
 import sys
 import json
+import zellberechnung
 
 app = Flask(__name__)
 
@@ -57,8 +58,17 @@ def get_Zellwahl():
 def get_zellergebnisse():
     Zellchemie = request.get_json()["Zellchemie"]
     Materialinfos = request.get_json()["Materialinfos"]
-    gebeaude = request.get_json()["gebeaude"]
     zellformat = request.get_json()["zellformat"]
+    zellformatName = request.get_json()["zellformatName"]
+    
+    print("Zellchemie")
+    print(Zellchemie)
+    print("Materialinfos")
+    print(Materialinfos)
+    print("zellformat")
+    print(zellformat)
+    print("zellformatName")
+    print(zellformatName)
     
     #Die Zellchemie abrufen und in ein df umwandeln
     a_json = json.loads(Zellchemie)
@@ -73,16 +83,18 @@ def get_zellergebnisse():
         for Spalte in Material_tabelle[Material]:
             Spalte["Material"]=Material
             complete_df.append(Spalte)
-        
     print(pd.DataFrame.from_records(complete_df))
-    
-    c_json = json.loads(gebeaude)
-    print(pd.DataFrame.from_records(c_json))
-    
+
     d_json = json.loads(zellformat)
     print(pd.DataFrame.from_records(d_json))
+    
+    e_json = json.loads(zellformatName)
+    df = pd.DataFrame.from_dict(e_json, orient="index")
+    print(df)
 
-    Zellergebnisse = "bla"
+    Zellergebnisse = zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName)
+    print(Zellergebnisse)
+    Zellergebnisse = Zellergebnisse.to_json(orient='records')
     return {'Zellergebnisse': Zellergebnisse}
 
 

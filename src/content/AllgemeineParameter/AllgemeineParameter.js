@@ -10,51 +10,13 @@ import {
 
 export default function AllgemeineParameter() {
   const dispatch = useDispatch();
-  /*
-  const [oekonomischeParameter, setOekonomischeParameter] = useState(null);
-  const [mitarbeiterLogistik, setMitarbeiterLogistik] = useState(null);
-  const [gebeaude, setGebeaude] = useState(null);
-*/
+
   const oekonomischeParameter = useSelector(
     state => state.oekonomischeParameter
   );
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
   const gebaeude = useSelector(state => state.gebaeude);
-  /*
-  tabelle_abrufen("oekonomische_parameter").then(result => dispatch(oekonomische_parameter_state(result)))
-  tabelle_abrufen("mitarbeiter_logistik").then(result => dispatch(mitarbeiter_logistik_state(result)))
-  tabelle_abrufen("gebaeude_parameter").then(result => dispatch(gebeaude_state(result)))
-*/
-
-  //useEffect(() => {tabelle_abrufen("oekonomische_parameter").then(result => setOekonomischeParameter(result))}, []);
-
-  /*
-  useEffect(() => {
-    tabelle_abrufen("oekonomische_parameter")
-      .then(data => {
-        dispatch(oekonomische_parameter_state(data));
-      });
-  }, []);
-
-  useEffect(() => {
-    tabelle_abrufen("mitarbeiter_logistik")
-      .then(data => {
-        dispatch(mitarbeiter_logistik_state(data));
-      });
-  }, []);
-
-  useEffect(() => {
-    tabelle_abrufen("gebaeude_parameter")
-      .then(data => {
-        dispatch(gebeaude_state(data));
-      });
-  }, []);
-*/
-
-  //tabelle_abrufen("oekonomische_parameter").then(result => setOekonomischeParameter(result))
-  //tabelle_abrufen("mitarbeiter_logistik").then(result => setMitarbeiterLogistik(result))
-  //tabelle_abrufen("gebaeude_parameter").then(result => setGebeaude(result))
-
+  
   //allgemeine Funktion die eine Tabelle aus der Datenbank abruft und als string zurück gibt
   async function tabelle_abrufen(tabelle_dateiname) {
     const res = await fetch('/tabelle_abrufen', {

@@ -113,3 +113,10 @@ export const empty_reducer = newState => {
     payload: newState,
   };
 };
+
+export const prozessroute_change = newState => {
+  return {
+    type: 'PROZESSROUTE_CHANGE',
+    payload: newState,
+  };
+};

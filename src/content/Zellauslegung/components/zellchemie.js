@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   zellchemie_state,
   zellchemie_name_state,
-  materialinfos_state,
-  materialien_state,
   empty_reducer,
 } from '../../../actions/index';
 import {
@@ -13,14 +11,7 @@ import {
   TableRow,
   TableHeader,
   Dropdown,
-  TableBody,
-  TableCell,
-  NumberInput,
-  Tabs,
-  Tab,
   Button,
-  ContentSwitcher,
-  Switch,
 } from 'carbon-components-react';
 import Zellchemie_TableRow from './zellchemie_tablerow';
 import MaterialInfoTable from './material_info_table';
@@ -30,6 +21,7 @@ export default function Zellchemie() {
   const dispatch = useDispatch();
 
   //redux states nur zum Test, können später raus
+  //Zellmaße
   const zellformat = useSelector(state => state.zellformat);
   const empty = useSelector(state => state.empty);
 
@@ -42,6 +34,9 @@ export default function Zellchemie() {
   const materialInfos = useSelector(state => state.empty);
   //Alle Materialien
   const materialien = useSelector(state => state.zellmaterialien);
+  //Zellformat & Zellformatname für den Export
+  const zellformatName = useSelector(state => state.zellformatName);
+
 
   //Liste der aktuell auswählbaren Materiealien
   //const [materialien, setmaterialen] = useState(null);
@@ -69,9 +64,6 @@ export default function Zellchemie() {
   //Abrufen der Informationen zu einer bestimmten Zellchemie aus der Datenbank mithilfe der funtion "tabelle_abrufen"
   //"result" stellt die Tabelle dar, innerhalb des "then" kann damit gearbeitet werden
   function auswahl_zellchemie(event) {
-    //dispatch(materialinfos_state("bas<dggfgdfgsdsdg"))
-    //dispatch(empty_reducer("balfhsldfhlskjf"));
-    console.log('skjdfsdljfh');
     dispatch(zellchemie_name_state(event.selectedItem));
     var Dateiname = JSON.parse(currentZellchemien).filter(
       item => item.Beschreibung === event.selectedItem
@@ -210,30 +202,19 @@ export default function Zellchemie() {
   function material_anpassen(Material, Beschreibung, neuerWert) {
     console.log(Material, Beschreibung, neuerWert);
     let newState = [...materialInfos]; //shallow copy of old state
-
-    //var prevIndex = materialInfos.findIndex(
     var prevIndex = newState.findIndex(
       item => Object.keys(item)[0] === Material
     ); //index im State für das zu Änderndn Object
-
     let newObject = { ...newState[prevIndex] }; //Kopie des Materials als Objec
-
     let innerIndex = newObject[Material].findIndex(
       item => item.Beschreibung === Beschreibung
     ); //index im neuen Objects für das zu Ändernden Wertes
-
     let innerObject = [...newObject[Material]]; //Kopie der Eigenschaften des Materials als Liste von Objects
-
     let innerinnerObject = { ...innerObject[innerIndex] }; //Kopie der betreffenden Spalte
-
     innerinnerObject.Wert = neuerWert; //Wert Überschreiben
-
     innerObject[innerIndex] = innerinnerObject; //Alle Spalten des Materials
-
     newObject[Material] = innerObject;
-
     newState[prevIndex] = newObject;
-
     dispatch(empty_reducer(newState));
   }
 
@@ -274,6 +255,7 @@ export default function Zellchemie() {
         Zellchemie: zellchemie,
         Materialinfos: JSON.stringify(materialInfos),
         zellformat: zellformat,
+        zellformatName: JSON.stringify(zellformatName)
       }),
     })
       .then(res => res.json())
@@ -333,8 +315,22 @@ export default function Zellchemie() {
       {zellchemie !== null && (
         <div key="c">
           <h3>{zellchemieName}</h3>
-          <h2>Materialien</h2>
+
           <Table useZebraStyles size="compact" className="zellchemie_table">
+            <TableHead>
+              <TableRow>
+                <TableHeader style={{ backgroundColor: 'white' }}>
+                </TableHeader>
+                <TableHeader style={{ backgroundColor: 'white' }}>
+                <h3>Zusammensetzung</h3>
+                </TableHeader>
+                <TableHeader style={{ backgroundColor: 'white' }}>
+                </TableHeader>
+                <TableHeader style={{ backgroundColor: 'white' }}>
+                </TableHeader>
+              </TableRow>
+            </TableHead>
+
             <TableHead key="b">
               <TableRow>
                 <TableHeader style={{ backgroundColor: 'white' }} />

@@ -41,7 +41,7 @@ export default function AllgParameterTable(props) {
                   invalidText="Ungültiger Wert"
                   value={item.Wert}
                   onChange={e =>
-                    props.onChange(item.Beschreibung, e.imaginaryTarget.value)
+                    props.onChange(item.Beschreibung, e.imaginaryTarget.valueAsNumber)
                   }
                 />
               </TableCell>

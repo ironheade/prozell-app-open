@@ -8,6 +8,7 @@ import {
   NumberInput,
 } from 'carbon-components-react';
 import { SubtractAlt32 } from '@carbon/icons-react';
+import { isTypeSystemDefinitionNode } from 'graphql';
 
 export default function Zellchemie_TableRow(props) {
   var listOfUsedMaterials = JSON.parse(props.Zellchemie)
@@ -26,16 +27,18 @@ export default function Zellchemie_TableRow(props) {
     <TableBody>
       <TableRow>
         <TableCell style={{ backgroundColor: 'white' }} />
-        <TableCell>
-          <h4>
-            <u>{props.filter}</u>
+        <TableCell style={{ backgroundColor: 'black' }}>
+          <h4 style={{color:"white"}}>
+            {props.filter}
           </h4>
         </TableCell>
-        <TableCell />
-        <TableCell>
+        <TableCell style={{ backgroundColor: 'black' }}/>
+        <TableCell style={{ backgroundColor: 'black' }}>
           {items.length !== 0 && (
             <Dropdown
               id={props.filter}
+              //type="inline"
+              size="sm"
               label="weitere Materialien"
               items={items}
               onChange={event => props.onChange(event.selectedItem)}
@@ -47,7 +50,7 @@ export default function Zellchemie_TableRow(props) {
         .filter(item => item.Kategorie === props.filter)
         .map(item => (
           <TableRow key={item.id}>
-            <TableCell style={{ backgroundColor: 'white' }}>
+            <TableCell style={{ textAlign:"right", backgroundColor: 'white' }}>
               {props.unique === false && (
                 <Button
                   size="sm"
@@ -73,7 +76,7 @@ export default function Zellchemie_TableRow(props) {
                   onChange={e =>
                     props.onIncrement(
                       item.Beschreibung,
-                      e.imaginaryTarget.value
+                      e.imaginaryTarget.valueAsNumber 
                     )
                   }
                   invalidText="Ungültiger Wert"

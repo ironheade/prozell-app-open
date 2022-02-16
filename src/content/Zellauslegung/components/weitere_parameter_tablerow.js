@@ -10,13 +10,13 @@ export default function WeitereParameterTablerow(props) {
   return (
     <TableBody>
       <TableRow>
-        <TableCell>
-          <h4>
-            <u>{props.filter}</u>
+        <TableCell style={{ backgroundColor: 'black' }}>
+          <h4 style={{ color: 'white' }}>
+            {props.filter}
           </h4>
         </TableCell>
-        <TableCell />
-        <TableCell />
+        <TableCell style={{ backgroundColor: 'black' }}/>
+        <TableCell style={{ backgroundColor: 'black' }}/>
       </TableRow>
       {JSON.parse(props.Zellchemie)
         .filter(item => item.Kategorie === props.filter)
@@ -31,7 +31,7 @@ export default function WeitereParameterTablerow(props) {
                 invalidText="Ungültiger Wert"
                 value={item.Wert}
                 onChange={e =>
-                  props.onChange(item.Beschreibung, e.imaginaryTarget.value)
+                  props.onChange(item.Beschreibung, e.imaginaryTarget.valueAsNumber)
                 }
               />
             </TableCell>
