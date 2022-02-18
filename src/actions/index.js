@@ -120,3 +120,18 @@ export const prozessroute_change = newState => {
     payload: newState,
   };
 };
+
+export const zellergebnisse_change = newState => {
+  return {
+    type: 'ZELLERGEBNISSE_CHANGE',
+    payload: newState,
+  };
+};
+
+export const GWh_Jahr_Ah_Zelle_change = newState => {
+  return {
+    type: 'GWH_JAHR_AH_ZELLE_STATE',
+    payload: newState,
+  };
+};
+

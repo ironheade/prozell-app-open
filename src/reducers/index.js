@@ -11,6 +11,8 @@ import materialInfosReducer from './materialInfosReducer';
 import zellmaterialienReducer from './zellmaterialienReducer';
 import emptyReducer from './emptyReducer';
 import prozessRouteReducer from './prozessRouteReducer'
+import zellergebnisseReducer from './zellergebnisseReducer'
+import GWH_Jahr_AH_ZelleReducer from './GWH_Jahr_AH_ZelleReducer'
 //import alleZellformateReducer from './alleZellformateReducer'
 import { combineReducers } from 'redux';
 
@@ -25,10 +27,12 @@ const rootreducer = combineReducers({
   zellchemie: zellchemieReducer,
   zellchemieName: zellchemieNameReducer,
   //alleMaterialien: materialienReducer,
+  zellergebnisse: zellergebnisseReducer,
   materialInfos: materialInfosReducer,
   zellmaterialien: zellmaterialienReducer,
   empty: emptyReducer,
-  prozessRoute: prozessRouteReducer
+  prozessRoute: prozessRouteReducer,
+  GWH_Jahr_AH_Zelle: GWH_Jahr_AH_ZelleReducer
   //alleZellformate: alleZellformateReducer
 });
 

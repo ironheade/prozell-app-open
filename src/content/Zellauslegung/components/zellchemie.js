@@ -4,6 +4,7 @@ import {
   zellchemie_state,
   zellchemie_name_state,
   empty_reducer,
+  zellergebnisse_change
 } from '../../../actions/index';
 import {
   Table,
@@ -36,6 +37,8 @@ export default function Zellchemie() {
   const materialien = useSelector(state => state.zellmaterialien);
   //Zellformat & Zellformatname für den Export
   const zellformatName = useSelector(state => state.zellformatName);
+  //Ah pro Zelle und GWh/Jahr für die Fabrik separat gespeichert
+  const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle)
 
 
   //Liste der aktuell auswählbaren Materiealien
@@ -255,12 +258,13 @@ export default function Zellchemie() {
         Zellchemie: zellchemie,
         Materialinfos: JSON.stringify(materialInfos),
         zellformat: zellformat,
-        zellformatName: JSON.stringify(zellformatName)
+        zellformatName: JSON.stringify(zellformatName),
+        GWh_Jahr_Ah_Zelle: JSON.stringify(GWH_Jahr_AH_Zelle)
       }),
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data.Zellinfo);
+        dispatch(zellergebnisse_change(data.Zellergebnisse));
       });
   }
 
@@ -293,6 +297,9 @@ export default function Zellchemie() {
     },
   };
 
+  //var summe = 0
+  //JSON.parse(zellchemie).filter(item => item)
+
   return (
     <div key="d">
       {currentZellchemien !== null && (
@@ -308,13 +315,37 @@ export default function Zellchemie() {
             )}
             onChange={event => auswahl_zellchemie(event)}
           />
+          {//Prüfung ob alle Vorraussetzungen für die Ergebnisse gegeben sind
+          zellchemie !== null &&
           <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
+          }
         </div>
       )}
 
       {zellchemie !== null && (
         <div key="c">
           <h3>{zellchemieName}</h3>
+          
+            {//Summenprüfung der Kathodenmaterialien
+            JSON.parse(zellchemie)
+              .filter(item=> item.Kategorie === "Aktivmaterial Kathode" || item.Kategorie === "Additive Kathode")
+              .reduce((a,v) =>  a = a + v.Wert , 0 ) !== 100 &&
+              <p style={{color: "red"}}>Summe der Kathodenmaterialien prüfen (
+                {JSON.parse(zellchemie)
+                .filter(item=> item.Kategorie === "Aktivmaterial Kathode" || item.Kategorie === "Additive Kathode")
+                .reduce((a,v) =>  a = a + v.Wert , 0 )}
+                %)</p>
+              }
+            {//Summenprüfung der Anodenmaterialien
+            JSON.parse(zellchemie)
+              .filter(item=> item.Kategorie === "Aktivmaterial Anode" || item.Kategorie === "Additive Anode")
+              .reduce((a,v) =>  a = a + v.Wert , 0 ) !== 100 &&
+              <p style={{color: "red"}}>Summe der Anodenmaterialien prüfen (
+                {JSON.parse(zellchemie)
+              .filter(item=> item.Kategorie === "Aktivmaterial Anode" || item.Kategorie === "Additive Anode")
+              .reduce((a,v) =>  a = a + v.Wert , 0 )}
+              %)</p>
+              }
 
           <Table useZebraStyles size="compact" className="zellchemie_table">
             <TableHead>

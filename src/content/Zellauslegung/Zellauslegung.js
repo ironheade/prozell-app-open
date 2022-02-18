@@ -2,6 +2,7 @@ import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Tabs, Tab } from 'carbon-components-react';
 import Zellformate from './components/zellformate';
 import Zellchemie from './components/zellchemie';
+import Zellergebnisse from './components/Zellergebnisse'
 
 export default function Zellauslegung() {
   const props = {
@@ -43,7 +44,11 @@ export default function Zellauslegung() {
                 </div>
               </div>
             </Tab>
-            <Tab {...props.tab} label="Ergebnisse Zellauslegung" />
+            <Tab {...props.tab} label="Ergebnisse Zellauslegung">
+              <div className="bx--row">
+                <Zellergebnisse/>
+              </div>
+              </Tab>
           </Tabs>
         </div>
       </div>

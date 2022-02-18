@@ -50,7 +50,7 @@ export default function Zellchemie_TableRow(props) {
         .filter(item => item.Kategorie === props.filter)
         .map(item => (
           <TableRow key={item.id}>
-            <TableCell style={{ textAlign:"right", backgroundColor: 'white' }}>
+            <TableCell style={{ textAlign:"right", backgroundColor: 'white', minHeight: "200px" }}>
               {props.unique === false && (
                 <Button
                   size="sm"

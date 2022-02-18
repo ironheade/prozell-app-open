@@ -1,9 +1,8 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem } from 'carbon-components-react';
 import Prozessroute from './components/prozessroute'
-//import logo from './../../../public/icons/process_icons/assemblieren.png'
-import logo from './../../resources/process_icons/assemblieren.png'
-import logo2 from './../../resources/process_icons/holib_stapeln_grau.png'
+import DarstellungProzessroute from './components/darstellung_prozessroute'
+
 
 
 export default function Prozessauslegung() {
@@ -22,9 +21,8 @@ export default function Prozessauslegung() {
           <h1 className="__heading">Prozessauslegung</h1>
         </div>
       </div>
-
         
-        
+        <DarstellungProzessroute/>
         <Prozessroute/>
         {/*
           <div className="bx--row">

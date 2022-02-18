@@ -41,7 +41,7 @@ export default function MaterialInfoTable(props) {
                     props.onChange(
                       props.header,
                       item.Beschreibung,
-                      e.imaginaryTarget.value
+                      e.imaginaryTarget.valueAsNumber
                     )
                   }
                   invalidText="Ungültiger Wert"

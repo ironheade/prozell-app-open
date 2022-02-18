@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   zellformat_change,
   zellformat_name_state,
+  GWh_Jahr_Ah_Zelle_change
 } from '../../../actions/index';
 import {
   Table,
@@ -24,26 +25,13 @@ export default function Zellformate() {
   const zellformatName = useSelector(state => state.zellformatName);
   //alle Zellformate
   const currentCells = useSelector(state => state.alleZellen);
+  //Ah pro Zelle und GWh/Jahr für die Fabrik separat gespeichert
+  const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle)
 
   //Liste der aktuell auswählbaren Zellen
   //const [currentCells, setCurrentCells] = useState(null);
   //Liste aller Möglichen Zellformate
   const [currentZellformate, setCurrentZellformate] = useState('Pouchzelle');
-  //Infos zur aktuell ausgewählten Zelle (Maße, etc.)
-  const [Zellinfo, setZellinfo] = useState(null);
-  //Aktuell ausgewähltes Zellformat
-  const [currentZellformat, setCurrentZellformat] = useState(null);
-
-  //ruft die Tabelle aller möglichen Zelltypen aus der Datenbank ab
-  /*
-  useEffect(() => {
-    fetch('/Zellformate')
-      .then(res => res.json())
-      .then(data => {
-        setCurrentCells(data.Zellformate);
-      });
-  }, []);
-  */
 
   /*
   //Wichtige Funktion! Die Funtkion arbeitet immer dann wenn Zellinfo sich ändert -> kann doppelten API Abruf durchführen
@@ -65,10 +53,12 @@ export default function Zellformate() {
   //ruft nach Auswahl der Zelle die Informationen zur Zelle aus der Datenbank ab
   const Zell_handler = event => {
     const value = event.target.value;
+    console.log(zellformatName)
+
     //dispatch(zellformat_change(value))
     dispatch(
       zellformat_name_state(
-        JSON.parse(currentCells).filter(item => item.Dateiname === value)[0]
+        {...JSON.parse(currentCells).filter(item => item.Dateiname === value)[0]}
       )
     );
 
@@ -87,15 +77,16 @@ export default function Zellformate() {
   };
 
   function setGWh_pro_jahr(newValue){
-    var newState = {...zellformatName, GWh_pro_jahr:newValue}
-    dispatch(zellformat_name_state(newState))
+    var newState = {...GWH_Jahr_AH_Zelle}
+    newState["GWh_pro_jahr"]=newValue
+    dispatch(GWh_Jahr_Ah_Zelle_change(newState))
   }
 
   function setAh_pro_Zelle (newValue){
-    var newState = {...zellformatName, Ah_pro_Zelle:newValue}
-    dispatch(zellformat_name_state(newState))
+    var newState = {...GWH_Jahr_AH_Zelle}
+    newState["Ah_pro_Zelle"]=newValue
+    dispatch(GWh_Jahr_Ah_Zelle_change(newState))
   }
-
 
   //aktualisiert den state zur aktuell ausgewählten Zelle
   function handleChange(Beschreibung, neuerWert) {
@@ -105,7 +96,6 @@ export default function Zellformate() {
       }
       return item;
     });
-    //setZellinfo(JSON.stringify(newArr));
     dispatch(zellformat_change(JSON.stringify(newArr)));
   }
 
@@ -113,7 +103,6 @@ export default function Zellformate() {
     <div>
       {currentCells !== null && (
         <div>
-          {/*<button onClick={()=> dispatch(zellformat_change(currentCells))}>Klick me</button>*/}
 
           <div style={{ width: 400 }}>
             <Dropdown
@@ -147,7 +136,7 @@ export default function Zellformate() {
                     value={item.Dateiname}
                     name="Zellformat"
                   />
-                  <span>{item.Beschreibung}</span>{' '}
+                  <span>{item.Beschreibung}</span>
                 </div>
               ) : (
                 <span key={item.id} hidden={true} />

@@ -9,9 +9,12 @@ import {
     Dropdown,
     Button
   } from 'carbon-components-react';
+  import ProzessCard from "./prozess_card";
   import { useSelector, useDispatch } from "react-redux";
   import { prozessroute_change } from '../../../actions/index' 
   import { AddAlt32, SubtractAlt32 } from '@carbon/icons-react';
+  import tabelle_abrufen from '../../../functions/tabelle_abrufen'
+  import logo from '../../../resources/process_icons/assemblieren.png'
 
 export default function Prozessroute(){
     //Route muss in dieser Form entstehen. 
@@ -53,6 +56,12 @@ export default function Prozessroute(){
     //abrufen aller Prozessschritte aus der Datenbank, speichern in alle Prozessschritte 
     tabelle_abrufen('prozessschritte').then(data => setProzessschritte(data))
 
+    function importAll(r) {
+        return r.keys().map(r);
+      }
+      
+    const images = importAll(require.context('../../../resources/process_icons/', false, /\.(png|jpe?g|svg)$/));
+
     
     //sobald sich die Prozessroute im temporären state ändert, wird die Prozessroute angepasst
     const didMount = useRef(false);
@@ -76,17 +85,6 @@ export default function Prozessroute(){
             setTempProzessroute(null)
     }  
 
-    async function tabelle_abrufen(tabelle_dateiname) {
-        const res = await fetch('/tabelle_abrufen', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tabelle: tabelle_dateiname,
-          }),
-        });
-        const data = await res.json();
-        return data.tabelle;
-      }
     
     //Prozessroute wird aus der Datenbank in den temporären State geladen
     function change_prozessroute(neue_prozessroute){

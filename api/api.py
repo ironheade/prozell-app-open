@@ -60,6 +60,7 @@ def get_zellergebnisse():
     Materialinfos = request.get_json()["Materialinfos"]
     zellformat = request.get_json()["zellformat"]
     zellformatName = request.get_json()["zellformatName"]
+    GWh_Jahr_Ah_Zelle = request.get_json()["GWh_Jahr_Ah_Zelle"]
     
     print("Zellchemie")
     print(Zellchemie)
@@ -69,32 +70,38 @@ def get_zellergebnisse():
     print(zellformat)
     print("zellformatName")
     print(zellformatName)
+    print("GWh_Jahr_Ah_Zelle")
+    print(GWh_Jahr_Ah_Zelle)
     
-    #Die Zellchemie abrufen und in ein df umwandeln
-    a_json = json.loads(Zellchemie)
-    dfItem = pd.DataFrame.from_records(a_json)
-    print(dfItem, file=sys.stderr)
-
-    #Die Materialinfos abrufen und in ein df umwandeln
-    b_json = json.loads(Materialinfos)
-    complete_df = []
-    for Material_tabelle in b_json:
-        Material = list(Material_tabelle.keys())[0]
-        for Spalte in Material_tabelle[Material]:
-            Spalte["Material"]=Material
-            complete_df.append(Spalte)
-    print(pd.DataFrame.from_records(complete_df))
-
-    d_json = json.loads(zellformat)
-    print(pd.DataFrame.from_records(d_json))
+    a_json = json.loads(GWh_Jahr_Ah_Zelle)
+    print(a_json["GWh_pro_jahr"])
     
-    e_json = json.loads(zellformatName)
-    df = pd.DataFrame.from_dict(e_json, orient="index")
-    print(df)
+    # #Die Zellchemie abrufen und in ein df umwandeln
+    # a_json = json.loads(Zellchemie)
+    # dfItem = pd.DataFrame.from_records(a_json)
+    # print(dfItem, file=sys.stderr)
 
-    Zellergebnisse = zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName)
+    # #Die Materialinfos abrufen und in ein df umwandeln
+    # b_json = json.loads(Materialinfos)
+    # complete_df = []
+    # for Material_tabelle in b_json:
+    #     Material = list(Material_tabelle.keys())[0]
+    #     for Spalte in Material_tabelle[Material]:
+    #         Spalte["Material"]=Material
+    #         complete_df.append(Spalte)
+    # print(pd.DataFrame.from_records(complete_df))
+
+    # d_json = json.loads(zellformat)
+    # print(pd.DataFrame.from_records(d_json))
+    
+    # e_json = json.loads(zellformatName)
+    # df = pd.DataFrame.from_dict(e_json, orient="index")
+    # print(df)
+
+    Zellergebnisse = zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName, GWh_Jahr_Ah_Zelle)
     print(Zellergebnisse)
     Zellergebnisse = Zellergebnisse.to_json(orient='records')
+    
     return {'Zellergebnisse': Zellergebnisse}
 
 
