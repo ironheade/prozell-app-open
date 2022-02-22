@@ -7,11 +7,15 @@ import {
     TableHead,
     TableHeader,
     Dropdown,
-    Button
+    Button,
+    NumberInput,
+    Accordion,
+    AccordionItem
   } from 'carbon-components-react';
   import ProzessCard from "./prozess_card";
   import { useSelector, useDispatch } from "react-redux";
-  import { prozessroute_change } from '../../../actions/index' 
+  import { prozessroute_change,
+            Prozessdaten_change } from '../../../actions/index' 
   import { AddAlt32, SubtractAlt32 } from '@carbon/icons-react';
   import tabelle_abrufen from '../../../functions/tabelle_abrufen'
   import logo from '../../../resources/process_icons/assemblieren.png'
@@ -49,7 +53,10 @@ export default function Prozessroute(){
     
     const dispatch = useDispatch()
 
+    //aktuelle Prozessroute
     const prozessRoute = useSelector(state => state.prozessRoute)
+    //Daten zur aktuellen Prozessroute
+    const prozessschrittDaten = useSelector(state => state.prozessschrittDaten)
 
     //Abrufen der Tabelle einer Produktionslinie in den temporären State
     tabelle_abrufen('prozessrouten').then(data => setProzessRouten(data))
@@ -60,7 +67,7 @@ export default function Prozessroute(){
         return r.keys().map(r);
       }
       
-    const images = importAll(require.context('../../../resources/process_icons/', false, /\.(png|jpe?g|svg)$/));
+    //const images = importAll(require.context('../../../resources/process_icons/', false, /\.(png|jpe?g|svg)$/));
 
     
     //sobald sich die Prozessroute im temporären state ändert, wird die Prozessroute angepasst
@@ -70,7 +77,14 @@ export default function Prozessroute(){
       neue_prozessroute() 
       :(didMount.current = true);
     }, [tempProzessroute]);
-    
+
+    //sobald sich ein Material in der aktuellen Prozessroute ändert wird das nested State angepasst
+    const didMount2 = useRef(false);
+    useEffect(() => {
+        didMount2.current ? add_prozessdaten(): (didMount2.current = true);
+    },[prozessRoute])
+
+
 
     //alle Prozessschritte 
     function neue_prozessroute(){
@@ -84,7 +98,6 @@ export default function Prozessroute(){
             dispatch(prozessroute_change(newRoute))
             setTempProzessroute(null)
     }  
-
     
     //Prozessroute wird aus der Datenbank in den temporären State geladen
     function change_prozessroute(neue_prozessroute){
@@ -131,6 +144,43 @@ export default function Prozessroute(){
     function move_down(){
 
     }
+
+    //füllt das nested Dict mit den Daten aus der Prozessroute
+    function add_prozessdaten() {
+        var newState = []
+        prozessRoute.map(item => item[Object.keys(item)[0]].map(inner_item => //liste mit den Prozessschritten pro Abschnitt
+            newState.push(tabelle_abrufen(JSON.parse(prozessschritte).filter(item => item.Beschreibung === inner_item)[0].Dateiname).then(result => ({
+                [inner_item]: JSON.parse(result),
+                }))) //jeweils die Dateinamen
+            ))
+
+        Promise.all(newState).then(values => {
+            dispatch(Prozessdaten_change(values));
+          });
+    }
+
+    //Anpassen einzelner Werte der verwendeten Prozessschritte im State, etwas komplizierter da der State verschachtelt ist
+    
+  function Prozessschritt_anpassen(Prozess, Beschreibung, neuerWert) {
+    console.log(Prozess, Beschreibung, neuerWert);
+    let newState = [...prozessschrittDaten]; //shallow copy of old state
+    console.log(newState)
+    var prevIndex = newState.findIndex(
+      item => Object.keys(item)[0] === Prozess
+    ); //index im State für das zu Änderndn Object
+    let newObject = { ...newState[prevIndex] }; //Kopie des Materials als Objec
+    let innerIndex = newObject[Prozess].findIndex(
+      item => item.Beschreibung === Beschreibung
+    ); //index im neuen Objects für das zu Ändernden Wertes
+    let innerObject = [...newObject[Prozess]]; //Kopie der Eigenschaften des Materials als Liste von Objects
+    let innerinnerObject = { ...innerObject[innerIndex] }; //Kopie der betreffenden Spalte
+    innerinnerObject.Wert = neuerWert; //Wert Überschreiben
+    innerObject[innerIndex] = innerinnerObject; //Alle Spalten des Materials
+    newObject[Prozess] = innerObject;
+    newState[prevIndex] = newObject;
+    dispatch(Prozessdaten_change(newState));
+  }
+  
 
     /* Funktion zum Ändern der position im Array
     function array_move(arr, old_index, new_index) {
@@ -234,6 +284,63 @@ export default function Prozessroute(){
 
                     )}
                     </Table>
+            </div>
+
+            <div className="bx--col-lg-8">
+                <h3 style={{marginLeft: "20px"}}>Details Prozessschritte</h3>
+                {/*<button style={{marginLeft: "20px"}} onClick={fill_Daten}>Daten und so</button>*/}
+                {prozessschrittDaten !== null &&
+                    prozessschrittDaten.map(item => 
+                        
+                        <Accordion style={{marginLeft: "20px"}}>
+                            <AccordionItem title={Object.keys(item)[0]}>
+                        
+                            
+                            <Table useZebraStyles size="compact" >
+                                <TableHead>
+                                    <TableRow>
+                                        <TableHeader>Beschreibung</TableHeader>
+                                        <TableHeader>Wert</TableHeader>
+                                        <TableHeader>Einheit</TableHeader>
+                                        <TableHeader>Besonderheit</TableHeader>
+                                    </TableRow>
+                                </TableHead>
+                                
+                                <TableBody>
+                                    {item[Object.keys(item)[0]].map(item2=>
+                                    <TableRow>
+                                        <TableCell>
+                                            {item2.Beschreibung}
+                                        </TableCell>
+                                        <TableCell>
+                                            <NumberInput
+                                                size="sm"
+                                                min={0}
+                                                id="carbon-number"
+                                                invalidText="Ungültiger Wert"
+                                                value={item2.Wert}
+                                                onChange={e => Prozessschritt_anpassen(Object.keys(item)[0], item2.Beschreibung, e.imaginaryTarget.valueAsNumber)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            {item2.Einheit}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item2.Besonderheit}
+                                        </TableCell>
+                                    </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                            </AccordionItem>
+
+                        </Accordion>
+                        
+                        //console.log(JSON.parse(item[Object.keys(item)[0]]))
+                        
+
+                    )}
+
             </div>
 
         </div>

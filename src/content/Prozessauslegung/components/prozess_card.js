@@ -1,7 +1,6 @@
 import React from 'react'
 
 export default function ProzessCard(props){
-    //const source = "/icons/process_icons/"+{props.Dateiname}+".png"
     return(
         <div id="Prozess_Card_aussen">
             <div className='box'>

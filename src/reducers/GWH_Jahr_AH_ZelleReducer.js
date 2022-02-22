@@ -7,5 +7,5 @@ const GWH_Jahr_AH_ZelleReducer = (state = initialstate, action) => {
       return state;
   }
 };
-  export default GWH_Jahr_AH_ZelleReducer;
+export default GWH_Jahr_AH_ZelleReducer;
   

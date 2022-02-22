@@ -135,3 +135,9 @@ export const GWh_Jahr_Ah_Zelle_change = newState => {
   };
 };
 
+export const Prozessdaten_change = newState => {
+  return {
+    type: 'PROZESS_DATEN_CHANGE',
+    payload: newState,
+  };
+};
