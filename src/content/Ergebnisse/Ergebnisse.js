@@ -21,6 +21,8 @@ export default function Ergebnisse() {
   const prozessschrittDaten = useSelector(state => state.prozessschrittDaten)
   //Infos zu den Materialien der aktuell ausgewählten Zellchemie
   const materialInfos = useSelector(state => state.empty);
+  //Infos zur aktuell ausgewählten Zellchemie
+  const zellchemie = useSelector(state => state.zellchemie);
   
   const oekonomischeParameter = useSelector(state => state.oekonomischeParameter);
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
@@ -90,6 +92,10 @@ export default function Ergebnisse() {
       <h1>Prozessroute</h1>
       {prozessRoute !== null &&
       <p>{JSON.stringify(prozessRoute)}</p>}
+
+      <h1>Zellchemie</h1>
+      {zellchemie !== null &&
+      <p>{zellchemie}</p>}
 
       <h1>Prozessdetails</h1>
       {prozessschrittDaten !== null &&

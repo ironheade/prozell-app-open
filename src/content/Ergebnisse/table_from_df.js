@@ -13,13 +13,14 @@ export default function DfTable(props){
     const data = JSON.parse(props.data)
 
     function getKeys(){
-        return Object.keys(data[0]);
+        console.log(Object.keys(data[0]))
+        return Object.keys(data[0])
       }
       
     function getHeader(){
     var keys = getKeys();
     return keys.map((key, index)=>{
-        return <TableHeader key={key}>{key.toUpperCase()}</TableHeader>
+        return <TableHeader key={index}>{key.toUpperCase()}</TableHeader>
     })
     }
     
@@ -33,7 +34,8 @@ export default function DfTable(props){
 
     const RenderRow = (props) =>{
         return props.keys.map((key, index)=>{
-          return <TableCell key={index}>
+          var style={backgroundColor:"#e0e0e0", fontWeight:"bold"}
+          return <TableCell style={index === 0 ? style:{}} key={index}>
               {typeof props.data[key] !== 'string' ?
               Math.round(props.data[key]*100)/100
               :

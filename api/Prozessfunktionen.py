@@ -10,8 +10,8 @@ import math
 #____________________________________
 #HARDCODED WERTE, BITTE ANPASSEN
 arbeitstage_pro_jahr=365
-meter_anodenkollektorfolie_pro_rolle=1000
-meter_kathodenkollektorfolie_pro_rolle=1000
+#meter_anodenkollektorfolie_pro_rolle=1000
+#meter_kathodenkollektorfolie_pro_rolle=1000
 
 #____________________________________
 #Allgemeine Funktionen
@@ -41,10 +41,14 @@ def anzahl_sheets_kathode(Massemodell_ergebnis):
     anzahl_sheets_kathode = Massemodell_ergebnis["Anzahl Wiederholeinheiten"][0]
     return anzahl_sheets_kathode
 
+def read_zellinfo(Material, df):
+    df = df.loc[df["Material"] == Material]
+    return df
+
 #____________________________________
 #Prozessfunktionen
             
-def Mischen(df,Zellergebnisse,schritt_dictionary):
+def Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
 
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
 
@@ -58,9 +62,9 @@ def Mischen(df,Zellergebnisse,schritt_dictionary):
     Elektrolyt=schritt_dictionary["Elektrolyt"]
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
-    
-    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]/1000 #[l]
-    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]/1000 #[l]
+
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
 
     Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
     Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
@@ -70,8 +74,8 @@ def Mischen(df,Zellergebnisse,schritt_dictionary):
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Energiebedarf = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
    
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*float(df["Wert"]["Personal Facharbeiter"])
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
         
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])
     schritt_dictionary={
@@ -79,8 +83,8 @@ def Mischen(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -93,14 +97,14 @@ def Mischen(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)
     return schritt_dictionary
     
-def Trockenbeschichten(df,Zellergebnisse,schritt_dictionary):
+def Trockenbeschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Beschichten(df,Zellergebnisse,schritt_dictionary):
+def Beschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Beschichten_und_Trocknen(df,Zellergebnisse,schritt_dictionary):
-
+def Beschichten_und_Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    #Anzahl Wiederholeinheiten anpassen, je nachdem ob wickel oder nicht
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
 
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
@@ -113,7 +117,6 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,schritt_dictionary):
     Elektrolyt=schritt_dictionary["Elektrolyt"]
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
-    "Sheets/Meter Anodenkollektor"
 
     Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
     Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
@@ -126,7 +129,7 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,schritt_dictionary):
 
     Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
 
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition Anlage"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     
     Energiebedarf_Anode = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"]))*24*arbeitstage_pro_jahr #[kWh]
     Energiebedarf_Kathode = (Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr #[kWh]
@@ -141,8 +144,8 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,schritt_dictionary):
     
     Flächenbedarf = Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode #[m²]
    
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*float(df["Wert"]["Personal Facharbeiter"])
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
     
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])
     schritt_dictionary={
@@ -150,8 +153,8 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,      
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,  
@@ -164,14 +167,14 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)
     return schritt_dictionary
 
-def Trocknen(df,Zellergebnisse,schritt_dictionary):
+def Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Prälithiierung(df,Zellergebnisse,schritt_dictionary):
+def Prälithiierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Kalandrieren(df,Zellergebnisse,schritt_dictionary):
-    
+def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    #Anzahl Wiederholeinheiten anpassen, je nachdem ob wickel oder nicht
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
@@ -195,8 +198,8 @@ def Kalandrieren(df,Zellergebnisse,schritt_dictionary):
     Investition = Anzahl_Anlagen*df["Wert"]["Investition"]
     Flächenbedarf = Anzahl_Anlagen*df["Wert"]["Anlagengrundfläche"]
     Energiebedarf = Anzahl_Anlagen*df["Wert"]["Leistungsaufnahme"]*24*arbeitstage_pro_jahr   
-    FA = Anzahl_Anlagen*df["Wert"]["FA"]
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -204,8 +207,8 @@ def Kalandrieren(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,       
@@ -218,11 +221,11 @@ def Kalandrieren(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)
     return schritt_dictionary
     
-def Strukturierung(df,Zellergebnisse,schritt_dictionary):
+def Strukturierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Längsschneiden(df,Zellergebnisse,schritt_dictionary):
-    
+def Längsschneiden(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    #Anzahl Wiederholeinheiten anpassen, je nachdem ob wickel oder nicht
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
@@ -243,11 +246,11 @@ def Längsschneiden(df,Zellergebnisse,schritt_dictionary):
     Anlagen_Kathode = math.ceil((Meter_Kathode_pro_Tag/(24*60))/float(df["Wert"]["Geschwindigkeit"]))
     
     Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
-    Investition = Anzahl_Anlagen*df["Wert"]["Investitionen"]
+    Investition = Anzahl_Anlagen*df["Wert"]["Investition"]
     Flächenbedarf = Anzahl_Anlagen*df["Wert"]["Anlagengrundfläche"]
     Energiebedarf = Anzahl_Anlagen*df["Wert"]["Leistungsaufnahme"]*24*arbeitstage_pro_jahr   
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
     
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -255,8 +258,8 @@ def Längsschneiden(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -269,20 +272,31 @@ def Längsschneiden(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Intensivtrocknen(df,Zellergebnisse,schritt_dictionary):
+def Intensivtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Vereinzeln(df,Zellergebnisse,schritt_dictionary):
-    
+def Vereinzeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    #Anzahl Wiederholeinheiten anpassen, je nachdem ob wickel oder nicht
+    #print(df)
+    #print(Zellergebnisse)
+    #print(Zellchemie)
+    #print(Materialinfos)
+    #print(schritt_dictionary)
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
+
+    Anodenkollektor = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Anode"].index.tolist()[0]
+    meter_anodenkollektorfolie_pro_rolle = read_zellinfo(Anodenkollektor,Materialinfos)["Wert"]["Rollenlänge"]
+    
+    Kathodenkollektor = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Kathode"].index.tolist()[0]
+    meter_kathodenkollektorfolie_pro_rolle = read_zellinfo(Kathodenkollektor,Materialinfos)["Wert"]["Rollenlänge"]
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
     
     Zusatzverlust_Anodenkollektor=float(df["Wert"]["Fixausschuss"])/meter_anodenkollektorfolie_pro_rolle
     Zusatzverlust_Kathodenkollektor=float(df["Wert"]["Fixausschuss"])/meter_kathodenkollektorfolie_pro_rolle
     
-    Anodenkollektor=schritt_dictionary["Anodenkollektor"]*(Verlust+Zusatzverlust_Anodenkollektor/100)
-    Kathodenkollektor=schritt_dictionary["Anodenkollektor"]*(Verlust+Zusatzverlust_Kathodenkollektor/100)
+    Anodenkollektor=schritt_dictionary["Anodenkollektor"]*(Verlust+Zusatzverlust_Anodenkollektor)
+    Kathodenkollektor=schritt_dictionary["Anodenkollektor"]*(Verlust+Zusatzverlust_Kathodenkollektor)
     Anodenbeschichtung=schritt_dictionary["Anodenbeschichtung"]*Verlust
     Kathodenbeschichtung=schritt_dictionary["Kathodenbeschichtung"]*Verlust
     Separator=schritt_dictionary["Separator"]
@@ -299,11 +313,11 @@ def Vereinzeln(df,Zellergebnisse,schritt_dictionary):
     
     Anzahl_Anlagen = Anzahl_Anlagen_Anode + Anzahl_Anlagen_Kathode
 
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
-    FA = 0
-    HiK = 0
+    Facharbeiter = 0
+    Hilfskraft = 0
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])        
@@ -312,8 +326,8 @@ def Vereinzeln(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -326,11 +340,11 @@ def Vereinzeln(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Laminieren(df,Zellergebnisse,schritt_dictionary):
+def Laminieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Stapeln(df,Zellergebnisse,schritt_dictionary):
-    
+def Stapeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    #Anzahl Wiederholeinheiten anpassen, je nachdem ob wickel oder nicht
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
@@ -350,8 +364,8 @@ def Stapeln(df,Zellergebnisse,schritt_dictionary):
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -359,8 +373,8 @@ def Stapeln(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -376,10 +390,10 @@ def Stapeln(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Wickeln_Z_Falten(df,Zellergebnisse,schritt_dictionary):
+def Wickeln_Z_Falten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Wickeln(df,Zellergebnisse,schritt_dictionary):
+def Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -401,12 +415,12 @@ def Wickeln(df,Zellergebnisse,schritt_dictionary):
     
     Anzahl_Anlagen = math.ceil(Zellen_pro_Tag/Kapazität_pro_Tag)
     
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -414,8 +428,8 @@ def Wickeln(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -429,7 +443,7 @@ def Wickeln(df,Zellergebnisse,schritt_dictionary):
 
     return schritt_dictionary
 
-def Kontaktieren(df,Zellergebnisse,schritt_dictionary):
+def Kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -446,12 +460,12 @@ def Kontaktieren(df,Zellergebnisse,schritt_dictionary):
     Zellen_pro_Minute = Zellen_pro_Tag/(24*60) 
     Anzahl_Anlagen = math.ceil(Zellen_pro_Minute/float(df["Wert"]["Geschwindigkeit"]))
     
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])   
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])   
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -459,8 +473,8 @@ def Kontaktieren(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -473,7 +487,7 @@ def Kontaktieren(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Assemblieren(df,Zellergebnisse,schritt_dictionary):
+def Assemblieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -490,12 +504,12 @@ def Assemblieren(df,Zellergebnisse,schritt_dictionary):
     Zellen_pro_Minute = Zellen_pro_Tag/(24*60) 
     Anzahl_Anlagen = math.ceil(Zellen_pro_Minute/float(df["Wert"]["Geschwindigkeit"]))
     
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])   
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])   
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -503,8 +517,8 @@ def Assemblieren(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -517,8 +531,8 @@ def Assemblieren(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Pouchbeutel___Gehäuse_verschließen(df,Zellergebnisse,schritt_dictionary):
-    
+def Pouchbeutel___Gehäuse_verschließen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
@@ -534,12 +548,12 @@ def Pouchbeutel___Gehäuse_verschließen(df,Zellergebnisse,schritt_dictionary):
     Zellen_pro_Minute = Zellen_pro_Tag/(24*60) 
     Anzahl_Anlagen = math.ceil(Zellen_pro_Minute/float(df["Wert"]["Geschwindigkeit"]))
     
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])   
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])   
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -547,8 +561,8 @@ def Pouchbeutel___Gehäuse_verschließen(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -561,7 +575,7 @@ def Pouchbeutel___Gehäuse_verschließen(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Elektrolyt_dosieren(df,Zellergebnisse,schritt_dictionary):
+def Elektrolyt_dosieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -579,12 +593,12 @@ def Elektrolyt_dosieren(df,Zellergebnisse,schritt_dictionary):
     Durchsatz_pro_Minute = 60*float(df["Wert"]["Parallelbefüllungen"])/float(df["Wert"]["Befülldauer je Zelle"])
     Anzahl_Anlagen = math.ceil(Zellen_pro_Minute/Durchsatz_pro_Minute)
     
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])        
     schritt_dictionary={
@@ -592,8 +606,8 @@ def Elektrolyt_dosieren(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -609,7 +623,7 @@ def Elektrolyt_dosieren(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Befüllöffnung_verschließen(df,Zellergebnisse,schritt_dictionary):
+def Befüllöffnung_verschließen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -625,12 +639,12 @@ def Befüllöffnung_verschließen(df,Zellergebnisse,schritt_dictionary):
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
     Zellen_pro_Minute = Zellen_pro_Tag/(24*60)
     Anzahl_Anlagen = math.ceil(Zellen_pro_Minute/float(df["Wert"]["Geschwindigkeit"]))
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investitionen"])
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*arbeitstage_pro_jahr*24
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])    
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])    
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -638,8 +652,8 @@ def Befüllöffnung_verschließen(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -652,7 +666,7 @@ def Befüllöffnung_verschließen(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Formieren(df,Zellergebnisse,schritt_dictionary):
+def Formieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
       
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -687,8 +701,8 @@ def Formieren(df,Zellergebnisse,schritt_dictionary):
     
     Energiebedarf=E_FormZ*Zelläquivalent/1000 #[kWh]
     
-    FA=float(df["Wert"]["FA"])
-    HiK=float(df["Wert"]["HiK"])
+    Facharbeiter=float(df["Wert"]["Personal Facharbeiter"])
+    Hilfskraft=float(df["Wert"]["Personal Hilfskräfte"])
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])        
     schritt_dictionary={
@@ -696,8 +710,8 @@ def Formieren(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -710,7 +724,7 @@ def Formieren(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)
     return schritt_dictionary
     
-def Reifelagern(df,Zellergebnisse,schritt_dictionary):
+def Reifelagern(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -732,8 +746,8 @@ def Reifelagern(df,Zellergebnisse,schritt_dictionary):
     Investition = Anzahl_Anlagen*float(df["Wert"]["Investition Bediengerät"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
-    FA = float(df["Wert"]["FA"])
-    HiK = float(df["Wert"]["HiK"])    
+    Facharbeiter = float(df["Wert"]["Personal Facharbeiter"])
+    Hilfskraft = float(df["Wert"]["Personal Hilfskräfte"])    
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])        
     schritt_dictionary={
@@ -741,8 +755,8 @@ def Reifelagern(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -755,7 +769,7 @@ def Reifelagern(df,Zellergebnisse,schritt_dictionary):
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
 
-def Prüfen_und_Klassifizieren(df,Zellergebnisse,schritt_dictionary):
+def Prüfen_und_Klassifizieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
     
@@ -773,8 +787,8 @@ def Prüfen_und_Klassifizieren(df,Zellergebnisse,schritt_dictionary):
     Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Energie"])*24*arbeitstage_pro_jahr
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
 
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
     schritt_dictionary={
@@ -782,8 +796,8 @@ def Prüfen_und_Klassifizieren(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -800,7 +814,7 @@ def Prüfen_und_Klassifizieren(df,Zellergebnisse,schritt_dictionary):
 
 #_____________________________________________________________________________
 #neue ProZell Schritte
-def MultiEx_Mischen(df,Zellergebnisse,schritt_dictionary):
+def MultiEx_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
 
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
@@ -814,8 +828,8 @@ def MultiEx_Mischen(df,Zellergebnisse,schritt_dictionary):
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
     
-    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Dichte Anodenbeschichtung"]/1000 #[l]
-    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Dichte Kathodenbeschichtung"]/1000 #[l]
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]/1000 #[l]
 
     Anlagen_Anode = math.ceil(Liter_Anode_pro_Tag/24/df["Wert"]["Geschwindigkeit"])
     Anlagen_Kathode = math.ceil(Liter_Kathode_pro_Tag/24/df["Wert"]["Geschwindigkeit"])
@@ -825,8 +839,8 @@ def MultiEx_Mischen(df,Zellergebnisse,schritt_dictionary):
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Energiebedarf = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
    
-    FA = Anzahl_Anlagen*float(df["Wert"]["FA"])
-    HiK = Anzahl_Anlagen*float(df["Wert"]["HiK"])
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
         
     liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])
     schritt_dictionary={
@@ -834,8 +848,8 @@ def MultiEx_Mischen(df,Zellergebnisse,schritt_dictionary):
         "Investition":Investition,
         "Flächenbedarf":Flächenbedarf,
         "Flächenbedarf Trockenraum":0,
-        "FA-Personalbedarf (pro Schicht)":FA,
-        "HiK-Personalbedarf (pro Schicht)":HiK,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
         "Anodenkollektor":Anodenkollektor,
         "Kathodenkollektor":Kathodenkollektor,
@@ -851,53 +865,53 @@ def MultiEx_Mischen(df,Zellergebnisse,schritt_dictionary):
     
     return schritt_dictionary
 
-def MiKal_Mischen(df,Zellergebnisse,schritt_dictionary):
+def MiKal_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def OptiEx(df,Zellergebnisse,schritt_dictionary):
+def OptiEx(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def ÖkoTroP_Bürstenauftrag(df,Zellergebnisse,schritt_dictionary):
+def ÖkoTroP_Bürstenauftrag(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def ÖkoTroP_Elektrostatisch(df,Zellergebnisse,schritt_dictionary):
+def ÖkoTroP_Elektrostatisch(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def HighStructures_Extrusion(df,Zellergebnisse,schritt_dictionary):
+def HighStructures_Extrusion(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def HighStructures_Laser(df,Zellergebnisse,schritt_dictionary):
+def HighStructures_Laser(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Epic(df,Zellergebnisse,schritt_dictionary):
+def Epic(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def RollBatt(df,Zellergebnisse,schritt_dictionary):
+def RollBatt(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def PräLi_Li_Salz(df,Zellergebnisse,schritt_dictionary):
+def PräLi_Li_Salz(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def PräLi_PVD(df,Zellergebnisse,schritt_dictionary):
+def PräLi_PVD(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def PräLi_Opferanode(df,Zellergebnisse,schritt_dictionary):
+def PräLi_Opferanode(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def HoLiB_Vereinzeln(df,Zellergebnisse,schritt_dictionary):
+def HoLiB_Vereinzeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def E_Qual(df,Zellergebnisse,schritt_dictionary):
+def E_Qual(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def ProfiStruk_Strukturierung(df,Zellergebnisse,schritt_dictionary):
+def ProfiStruk_Strukturierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def HoLiB_Stapeln(df,Zellergebnisse,schritt_dictionary):
+def HoLiB_Stapeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def Cell_Fill(df,Zellergebnisse,schritt_dictionary):
+def Cell_Fill(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
-def FormEl(df,Zellergebnisse,schritt_dictionary):
+def FormEl(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
