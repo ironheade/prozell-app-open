@@ -24,7 +24,6 @@ export default function Zellchemie() {
   //redux states nur zum Test, können später raus
   //Zellmaße
   const zellformat = useSelector(state => state.zellformat);
-  const empty = useSelector(state => state.empty);
 
   //redux states
   //Daten der aktuell ausgewählten Zellchemie
@@ -40,24 +39,8 @@ export default function Zellchemie() {
   //Ah pro Zelle und GWh/Jahr für die Fabrik separat gespeichert
   const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle)
 
-
-  //Liste der aktuell auswählbaren Materiealien
-  //const [materialien, setmaterialen] = useState(null);
-
   //Liste der aktuell auswählbaren Zellchemien
   const [currentZellchemien, setCurrentZellchemien] = useState(null);
-
-  //Aktuell ausgewählte Zellchemie
-  const [currentZellchemie, setCurrentZellchemie] = useState(null);
-
-  //Aktuell ausgewählte Zellchemie
-  const [currentZellchemieTitle, setCurrentZellchemieTitle] = useState(null);
-
-  //Informationen zu den ausgewählten Bestandteilen, ein State mit mehreren Tables, jeweils gespeichert direkt als JSON Format
-  //const [materialInfos, setMaterialInfos] = useState([]);
-
-  //Informationen zu den ausgewählten Bestandteilen, alle Tables hintereinander weg in ein JSON mit einem neuen Eintrag: Material
-  const [materialInfosNeu, setMaterialInfosNeu] = useState([]);
 
   //ruft die Tabelle aller möglichen Zellchemien aus der Datenbank ab
   tabelle_abrufen('Zellchemien').then(result => setCurrentZellchemien(result));
@@ -111,35 +94,11 @@ export default function Zellchemie() {
   useEffect(() => {
     didMount.current ? fill_materials() : (didMount.current = true);
   }, [zellchemie]);
+  /*
   function setMountFalse() {
     didMount.current = false;
   }
-
-  function fill_materials2() {
-    var listOfMaterials = JSON.parse(materialien).map(
-      item => item.Beschreibung
-    ); //Auflistung aller genutzten Materialien einer Kategorie, für die Filterung später
-    var newState = [];
-    var liste = [];
-
-    JSON.parse(zellchemie)
-      .filter(item =>
-        listOfMaterials.includes(item.Beschreibung) ? true : false
-      )
-      .map(item => liste.push(item.Beschreibung));
-
-    liste.map(item =>
-      newState.push(
-        tabelle_abrufen(material_Dateiname(item)).then(result =>
-          JSON.parse(result)
-          //.forEach((node) => node.Material = item)
-        )
-      )
-    );
-    Promise.all(newState).then(values => {
-      setMaterialInfosNeu(values);
-    });
-  }
+  */
 
   //allgemeine Funktion die eine Tabelle aus der Datenbank abruft und als string zurück gibt
   async function tabelle_abrufen(tabelle_dateiname) {

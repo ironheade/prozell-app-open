@@ -11,9 +11,7 @@ import {
 export default function AllgemeineParameter() {
   const dispatch = useDispatch();
 
-  const oekonomischeParameter = useSelector(
-    state => state.oekonomischeParameter
-  );
+  const oekonomischeParameter = useSelector(state => state.oekonomischeParameter);
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
   const gebaeude = useSelector(state => state.gebaeude);
   

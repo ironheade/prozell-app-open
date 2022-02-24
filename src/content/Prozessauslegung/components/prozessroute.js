@@ -218,15 +218,15 @@ export default function Prozessroute(){
 
                 {prozessRoute.map(outer_item => 
                     
-                        <TableBody>
+                        <TableBody key={Object.keys(outer_item)[0]}>
 
-                            <TableRow>
+                            <TableRow >
                                 <TableCell style={{ backgroundColor: 'white' }}></TableCell>
                                 <TableCell style={{ backgroundColor: 'black' }}><h4 style={{ color: 'white' }}>{Object.keys(outer_item)[0]}</h4></TableCell>
                             </TableRow>
 
                             {outer_item[Object.keys(outer_item)[0]].map(inner_item =>
-                            <TableRow>
+                            <TableRow key={inner_item}>
                                 <TableCell style={{ textAlign:"right", backgroundColor: 'white'}}>
                                 <Button
                                     size="sm"
@@ -257,14 +257,14 @@ export default function Prozessroute(){
                     {prozessschritte !== null &&
                     [...new Set(JSON.parse(prozessschritte).map(item => item.Prozessabschnitt))].map(item_outer =>
 
-                        <TableBody>
+                        <TableBody key={item_outer}>
                         <TableRow>
                             <TableCell style={{ backgroundColor: 'white' }}></TableCell>
                             <TableCell style={{ backgroundColor: 'black' }}><h4 style={{ color: 'white' }}>{item_outer}</h4></TableCell>
 
                         </TableRow>
                         {JSON.parse(prozessschritte).filter(item => item.Prozessabschnitt === item_outer).map(item => 
-                            <TableRow>
+                            <TableRow key={item.Beschreibung}>
                                 <TableCell style={{ textAlign:"right", backgroundColor: 'white' }}>
                                 <Button
                                     size="sm"
@@ -288,12 +288,11 @@ export default function Prozessroute(){
 
             <div className="bx--col-lg-8">
                 <h3 style={{marginLeft: "20px"}}>Details Prozessschritte</h3>
-                {/*<button style={{marginLeft: "20px"}} onClick={fill_Daten}>Daten und so</button>*/}
                 {prozessschrittDaten !== null &&
-                    prozessschrittDaten.map(item => 
+                <Accordion style={{marginLeft: "20px"}}>
+                    {prozessschrittDaten.map(item => 
                         
-                        <Accordion style={{marginLeft: "20px"}}>
-                            <AccordionItem title={Object.keys(item)[0]}>
+                            <AccordionItem key={Object.keys(item)[0]} title={Object.keys(item)[0]}>
                         
                             
                             <Table useZebraStyles size="compact" >
@@ -308,7 +307,7 @@ export default function Prozessroute(){
                                 
                                 <TableBody>
                                     {item[Object.keys(item)[0]].map(item2=>
-                                    <TableRow>
+                                    <TableRow key={item2.Beschreibung}>
                                         <TableCell>
                                             {item2.Beschreibung}
                                         </TableCell>
@@ -334,12 +333,13 @@ export default function Prozessroute(){
                             </Table>
                             </AccordionItem>
 
-                        </Accordion>
+                        
                         
                         //console.log(JSON.parse(item[Object.keys(item)[0]]))
                         
 
                     )}
+                    </Accordion>}
 
             </div>
 

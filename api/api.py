@@ -5,7 +5,8 @@ import pandas as pd
 import os
 import sys
 import json
-import zellberechnung
+import Zellberechnung
+import Kostenberechnung
 
 app = Flask(__name__)
 
@@ -54,6 +55,44 @@ def get_Zellwahl():
 
     return {'Zellinfo': Zellinfo}
 
+@app.route('/Ergebnisse', methods=['POST'])
+def get_ergebnisse():
+
+    Zellergebnisse = request.get_json()["Zellergebnisse"]
+    Prozessroute = request.get_json()["Prozessroute"]
+    Prozessroute_array = request.get_json()["Prozessroute_array"]
+    Prozessdetails = request.get_json()["Prozessdetails"]
+    Materialinfos = request.get_json()["Materialinfos"]
+    Oekonomische_parameter = request.get_json()["Oekonomische_parameter"]
+    Mitarbeiter_Logistik = request.get_json()["Mitarbeiter_Logistik"] 
+    Gebaeude = request.get_json()["Gebaeude"] 
+    
+    #Zellergebnisse = pd.DataFrame.from_records(json.loads(Zellergebnisse))
+    
+    #print("Zellergebnisse")
+    #print(Zellergebnisse)
+    #print("Prozessroute_array")
+    #print(Prozessroute_array)
+    #print("Prozessroute")
+    #print(Prozessroute)
+    #print("Prozessdetails")
+    #print(Prozessdetails)
+    #print("Materialinfos")
+    #print(Materialinfos)
+    #print("Oekonomische Parameter")
+    #print(Oekonomische_parameter)
+    #print("Mitarbeiter und Logistik")
+    #print(Mitarbeiter_Logistik)
+    #print("Gebäude")
+    #print(Gebaeude)
+    
+
+    print(Kostenberechnung.Kostenberechnung())
+    #print(Ergebnisse)
+    Ergebnisse = Kostenberechnung.Kostenberechnung()
+    Ergebnisse = Ergebnisse.to_json(orient="records")
+    return {'Ergebnisse': Ergebnisse}
+
 @app.route('/Zellergebnisse', methods=['POST'])
 def get_zellergebnisse():
     Zellchemie = request.get_json()["Zellchemie"]
@@ -98,7 +137,7 @@ def get_zellergebnisse():
     # df = pd.DataFrame.from_dict(e_json, orient="index")
     # print(df)
 
-    Zellergebnisse = zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName, GWh_Jahr_Ah_Zelle)
+    Zellergebnisse = Zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName, GWh_Jahr_Ah_Zelle)
     print(Zellergebnisse)
     Zellergebnisse = Zellergebnisse.to_json(orient='records')
     

@@ -5074,6 +5074,7 @@ __metadata:
     react: 16.10.0
     react-apollo: 2.5.6
     react-bootstrap: ^2.1.2
+    react-csv: ^2.2.2
     react-dnd: ^14.0.5
     react-dnd-html5-backend: ^14.1.0
     react-dnd-list: ^1.2.3
@@ -14689,6 +14690,13 @@ fsevents@^1.2.7:
   peerDependencies:
     react: ^15.3.0 || ^16.0.0 || ^17.0.0
   checksum: d4ddba85219bc4b839b01900ea275e4b39331f1b6995f64ee02210d10eb119c7b18ce6de5739aaf2b66ff0047c074096341d44113af84671c1b69d4b4650626c
+  languageName: node
+  linkType: hard
+
+"react-csv@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "react-csv@npm:2.2.2"
+  checksum: 9510ec4c766e5e5c67e0de811bc701603070ff8ef81310a193f57dd09a02de1bce763a2c0e5075cc2eae0559448a71460deebc824a57c47eef8e63a9b874aeb4
   languageName: node
   linkType: hard
 

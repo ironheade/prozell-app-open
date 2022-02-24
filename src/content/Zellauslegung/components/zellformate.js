@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Dropdown } from 'carbon-components-react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -28,8 +28,6 @@ export default function Zellformate() {
   //Ah pro Zelle und GWh/Jahr für die Fabrik separat gespeichert
   const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle)
 
-  //Liste der aktuell auswählbaren Zellen
-  //const [currentCells, setCurrentCells] = useState(null);
   //Liste aller Möglichen Zellformate
   const [currentZellformate, setCurrentZellformate] = useState('Pouchzelle');
 

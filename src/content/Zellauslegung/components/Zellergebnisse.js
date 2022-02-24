@@ -7,11 +7,12 @@ import {
     Table,
     TableHead,
     TableHeader,
-    Dropdown,
-    Button
   } from 'carbon-components-react';
 import { StackedAreaChart, DonutChart } from "@carbon/charts-react";
 import "@carbon/charts/styles.css";
+import { CSVLink } from "react-csv";
+
+
 
 const data = [
 	{
@@ -114,7 +115,6 @@ export default function Zellergebnisse(){
 
     const Zellergebnisse = useSelector(state => state.zellergebnisse)
 
-
     var donutData = [
 
     ]
@@ -124,6 +124,19 @@ export default function Zellergebnisse(){
             donutData.push({group: item.Beschreibung, value: item.Wert})
             )
     }
+
+    const headers = [
+        { label: "Beschreibung", key: "Beschreibung" },
+        { label: "Wert", key: "Wert" },
+        { label: "Einheit", key: "Einheit" },
+
+      ];
+       
+      const csvReport = {
+        headers: headers,
+        filename: 'Clue_Mediator_Report.csv'
+      };
+    
 
 /*
     const donutOptions = {
@@ -175,8 +188,7 @@ export default function Zellergebnisse(){
     {Zellergebnisse !== null &&
         JSON.parse(Zellergebnisse).filter(item => item.Kategorie === "Kosten" && !excludeList.includes(item.Beschreibung) ).map(item =>
             costDonutData.push({group: item.Beschreibung, value: item.Wert})
-            )
-    }
+            )}
 
 
     const costDonutOptions = {
@@ -225,7 +237,9 @@ export default function Zellergebnisse(){
     return (
         <>
             <div className="bx--col-lg-4">
+
             {Zellergebnisse !== null &&
+            <>
                 <Table useZebraStyles size="compact" className="zellchemie_table">
                     <TableHead>
                         <TableRow>
@@ -263,6 +277,10 @@ export default function Zellergebnisse(){
                         </TableBody>
                     )}
                 </Table>
+                <CSVLink {...csvReport} data={JSON.parse(Zellergebnisse)} separator=";">Excel-CSV Export</CSVLink>
+                <br/>
+                <CSVLink {...csvReport} data={JSON.parse(Zellergebnisse)}>CSV Export</CSVLink>
+            </>
             }
         </div>
         
