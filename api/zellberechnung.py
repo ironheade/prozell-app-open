@@ -229,10 +229,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Anode
         bahnen_bes_A_ausn = (Breite_Anodenkollektor-2*Schneid_abs_aus_A+Schneid_abd_gg_bahnr_A)/(laenge_anode+laenge_anode_zellf+Schneid_abd_gg_bahnr_A)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
+        bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
         S_MA = 1000/(breite_anode+Schneid_abs_bahnr_A)*bahnen_bes_A
         #Kathode
         bahnen_bes_K_ausn = (Breite_Kathodenkollektor-2*Schneid_abs_aus_K+Schneid_abd_gg_bahnr_K)/(laenge_kathode+laenge_kathode_zellf+Schneid_abd_gg_bahnr_K)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
+        bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
         S_MK = 1000/(breite_kathode+Schneid_abs_bahnr_K)*bahnen_bes_K          
         
         #nutzbarere Innenraum der Zelle, Fläche des Separators * Höhe des desammten Stacks + die modifizierte WHE
@@ -286,10 +288,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Anode
         bahnen_bes_A_ausn = (Breite_Anodenkollektor-2*Schneid_abs_aus_A+Schneid_abd_gg_bahnr_A)/(laenge_anode+laenge_anode_zellf+Schneid_abd_gg_bahnr_A)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
+        bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
         S_MA = 1000/(breite_anode+Schneid_abs_bahnr_A)*bahnen_bes_A
         #Kathode
         bahnen_bes_K_ausn = (Breite_Kathodenkollektor-2*Schneid_abs_aus_K+Schneid_abd_gg_bahnr_K)/(laenge_kathode+laenge_kathode_zellf+Schneid_abd_gg_bahnr_K)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
+        bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
         S_MK = 1000/(breite_kathode+Schneid_abs_bahnr_K)*bahnen_bes_K        
         
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
@@ -340,10 +344,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Anode
         bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
+        bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
         S_MA = 1000/(l_bahn)*bahnen_bes_A
         #Kathode
         bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
-        bahnen_bes_K = math.floor(bahnen_bes_A_ausn)
+        bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
+        bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
         S_MK = 1000/(l_bahn-2*ueberstand_anode_kathode)*bahnen_bes_K
 
         vol_nutz_zelle = math.pi*radius_rundzelle*radius_rundzelle*hoehe_rundzelle #[mm³]
@@ -405,10 +411,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Anode
         bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
+        bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
         S_MA = 1000/(l_bahn)*bahnen_bes_A
         #Kathode
         bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
-        bahnen_bes_K = math.floor(bahnen_bes_A_ausn)
+        bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
+        bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
         S_MK = 1000/(l_bahn-2*ueberstand_anode_kathode)*bahnen_bes_K
 
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
@@ -522,10 +530,10 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Preis Hülle","Wert":0,"Einheit":"€","Kategorie":"Kosten"},
         {"Beschreibung":"Materialkosten einer Zelle","Wert":round(Gesamtkosten_Zelle,2),"Einheit":"€","Kategorie":"Kosten"},
         
-        {"Beschreibung":"Beschichtete Bahnen Anode Ausnutzung","Wert":bahnen_bes_A_ausn,"Einheit":"","Kategorie":"Flächennutzung Elektrode"},
+        {"Beschreibung":"Beschichtete Bahnen Anode Ausnutzung","Wert":bahnen_bes_A_ausn,"Einheit":"%","Kategorie":"Flächennutzung Elektrode"},
         {"Beschreibung":"Beschichtete Bahnen Anode","Wert":bahnen_bes_A,"Einheit":"","Kategorie":"Flächennutzung Elektrode"},
         {"Beschreibung":"Sheets/ Meter Anode","Wert":S_MA,"Einheit":"Sheet/m","Kategorie":"Flächennutzung Elektrode"},
-        {"Beschreibung":"Beschichtete Bahnen Kathode Ausnutzung","Wert":bahnen_bes_K_ausn,"Einheit":"","Kategorie":"Flächennutzung Elektrode"},
+        {"Beschreibung":"Beschichtete Bahnen Kathode Ausnutzung","Wert":bahnen_bes_K_ausn,"Einheit":"%","Kategorie":"Flächennutzung Elektrode"},
         {"Beschreibung":"Beschichtete Bahnen Kathode","Wert":bahnen_bes_K,"Einheit":"","Kategorie":"Flächennutzung Elektrode"},
         {"Beschreibung":"Sheets/ Meter Kathode","Wert":S_MK,"Einheit":"Sheet/m","Kategorie":"Flächennutzung Elektrode"},
             ]

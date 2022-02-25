@@ -428,8 +428,8 @@ export default function Zellchemie() {
 */}
 
       <h2>Materialien Details</h2>
-
-      {materialInfos.length !== 0 &&
+      {/*{materialInfos.length !== 0 &&*/}
+      {materialInfos !== null &&
         materialInfos.map(item => (
           <MaterialInfoTable
             key={Object.keys(item)[0]}

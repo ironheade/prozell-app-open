@@ -1,4 +1,4 @@
-const emptyReducer = (state = [], action) => {
+const emptyReducer = (state = null, action) => {
   // handle a particular action type
   if (action.type === 'EMPTY_REDUCER') {
     // return the new state

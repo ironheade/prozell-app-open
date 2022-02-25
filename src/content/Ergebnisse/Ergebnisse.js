@@ -9,7 +9,8 @@ import {
   TableHead,
   TableHeader,
 } from 'carbon-components-react';
-import DfTable from './table_from_df'
+import DfTable from './components/table_from_df'
+import MyStackedBarChart from './components/bar_graph'
 
 export default function Ergebnisse() {
 
@@ -39,6 +40,7 @@ export default function Ergebnisse() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         Zellergebnisse: Zellergebnisse,
+        Zellchemie: zellchemie,
         Prozessroute: JSON.stringify(prozessRoute),
         Prozessroute_array: create_ProzessschrittArray(),
         Prozessdetails: JSON.stringify(prozessschrittDaten),
@@ -79,10 +81,18 @@ export default function Ergebnisse() {
           <h1 className="__heading">Ergebnisse</h1>
         </div>
       </div>
-      <Button onClick={Ergebnis}>Ergebnisse</Button>
-      
+
+      {
+        Zellergebnisse !== null
+        &&
+        <Button onClick={Ergebnis}>Ergebnisse</Button>
+      }
+
       {ergebnissTabelle !== null &&
-      <DfTable data={ergebnissTabelle}/>
+      <>
+        <MyStackedBarChart data={ergebnissTabelle} Prozessroute={create_ProzessschrittArray()}/>
+        <DfTable data={ergebnissTabelle}/>
+      </>
       }
 
       <h1>Zellergebnisse</h1>

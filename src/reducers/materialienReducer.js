@@ -1,4 +1,4 @@
-const materialienReducer = (state = [], action) => {
+const materialienReducer = (state = null, action) => {
   // handle a particular action type
   if (action.type === 'MATERIALIEN_CHANGE') {
     // return the new state

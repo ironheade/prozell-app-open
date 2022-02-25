@@ -9,11 +9,6 @@ import {
 import { InfoSection, InfoCard } from '../../components/Info';
 import PersonFavorite32 from '@carbon/icons-react/lib/person--favorite/32';
 import Application32 from '@carbon/icons-react/lib/application/32';
-import MyTable from './LandingTable';
-import MyTable2 from './LoadingTable3';
-import MyDropdown from './dropdown';
-import MyNumberInput from './numberinput';
-import MyList from './sortingtable';
 
 import { Apple32 } from '@carbon/icons-react';
 
@@ -86,17 +81,13 @@ const LandingPage = () => {
                 <div className="bx--row landing-page__tab-content">
                   <div className="bx--col-lg-12">
                     <Button kind="danger--tertiary">???</Button>
-                    <MyTable />
-                    <MyTable2 />
-                    <MyDropdown />
-                    <MyNumberInput />
-                    <MyList />
+
                   </div>
                   <div className="bx--col-lg-4">
                     <p>
-                      Rapidly build beautiful and accessible experiences. The
-                      Carbon kit contains all resources you need to get started.
+                       Kontakt:<br/>Konrad Bendzuck <br/> k.bendzuck@tu-braunschweig.de <br/> 0531/ 391 94648
                     </p>
+
                   </div>
                 </div>
               </div>
@@ -105,8 +96,7 @@ const LandingPage = () => {
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
                 <div className="bx--row landing-page__tab-content">
                   <div className="bx--col-lg-16">
-                    Carbon provides styles and components in Vanilla, React,
-                    Angular, and Vue for anyone building on the web.
+                    V1.0 - Release
                   </div>
                 </div>
               </div>
@@ -114,7 +104,7 @@ const LandingPage = () => {
           </Tabs>
         </div>
       </div>
-      <InfoSection heading="The Principles" className="landing-page__r3">
+      <InfoSection heading="Principles" className="landing-page__r3">
         <InfoCard
           heading="Carbon is Open"
           body="It's a distributed effort, guided by the principles of the open-source movement. Carbon's users are also it's makers, and everyone is encouraged to contribute."

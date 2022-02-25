@@ -7,3 +7,4 @@ const zellchemieNameReducer = (state = null, action) => {
   }
 };
 export default zellchemieNameReducer;
+

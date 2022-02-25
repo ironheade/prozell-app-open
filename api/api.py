@@ -59,6 +59,7 @@ def get_Zellwahl():
 def get_ergebnisse():
 
     Zellergebnisse = request.get_json()["Zellergebnisse"]
+    Zellchemie = request.get_json()["Zellchemie"]
     Prozessroute = request.get_json()["Prozessroute"]
     Prozessroute_array = request.get_json()["Prozessroute_array"]
     Prozessdetails = request.get_json()["Prozessdetails"]
@@ -87,9 +88,18 @@ def get_ergebnisse():
     #print(Gebaeude)
     
 
-    print(Kostenberechnung.Kostenberechnung())
+    #print(Kostenberechnung.Kostenberechnung())
     #print(Ergebnisse)
-    Ergebnisse = Kostenberechnung.Kostenberechnung()
+    Ergebnisse = Kostenberechnung.Kostenberechnung(
+        Zellergebnisse,
+        Zellchemie,
+        Prozessroute_array,
+        Prozessdetails,
+        Materialinfos,
+        Oekonomische_parameter,
+        Mitarbeiter_Logistik,
+        Gebaeude
+    )
     Ergebnisse = Ergebnisse.to_json(orient="records")
     return {'Ergebnisse': Ergebnisse}
 

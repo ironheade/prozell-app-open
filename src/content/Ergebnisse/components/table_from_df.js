@@ -46,6 +46,7 @@ export default function DfTable(props){
       }
 
     return(
+      <>
         <Table useZebraStyles size="compact">
             <TableHead>
                 <TableRow>{getHeader()}</TableRow>
@@ -54,5 +55,7 @@ export default function DfTable(props){
                 {getRowsData()}
             </TableBody>
         </Table>
+        <p>{props.data}</p>
+      </>
     )
 }

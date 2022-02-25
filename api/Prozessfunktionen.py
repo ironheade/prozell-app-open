@@ -188,8 +188,8 @@ def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
 
-    Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]*Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
-    Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]*Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
+    Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
+    Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
 
     Anlagen_Anode = math.ceil((Meter_Anode_pro_Tag/(24*60))/float(df["Wert"]["Geschw. Anode"]))
     Anlagen_Kathode = math.ceil((Meter_Kathode_pro_Tag/(24*60))/float(df["Wert"]["Geschw. Kathode"]))
@@ -239,8 +239,8 @@ def Längsschneiden(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionar
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
 
-    Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]*Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
-    Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]*Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
+    Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
+    Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
 
     Anlagen_Anode = math.ceil((Meter_Anode_pro_Tag/(24*60))/float(df["Wert"]["Geschwindigkeit"]))
     Anlagen_Kathode = math.ceil((Meter_Kathode_pro_Tag/(24*60))/float(df["Wert"]["Geschwindigkeit"]))
