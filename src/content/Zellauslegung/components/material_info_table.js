@@ -7,12 +7,14 @@ import {
   TableBody,
   TableCell,
   NumberInput,
+  AccordionItem
 } from 'carbon-components-react';
 
 export default function MaterialInfoTable(props) {
   return (
-    <div>
-      <h4>{props.header}</h4>
+
+      <AccordionItem title={props.header}>
+
       <Table useZebraStyles size="compact" className="zellchemie_table">
         <TableHead>
           <TableRow>
@@ -52,6 +54,7 @@ export default function MaterialInfoTable(props) {
           ))}
         </TableBody>
       </Table>
-    </div>
+      </AccordionItem>
+
   );
 }

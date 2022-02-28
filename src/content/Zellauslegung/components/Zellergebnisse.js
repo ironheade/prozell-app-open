@@ -13,7 +13,6 @@ import "@carbon/charts/styles.css";
 import { CSVLink } from "react-csv";
 
 
-
 const data = [
 	{
 		"group": "Dataset 1",
@@ -119,11 +118,11 @@ export default function Zellergebnisse(){
 
     ]
     var excludeList = ["Gesamtgewicht Zelle", "Gesamtdichte Anodenbeschichtung", "Gesamtdichte Kathodenbeschichtung"]
-    {Zellergebnisse !== null &&
+    Zellergebnisse !== null &&
         JSON.parse(Zellergebnisse).filter(item => item.Kategorie === "Gewichte und Dichten" && !excludeList.includes(item.Beschreibung) ).map(item =>
             donutData.push({group: item.Beschreibung, value: item.Wert})
             )
-    }
+    
 
     const headers = [
         { label: "Beschreibung", key: "Beschreibung" },
@@ -136,59 +135,14 @@ export default function Zellergebnisse(){
         headers: headers,
         filename: 'Clue_Mediator_Report.csv'
       };
-    
-
-/*
-    const donutOptions = {
-        "title": "Gewichtsverteilung Zelle",
-        "resizable": true,
-        "legend": {
-            "hidden": true,
-            "alignment": "center",
-            "truncation": {
-                "numCharacter": 35,
-            }
-          },
-        "donut": {
-          "center": {
-            "label": "Gewicht Zelle [g]"
-        },
-        "alignment": "center"
-        },
-        "height": "400px",
-        "width": "800px"
-      };
 
 
-    const costDonutOptions = {
-        "title": "Kostenverteilung Zelle",
-        "resizable": true,
-        "legend": {
-            "alignment": "center",
-            "truncation": {
-                "numCharacter": 35,
-            }
-          },
-        "donut": {
-          "center": {
-            "label": "Gesamtkosten Zelle [€]"
-        },
-        "alignment": "center"
-        },
-        "height": "400px",
-        "width": "800px"
-      };
-
-*/
-
-    var costDonutData = [
-
-    ]
-    var excludeList = ["Kilopreis Anodenbeschichtung", "Kilopreis Kathodenbeschichtung", "Materialkosten einer Zelle"]
-    {Zellergebnisse !== null &&
-        JSON.parse(Zellergebnisse).filter(item => item.Kategorie === "Kosten" && !excludeList.includes(item.Beschreibung) ).map(item =>
+    var costDonutData = []
+    var excludeListCost = ["Kilopreis Anodenbeschichtung", "Kilopreis Kathodenbeschichtung", "Materialkosten einer Zelle"]
+    Zellergebnisse !== null &&
+        JSON.parse(Zellergebnisse).filter(item => item.Kategorie === "Kosten" && !excludeListCost.includes(item.Beschreibung)).map(item =>
             costDonutData.push({group: item.Beschreibung, value: item.Wert})
-            )}
+            )
 
 
     const costDonutOptions = {
@@ -210,7 +164,6 @@ export default function Zellergebnisse(){
         "height": "400px",
         "width": "600px"
       };
-
 
 
     const donutOptions = {

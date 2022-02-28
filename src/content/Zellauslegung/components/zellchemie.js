@@ -13,8 +13,9 @@ import {
   TableHeader,
   Dropdown,
   Button,
+  Accordion
 } from 'carbon-components-react';
-import Zellchemie_TableRow from './zellchemie_tablerow';
+import ZellchemieTableRow from './zellchemie_tablerow';
 import MaterialInfoTable from './material_info_table';
 import WeitereParameterTablerow from './weitere_parameter_tablerow';
 
@@ -337,51 +338,51 @@ export default function Zellchemie() {
             </TableHead>
             {materialien !== null && (
               <>
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_unique_Anteil}
                   filter="Aktivmaterial Kathode"
                 />
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_nicht_unique_Anteil}
                   filter="Additive Kathode"
                 />
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_nicht_unique_Anteil}
                   filter="Lösemittel Kathode"
                 />
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   filter="Kollektorfolie Kathode"
                   {...props.Zellchemie_TableRow_unique_kein_Anteil}
                 />
                 {/* Parameter Anode */}
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_unique_Anteil}
                   filter="Aktivmaterial Anode"
                 />
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_nicht_unique_Anteil}
                   filter="Additive Anode"
                 />
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_nicht_unique_Anteil}
                   filter="Lösemittel Anode"
                 />
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_unique_kein_Anteil}
                   filter="Kollektorfolie Anode"
                 />
                 {/* Parameter Separator */}
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_unique_kein_Anteil}
                   filter="Separator"
                 />
                 {/* Parameter Elekotrlyt */}
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_unique_kein_Anteil}
                   filter="Elektrolyt"
                 />
                 {/* Parameter Hülle */}
-                <Zellchemie_TableRow
+                <ZellchemieTableRow
                   {...props.Zellchemie_TableRow_unique_kein_Anteil}
                   filter="Hülle"
                 />
@@ -428,16 +429,19 @@ export default function Zellchemie() {
 */}
 
       <h2>Materialien Details</h2>
-      {/*{materialInfos.length !== 0 &&*/}
       {materialInfos !== null &&
-        materialInfos.map(item => (
+      <Accordion>
+        {materialInfos.map(item => (
           <MaterialInfoTable
             key={Object.keys(item)[0]}
             header={Object.keys(item)[0]}
             content={item[Object.keys(item)[0]]}
             onChange={material_anpassen}
           />
+
         ))}
+        </Accordion>
+        }
     </div>
   );
 }

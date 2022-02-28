@@ -12,13 +12,11 @@ import {
     Accordion,
     AccordionItem
   } from 'carbon-components-react';
-  import ProzessCard from "./prozess_card";
   import { useSelector, useDispatch } from "react-redux";
   import { prozessroute_change,
             Prozessdaten_change } from '../../../actions/index' 
   import { AddAlt32, SubtractAlt32 } from '@carbon/icons-react';
   import tabelle_abrufen from '../../../functions/tabelle_abrufen'
-  import logo from '../../../resources/process_icons/assemblieren.png'
 
 export default function Prozessroute(){
     //Route muss in dieser Form entstehen. 
@@ -63,9 +61,9 @@ export default function Prozessroute(){
     //abrufen aller Prozessschritte aus der Datenbank, speichern in alle Prozessschritte 
     tabelle_abrufen('prozessschritte').then(data => setProzessschritte(data))
 
-    function importAll(r) {
-        return r.keys().map(r);
-      }
+    //function importAll(r) {
+    //    return r.keys().map(r);
+    //  }
       
     //const images = importAll(require.context('../../../resources/process_icons/', false, /\.(png|jpe?g|svg)$/));
 
@@ -127,8 +125,8 @@ export default function Prozessroute(){
         var newObject = {...newState[stateIndex]}
         var newArray =  [...newObject[Object.keys(newObject)[0]]]
 
-        {newArray.indexOf(Prozessschritt) > -1 ||
-        newArray.push(Prozessschritt)}
+        newArray.indexOf(Prozessschritt) > -1 ||
+        newArray.push(Prozessschritt)
 
         newObject[Object.keys(newObject)[0]] = newArray
 
@@ -137,13 +135,9 @@ export default function Prozessroute(){
         dispatch(prozessroute_change(newState))
     }
 
-    function move_up(){
+    //function move_up(){}
 
-    }
-
-    function move_down(){
-
-    }
+    //function move_down(){}
 
     //füllt das nested Dict mit den Daten aus der Prozessroute
     function add_prozessdaten() {
@@ -281,7 +275,6 @@ export default function Prozessroute(){
                             )}
                         </TableBody>
 
-
                     )}
                     </Table>
             </div>
@@ -294,7 +287,6 @@ export default function Prozessroute(){
                         
                             <AccordionItem key={Object.keys(item)[0]} title={Object.keys(item)[0]}>
                         
-                            
                             <Table useZebraStyles size="compact" >
                                 <TableHead>
                                     <TableRow>
@@ -332,11 +324,6 @@ export default function Prozessroute(){
                                 </TableBody>
                             </Table>
                             </AccordionItem>
-
-                        
-                        
-                        //console.log(JSON.parse(item[Object.keys(item)[0]]))
-                        
 
                     )}
                     </Accordion>}

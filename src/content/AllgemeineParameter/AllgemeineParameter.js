@@ -14,19 +14,6 @@ export default function AllgemeineParameter() {
   const oekonomischeParameter = useSelector(state => state.oekonomischeParameter);
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
   const gebaeude = useSelector(state => state.gebaeude);
-  
-  //allgemeine Funktion die eine Tabelle aus der Datenbank abruft und als string zurück gibt
-  async function tabelle_abrufen(tabelle_dateiname) {
-    const res = await fetch('/tabelle_abrufen', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tabelle: tabelle_dateiname,
-      }),
-    });
-    const data = await res.json();
-    return data.tabelle;
-  }
 
   function onChange_oekonomisch(Beschreibung, neuerWert) {
     var prevIndex = JSON.parse(oekonomischeParameter).findIndex(

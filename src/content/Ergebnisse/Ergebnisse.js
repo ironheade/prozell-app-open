@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { Breadcrumb, BreadcrumbItem, Button } from 'carbon-components-react';
 import { useSelector } from 'react-redux'
-import {
-  TableRow,
-  TableCell,
-  TableBody,
-  Table,
-  TableHead,
-  TableHeader,
-} from 'carbon-components-react';
 import DfTable from './components/table_from_df'
 import MyStackedBarChart from './components/bar_graph'
 

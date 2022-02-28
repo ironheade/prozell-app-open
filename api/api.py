@@ -10,6 +10,12 @@ import Kostenberechnung
 
 app = Flask(__name__)
 
+@app.route('/')
+def greetings():
+    return """
+            <h1><a  href="https://i.gifer.com/1Ms.gif">Buenas noches, amigo!</a></h1>
+            """
+
 @app.route('/time')
 def get_current_time():
     return {'time': time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())}

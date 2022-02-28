@@ -8,9 +8,8 @@ import {
   NumberInput,
 } from 'carbon-components-react';
 import { SubtractAlt32 } from '@carbon/icons-react';
-import { isTypeSystemDefinitionNode } from 'graphql';
 
-export default function Zellchemie_TableRow(props) {
+export default function ZellchemieTableRow(props) {
   var listOfUsedMaterials = JSON.parse(props.Zellchemie)
     .filter(item => item.Kategorie === props.filter)
     .map(item => item.Beschreibung); //Auflistung aller genutzten Materialien einer Kategorie, für die Filterung später
@@ -21,7 +20,8 @@ export default function Zellchemie_TableRow(props) {
     ) //Herausfiltern aller bereits genutzten Materialien, siehe oben
     .map(item => item.Beschreibung);
   //  items.length == 0 ? console.log("empty"): console.log("not empty")
-  items.length == 0 ? (items = []) : (items = items);
+  //items.length === 0 ? (items = []) : (items = items);
+  items.length === 0 && (items = []);
 
   return (
     <TableBody>

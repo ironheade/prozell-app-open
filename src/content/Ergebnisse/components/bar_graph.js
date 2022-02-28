@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import { StackedBarChart } from "@carbon/charts-react";
 import "@carbon/charts/styles.css";
 
@@ -6,23 +6,6 @@ import "@carbon/charts/styles.css";
 
 export default function MyStackedBarChart(props){
 
-    /*
-    const Prozessroute = ["Mischen",
-     "Beschichten und Trocknen",
-    "Kalandrieren",
-    "Längsschneiden",
-    "Vereinzeln",
-    "Stapeln",
-    "Kontaktieren",
-    "Assemblieren",
-    "Pouchbeutel / Gehäuse verschließen",
-    "Elektrolyt dosieren",
-    "Befüllöffnung verschließen",
-    "Formieren",
-    "Reifelagern",
-    "Prüfen und Klassifizieren"
-    ]
-*/
     const Prozessroute = props.Prozessroute
 
     const Kostenfaktoren = [
@@ -51,6 +34,7 @@ export default function MyStackedBarChart(props){
                     )
                 )
             )
+
     //aufsummiertes Balkendiagramm
     const data_stacked = [                            {
         "group":"Kostenfaktor",
@@ -61,7 +45,7 @@ export default function MyStackedBarChart(props){
         JSON.parse(props.data).map(item => //alle Items
             item.index === Kostenfaktor && //nur die Items (Zeilen) der Kostenfaktoren
                 Prozessroute.map(prozess => //jeden Prozess durchgehen
-                    {[...data_stacked].slice(-1)[0].group !== Kostenfaktor ?
+                    {[...data_stacked].slice(-1)[0].group !== Kostenfaktor ? //Wenn ein neuer Kostenfaktor beginnt: nicht die Werte vom vorherigen Eintrag aufsummieren
                         data_stacked.push(
                             {
                                 "group":Kostenfaktor,
@@ -74,7 +58,7 @@ export default function MyStackedBarChart(props){
                             {
                                 "group":Kostenfaktor,
                                 "key":prozess,
-                                "value":item[prozess]+[...data_stacked].slice(-1)[0].value  //Wert
+                                "value":item[prozess]+[...data_stacked].slice(-1)[0].value  //Wert vom vorherigen Eintrag aufsummieren
                             }
                         ) 
                     },
@@ -82,6 +66,9 @@ export default function MyStackedBarChart(props){
             )
         )
         data_stacked.shift()
+
+    const dryRoomStart = "Vereinzeln"
+    const dryRoomEnd = "Befüllöffnung verschließen"
 
     const options = {
         "title": "Prozessroute",
@@ -113,9 +100,9 @@ export default function MyStackedBarChart(props){
                     "labelMapsTo": "label",
                     "data": [
                       {
-                        "startHighlight": "Vereinzeln",
+                        "startHighlight": dryRoomStart,
                         "label": "Custom formatter",
-                        "endHighlight": "Befüllöffnung verschließen"
+                        "endHighlight": dryRoomEnd
                       }]
                   }
             },
