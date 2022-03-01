@@ -8,13 +8,13 @@ import json
 import Zellberechnung
 import Kostenberechnung
 
+
 app = Flask(__name__)
 
 @app.route('/')
 def greetings():
-    return """
-            <h1><a  href="https://i.gifer.com/1Ms.gif">Buenas noches, amigo!</a></h1>
-            """
+    return """<h1><a  href="https://i.gifer.com/1Ms.gif">Buenas noches, amigo!</a></h1>"""
+    #return ("Hello World")
 
 @app.route('/time')
 def get_current_time():
@@ -130,28 +130,7 @@ def get_zellergebnisse():
     
     a_json = json.loads(GWh_Jahr_Ah_Zelle)
     print(a_json["GWh_pro_jahr"])
-    
-    # #Die Zellchemie abrufen und in ein df umwandeln
-    # a_json = json.loads(Zellchemie)
-    # dfItem = pd.DataFrame.from_records(a_json)
-    # print(dfItem, file=sys.stderr)
 
-    # #Die Materialinfos abrufen und in ein df umwandeln
-    # b_json = json.loads(Materialinfos)
-    # complete_df = []
-    # for Material_tabelle in b_json:
-    #     Material = list(Material_tabelle.keys())[0]
-    #     for Spalte in Material_tabelle[Material]:
-    #         Spalte["Material"]=Material
-    #         complete_df.append(Spalte)
-    # print(pd.DataFrame.from_records(complete_df))
-
-    # d_json = json.loads(zellformat)
-    # print(pd.DataFrame.from_records(d_json))
-    
-    # e_json = json.loads(zellformatName)
-    # df = pd.DataFrame.from_dict(e_json, orient="index")
-    # print(df)
 
     Zellergebnisse = Zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName, GWh_Jahr_Ah_Zelle)
     print(Zellergebnisse)
@@ -159,40 +138,3 @@ def get_zellergebnisse():
     
     return {'Zellergebnisse': Zellergebnisse}
 
-
-#@app.route('/Zellchemien')
-#def get_Zellchemien():
-#    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
-#    df = pd.read_sql_query('''SELECT * FROM Zellchemien''', db)
-#
-#    Zellchemien = df.to_json(orient='records')
-#    db.commit()
-#    db.close()
-#    
-#    return {'Zellchemien': Zellchemien}
-
-#@app.route('/Zellchemiewahl',methods=['POST'])
-#def get_Zellchemiewahl():
-#    Dateiname = request.get_json()["Zellchemiewahl"]
-#    
-#    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
-#    read_order = ('''SELECT * FROM {Dateiname}''')
-#    read_order = read_order.format(Dateiname=Dateiname)
-#    df = pd.read_sql_query(read_order, db)
-#
-#    Zellchemie = df.to_json(orient='records')
-#    db.commit()
-#    db.close()
-#
-#    return {'Zellchemie': Zellchemie}
-
-#@app.route('/Zellmaterialien')
-#def get_Zellmaterialien():
-#    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
-#    df = pd.read_sql_query('''SELECT * FROM materialien''', db)
-#
-#    Zellmaterialien = df.to_json(orient='records')
-#    db.commit()
-#    db.close()
-#    
-#    return {'Zellmaterialien': Zellmaterialien}
