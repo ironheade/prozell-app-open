@@ -7,9 +7,16 @@ import sys
 import json
 import Zellberechnung
 import Kostenberechnung
+from flask_cors import CORS, cross_origin
 
 
 app = Flask(__name__)
+CORS(app)
+#cors = CORS(app, resources={
+#    r"/*": {
+#        "origins":"*"
+#    }
+#})
 
 @app.route('/')
 def greetings():
@@ -131,7 +138,7 @@ def get_zellergebnisse():
     a_json = json.loads(GWh_Jahr_Ah_Zelle)
     print(a_json["GWh_pro_jahr"])
 
-
+ 
     Zellergebnisse = Zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName, GWh_Jahr_Ah_Zelle)
     print(Zellergebnisse)
     Zellergebnisse = Zellergebnisse.to_json(orient='records')
