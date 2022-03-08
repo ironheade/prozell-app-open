@@ -239,7 +239,7 @@ export default function Zellergebnisse(){
         
         <div className="bx--col-lg-8">
             
-
+ 
             <h2>Graphen</h2>
                 <div className="bx--row">
                     <div className="bx--col-lg-10">
@@ -264,6 +264,7 @@ export default function Zellergebnisse(){
                     options={options}
                     />
                 </div>
+
         </div>
         </>
     )

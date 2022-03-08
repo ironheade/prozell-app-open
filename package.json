@@ -96,5 +96,5 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "proxy": "http://172.17.0.3:5000"
+  "proxy": "http://localhost:5000"
 }

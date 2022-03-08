@@ -7,16 +7,11 @@ import sys
 import json
 import Zellberechnung
 import Kostenberechnung
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 
 app = Flask(__name__)
 CORS(app)
-#cors = CORS(app, resources={
-#    r"/*": {
-#        "origins":"*"
-#    }
-#})
 
 @app.route('/')
 def greetings():
