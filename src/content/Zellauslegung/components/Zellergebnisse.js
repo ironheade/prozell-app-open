@@ -9,7 +9,7 @@ import {
     TableHeader,
   } from 'carbon-components-react';
 import { StackedAreaChart, DonutChart } from "@carbon/charts-react";
-import "@carbon/charts/styles.css";
+
 import { CSVLink } from "react-csv";
 
 

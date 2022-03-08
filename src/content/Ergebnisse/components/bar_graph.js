@@ -1,6 +1,6 @@
 import React from "react";
 import { StackedBarChart } from "@carbon/charts-react";
-import "@carbon/charts/styles.css";
+
 
 
 

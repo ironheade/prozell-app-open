@@ -1,78 +1,10 @@
-#version: '3.9'
-#services:
-#  web:
-#    build: .
-#    ports:
-#      - "3000:8080"
-
-#  df:
-
-#version: '3'
-
-#services:
-  #backend:
-    #build: ./api
-    #command: ["python", "-m","flask", "run", "--host=0.0.0.0"]
-    #volumes:
-    #  - ./api:/api
-    #ports:
-    #  - "5000:5000"
-    #ports:
-    #  - "5000:5000"
-
-    #container_name: backend
-    #hostname: backend
-
-  #frontend:
-  #  build: .
-    #command: ["npm", "start"]
-    #volumes:
-    #  - .:/app
-    #  - node-modules:/app/node_modules
-    #environment:
-    #  - NODE_ENV=development
-    #ports:
-    #  - '3000:3000'
-    #depends_on:
-    #  -   backend
-    #links:
-    #  -   "backend"
-
-
-#volumes:
-#  node-modules:
-
-
-
-
-
-#version: '3'
-
-#services:
-#  backend:
-#    build: ./api    
-#    ports:
-#      - "5000:5000"
-
-#  frontend:
-#    build: .
-
-#  ports:
-#      - '3000:3000'
-#  depends_on:
-#      -   backendd
-#  links:
-#      -   "backend"
-
-
-
 version: "3"
 services:
   frontend:
     image: ironheade/prozell-frontend
     stdin_open: true
     ports: 
-      - "3000:3000"
+      - "8080:3000"
     networks:
       - prozell-app
     depends_on:
