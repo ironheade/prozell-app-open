@@ -20,7 +20,7 @@ COPY . /api
 #kann raus
 EXPOSE 5000
 #kann raus
-CMD ["flask","run","--host=0.0.0.0"]
+CMD ["python3","flask","run","--host=0.0.0.0"]
 #CMD ["python", "-m" ,"flask","run","--host=0.0.0.0"]
 
 
