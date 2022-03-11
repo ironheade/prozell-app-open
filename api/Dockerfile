@@ -1,6 +1,5 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3.8-slim
-
+FROM python:3.8-slim-bullseye
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -12,7 +11,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Install pip requirements
 COPY requirements.txt .
-RUN python -m pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 
 WORKDIR /api
 COPY . /api
@@ -20,6 +19,6 @@ COPY . /api
 EXPOSE 5000
 #kann raus
 #CMD ["python", "-m" ,"flask","run","--host=0.0.0.0"]
-CMD ["python3", "-m" ,"flask","run","--host=0.0.0.0"]
+CMD ["python", "-m" ,"flask","run","--host=0.0.0.0"]
 
 
