@@ -4,7 +4,7 @@ import {
   zellchemie_state,
   zellchemie_name_state,
   empty_reducer,
-  zellergebnisse_change
+  zellergebnisse_change,
 } from '../../../actions/index';
 import {
   Table,
@@ -13,7 +13,7 @@ import {
   TableHeader,
   Dropdown,
   Button,
-  Accordion
+  Accordion,
 } from 'carbon-components-react';
 import ZellchemieTableRow from './zellchemie_tablerow';
 import MaterialInfoTable from './material_info_table';
@@ -38,7 +38,7 @@ export default function Zellchemie() {
   //Zellformat & Zellformatname für den Export
   const zellformatName = useSelector(state => state.zellformatName);
   //Ah pro Zelle und GWh/Jahr für die Fabrik separat gespeichert
-  const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle)
+  const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle);
 
   //Liste der aktuell auswählbaren Zellchemien
   const [currentZellchemien, setCurrentZellchemien] = useState(null);
@@ -219,13 +219,14 @@ export default function Zellchemie() {
         Materialinfos: JSON.stringify(materialInfos),
         zellformat: zellformat,
         zellformatName: JSON.stringify(zellformatName),
-        GWh_Jahr_Ah_Zelle: JSON.stringify(GWH_Jahr_AH_Zelle)
+        GWh_Jahr_Ah_Zelle: JSON.stringify(GWH_Jahr_AH_Zelle),
       }),
     })
       .then(res => res.json())
       .then(data => {
         dispatch(zellergebnisse_change(data.Zellergebnisse));
       });
+    console.log(JSON.stringify(zellformatName));
   }
 
   const props = {
@@ -257,6 +258,27 @@ export default function Zellchemie() {
     },
   };
 
+  function Summenprüfung(liste, string) {
+    return (
+      JSON.parse(zellchemie)
+        .filter(item => liste.includes(item.Kategorie))
+        .reduce((a, v) => (a = a + v.Wert), 0) !== 100 && (
+        <p style={{ color: 'red' }}>
+          Summe der {string} prüfen (
+          {JSON.parse(zellchemie)
+            .filter(item => liste.includes(item.Kategorie))
+            .reduce((a, v) => (a = a + v.Wert), 0)}
+          %)
+        </p>
+      )
+    );
+  }
+
+  const Kathodenmaterial_liste = ['Aktivmaterial Kathode', 'Additive Kathode'];
+  const Anodenmaterial_liste = ['Aktivmaterial Anode', 'Additive Anode'];
+  const Lösemittel_Kathode_liste = ['Lösemittel Kathode'];
+  const Lösemittel_Anode_liste = ['Lösemittel Anode'];
+
   //var summe = 0
   //JSON.parse(zellchemie).filter(item => item)
 
@@ -276,49 +298,29 @@ export default function Zellchemie() {
             onChange={event => auswahl_zellchemie(event)}
           />
           {//Prüfung ob alle Vorraussetzungen für die Ergebnisse gegeben sind
-          zellchemie !== null &&
-          <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
-          }
+          zellchemie !== null && (
+            <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
+          )}
         </div>
       )}
 
       {zellchemie !== null && (
         <div key="c">
           <h3>{zellchemieName}</h3>
-          
-            {//Summenprüfung der Kathodenmaterialien
-            JSON.parse(zellchemie)
-              .filter(item=> item.Kategorie === "Aktivmaterial Kathode" || item.Kategorie === "Additive Kathode")
-              .reduce((a,v) =>  a = a + v.Wert , 0 ) !== 100 &&
-              <p style={{color: "red"}}>Summe der Kathodenmaterialien prüfen (
-                {JSON.parse(zellchemie)
-                .filter(item=> item.Kategorie === "Aktivmaterial Kathode" || item.Kategorie === "Additive Kathode")
-                .reduce((a,v) =>  a = a + v.Wert , 0 )}
-                %)</p>
-              }
-            {//Summenprüfung der Anodenmaterialien
-            JSON.parse(zellchemie)
-              .filter(item=> item.Kategorie === "Aktivmaterial Anode" || item.Kategorie === "Additive Anode")
-              .reduce((a,v) =>  a = a + v.Wert , 0 ) !== 100 &&
-              <p style={{color: "red"}}>Summe der Anodenmaterialien prüfen (
-                {JSON.parse(zellchemie)
-              .filter(item=> item.Kategorie === "Aktivmaterial Anode" || item.Kategorie === "Additive Anode")
-              .reduce((a,v) =>  a = a + v.Wert , 0 )}
-              %)</p>
-              }
+          {Summenprüfung(Kathodenmaterial_liste, 'Kathodenmaterialien')}
+          {Summenprüfung(Anodenmaterial_liste, 'Anodenmaterialien')}
+          {Summenprüfung(Lösemittel_Kathode_liste, 'Lösemittel Kathode')}
+          {Summenprüfung(Lösemittel_Anode_liste, 'Lösemittel Anode')}
 
           <Table useZebraStyles size="compact" className="zellchemie_table">
             <TableHead>
               <TableRow>
+                <TableHeader style={{ backgroundColor: 'white' }} />
                 <TableHeader style={{ backgroundColor: 'white' }}>
+                  <h3>Zusammensetzung</h3>
                 </TableHeader>
-                <TableHeader style={{ backgroundColor: 'white' }}>
-                <h3>Zusammensetzung</h3>
-                </TableHeader>
-                <TableHeader style={{ backgroundColor: 'white' }}>
-                </TableHeader>
-                <TableHeader style={{ backgroundColor: 'white' }}>
-                </TableHeader>
+                <TableHeader style={{ backgroundColor: 'white' }} />
+                <TableHeader style={{ backgroundColor: 'white' }} />
               </TableRow>
             </TableHead>
 
@@ -428,20 +430,19 @@ export default function Zellchemie() {
 {JSON.parse(zellchemie).map(item=>console.log(item.Beschreibung))}
 */}
 
-      <h2>Materialien Details</h2>
-      {materialInfos !== null &&
-      <Accordion>
-        {materialInfos.map(item => (
-          <MaterialInfoTable
-            key={Object.keys(item)[0]}
-            header={Object.keys(item)[0]}
-            content={item[Object.keys(item)[0]]}
-            onChange={material_anpassen}
-          />
-
-        ))}
+      <h2>Materialdetails</h2>
+      {materialInfos !== null && (
+        <Accordion>
+          {materialInfos.map(item => (
+            <MaterialInfoTable
+              key={Object.keys(item)[0]}
+              header={Object.keys(item)[0]}
+              content={item[Object.keys(item)[0]]}
+              onChange={material_anpassen}
+            />
+          ))}
         </Accordion>
-        }
+      )}
     </div>
   );
 }
