@@ -86,5 +86,5 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "proxy": "http://prozell-app-backend-1:5000"
+  "proxy": "http://backend:5000"
 }
