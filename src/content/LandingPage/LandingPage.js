@@ -11,6 +11,7 @@ import PersonFavorite32 from '@carbon/icons-react/lib/person--favorite/32';
 import Application32 from '@carbon/icons-react/lib/application/32';
 
 import { Apple32 } from '@carbon/icons-react';
+import Anleitung from './Anleitung';
 
 const props = {
   tabs: {
@@ -23,8 +24,10 @@ const props = {
   },
 };
 
+
 const LandingPage = () => {
   const [currentTime, setCurrentTime] = useState(0);
+  const [chosenTab, setChosenTab] = useState(0)
 
   useEffect(() => {
     fetch('/time')
@@ -33,6 +36,8 @@ const LandingPage = () => {
         setCurrentTime(data.time);
       });
   }, []);
+
+ const Unterstützer = ["Max Mitrenga","Patrick Berghäuser","Mona Kabus", "Felix Buck", "Anna Kollenda","Julian Mayer"]
 
   return (
     <div className="bx--grid bx--grid--full-width landing-page">
@@ -48,8 +53,8 @@ const LandingPage = () => {
       </div>
       <div className="bx--row landing-page__r2">
         <div className="bx--col bx--no-gutter">
-          <Tabs {...props.tabs} aria-label="Tab navigation">
-            <Tab {...props.tab} label="Übersicht">
+          <Tabs {...props.tabs} aria-label="Tab navigation" selected={chosenTab} >
+            <Tab {...props.tab} label="Übersicht" onClick={()=>setChosenTab(0)}>
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
                 <div className="bx--row landing-page__tab-content">
                   <div className="bx--col-md-4 bx--col-lg-7">
@@ -64,7 +69,7 @@ const LandingPage = () => {
                       Prozessschritte und zur weiteren Optimierung der
                       Prozessroute.
                     </p>
-                    <Button>Anleitung</Button>
+                    <Button onClick={() => setChosenTab(1)}>Anleitung</Button>
                   </div>
                   <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
                     <img
@@ -76,27 +81,35 @@ const LandingPage = () => {
                 </div>
               </div>
             </Tab>
-            <Tab {...props.tab} label="Kontakt">
+            <Tab {...props.tab} label="Anleitung" onClick={()=>setChosenTab(1)}>
+              <div className="bx--grid" style={{paddingLeft:300, paddindRight:300}}>
+                <div className="bx--row  landing-page__tab-content">
+
+                  <Anleitung/>
+
+                </div>
+              </div>
+            </Tab>
+            <Tab {...props.tab} label="Impressum" onClick={()=>setChosenTab(2)}>
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
                 <div className="bx--row landing-page__tab-content">
-                  <div className="bx--col-lg-12">
-                    <Button kind="danger--tertiary">???</Button>
+                <div className="bx--col-lg-12"> 
+                    <p>V1.0 - Release (11.03.2022)</p>
+                    <p>V1.1 (28.03.2022)</p>
+                    <ul style={{listStyle:"inherit", paddingLeft:40}}>
+                      <li>Fehlerbehebun in der Zellauslegung</li>
+                      <li>Hinzufügen einer Anleitung</li>
+                      </ul>
 
                   </div>
                   <div className="bx--col-lg-4">
                     <p>
-                       Kontakt:<br/>Konrad Bendzuck <br/> k.bendzuck@tu-braunschweig.de <br/> 0531/ 391 94648
+                       <span style={{fontWeight:"bold"}}>Kontakt:</span><br/>Konrad Bendzuck <br/> k.bendzuck@tu-braunschweig.de <br/> 0531/ 391 94648
                     </p>
+                    <br/>
+                    <p><span style={{fontWeight:"bold"}}>Unterstützung durch:</span></p>
+                    {Unterstützer.map(item => <p>{item}</p>)}
 
-                  </div>
-                </div>
-              </div>
-            </Tab>
-            <Tab {...props.tab} label="Develop">
-              <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
-                <div className="bx--row landing-page__tab-content">
-                  <div className="bx--col-lg-16">
-                    V1.0 - Release
                   </div>
                 </div>
               </div>

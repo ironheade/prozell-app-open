@@ -102,6 +102,7 @@ export default function Zellergebnisse() {
 
   return (
     <>
+    <div className="bx--col-lg-1"></div>
       {Zellergebnisse !== null && (
         <div className="bx--col-lg-6">
           <h2>Ergebnisstabelle</h2>
@@ -155,12 +156,14 @@ export default function Zellergebnisse() {
           </CSVLink>
         </div>
       )}
+      <div className="bx--col-lg-2"></div>
 
       {Zellergebnisse !== null && (
-        <div className="bx--col-lg-8">
+        <div className="bx--col-lg-6">
           <h2>Graphen</h2>
           <div className="bx--row">
             <DonutChart data={donutData} options={donutOptions} />
+            <div style={{height:500}}></div>
 
             <DonutChart data={costDonutData} options={costDonutOptions} />
           </div>

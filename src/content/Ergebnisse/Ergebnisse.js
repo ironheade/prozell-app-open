@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Breadcrumb, BreadcrumbItem, Button } from 'carbon-components-react';
+import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button, Tag } from 'carbon-components-react';
 import { useSelector } from 'react-redux'
 import DfTable from './components/table_from_df'
 import MyStackedBarChart from './components/bar_graph'
@@ -23,7 +23,7 @@ export default function Ergebnisse() {
 
   const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
 
-  
+  const [hintergrundDatenHidden, setHintergrundDatenHidden] = useState(true)
 
   //schickt alle Informationen an das Backend und ruft ein Ergebnis ab
   function Ergebnis() {
@@ -46,6 +46,7 @@ export default function Ergebnisse() {
       .then(data => {
         setErgebnissTabelle(data.Ergebnisse);
       });
+      setHintergrundDatenHidden(false)
     }
 
     //Erstellt einen Array mit den Prozessschritten in der richtigen Reihenfolge
@@ -75,10 +76,13 @@ export default function Ergebnisse() {
       </div>
 
       {
-        Zellergebnisse !== null
+        prozessschrittDaten !== null && Zellergebnisse !== null  
         &&
         <Button onClick={Ergebnis}>Ergebnisse</Button>
       }
+
+      {prozessschrittDaten === null && <h3>Zellberechnung nicht vollständig</h3>}
+      {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
       {ergebnissTabelle !== null &&
       <>
@@ -86,7 +90,8 @@ export default function Ergebnisse() {
         <DfTable data={ergebnissTabelle}/>
       </>
       }
-
+      <Accordion hidden={hintergrundDatenHidden}>
+    <AccordionItem  title="Hintergrunddaten">
       <h1>Zellergebnisse</h1>
       {Zellergebnisse !== null &&
       <p>{Zellergebnisse}</p>}
@@ -118,6 +123,9 @@ export default function Ergebnisse() {
       <h1>Gebäude</h1>
       {gebaeude !== null &&
       <p>{gebaeude}</p>}
+          </AccordionItem>
+
+</Accordion>
 
     </div>
   );

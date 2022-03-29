@@ -19,7 +19,7 @@ import ZellchemieTableRow from './zellchemie_tablerow';
 import MaterialInfoTable from './material_info_table';
 import WeitereParameterTablerow from './weitere_parameter_tablerow';
 
-export default function Zellchemie() {
+export default function Zellchemie({ click }) {
   const dispatch = useDispatch();
 
   //redux states nur zum Test, können später raus
@@ -227,6 +227,7 @@ export default function Zellchemie() {
         dispatch(zellergebnisse_change(data.Zellergebnisse));
       });
     console.log(JSON.stringify(zellformatName));
+    click()
   }
 
   const props = {
@@ -279,13 +280,10 @@ export default function Zellchemie() {
   const Lösemittel_Kathode_liste = ['Lösemittel Kathode'];
   const Lösemittel_Anode_liste = ['Lösemittel Anode'];
 
-  //var summe = 0
-  //JSON.parse(zellchemie).filter(item => item)
-
   return (
-    <div key="d">
+    <div>
       {currentZellchemien !== null && (
-        <div key="a" style={{ width: 400 }}>
+        <div style={{ width: 400 }}>
           <Dropdown
             className="zellformate__dropdown"
             id="default"
@@ -298,19 +296,22 @@ export default function Zellchemie() {
             onChange={event => auswahl_zellchemie(event)}
           />
           {//Prüfung ob alle Vorraussetzungen für die Ergebnisse gegeben sind
-          zellchemie !== null && (
-            <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
-          )}
+            zellchemie !== null && (
+              <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
+            )}
         </div>
       )}
 
       {zellchemie !== null && (
-        <div key="c">
-          <h3>{zellchemieName}</h3>
+        <div>
           {Summenprüfung(Kathodenmaterial_liste, 'Kathodenmaterialien')}
           {Summenprüfung(Anodenmaterial_liste, 'Anodenmaterialien')}
           {Summenprüfung(Lösemittel_Kathode_liste, 'Lösemittel Kathode')}
           {Summenprüfung(Lösemittel_Anode_liste, 'Lösemittel Anode')}
+          {GWH_Jahr_AH_Zelle["GWh_pro_jahr"]===0 && <p style={{ color: 'red' }}>GWh/ Jahr eingeben</p>}
+          {zellformatName !== null && zellformatName.Zellformat === "Pouchzelle" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"]===0 && <p style={{ color: 'red' }}>AH/ Zelle eingeben</p>}
+          <h3>{zellchemieName}</h3>
+
 
           <Table useZebraStyles size="compact" className="zellchemie_table">
             <TableHead>
@@ -391,7 +392,8 @@ export default function Zellchemie() {
               </>
             )}
           </Table>
-          <h2>Weitere Parameter</h2>
+
+          <h2 >Weitere Parameter</h2>
           <Table useZebraStyles size="compact" className="zellchemie_table">
             <TableHead>
               <TableRow>

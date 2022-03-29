@@ -55,7 +55,7 @@ export default function DfTable(props){
                 {getRowsData()}
             </TableBody>
         </Table>
-        <p>{props.data}</p>
+
       </>
     )
 }

@@ -99,6 +99,8 @@ export default function Zellformate() {
     dispatch(zellformat_change(JSON.stringify(newArr)));
   }
 
+
+
   return (
     <div>
       {currentCells !== null && (
@@ -156,9 +158,12 @@ export default function Zellformate() {
                 invalidText="Ungültiger Wert"
                 helperText="GWh/Jahr"
                 value={GWH_Jahr_AH_Zelle['GWh_pro_jahr']}
-                onChange={e => setGWh_pro_jahr(e.imaginaryTarget.valueAsNumber)}
+                onChange={e => 
+                  !isNaN(e.imaginaryTarget.valueAsNumber) &&
+                  setGWh_pro_jahr(e.imaginaryTarget.valueAsNumber)
+                }
               />
-              {zellformatName.Zellformat === 'Pouchzelle' && (
+              {zellformatName.Zellformat === 'Pouchzelle' && 
                 <NumberInput
                   size="sm"
                   id="carbon-number"
@@ -166,10 +171,11 @@ export default function Zellformate() {
                   helperText="Ah/Zelle"
                   value={GWH_Jahr_AH_Zelle['Ah_pro_Zelle']}
                   onChange={e =>
+                    !isNaN(e.imaginaryTarget.valueAsNumber) &&
                     setAh_pro_Zelle(e.imaginaryTarget.valueAsNumber)
                   }
                 />
-              )}
+              }
               <Table useZebraStyles size="compact">
                 <TableHead>
                   <TableRow>
