@@ -108,7 +108,7 @@ const LandingPage = () => {
                     </p>
                     <br/>
                     <p><span style={{fontWeight:"bold"}}>Unterstützung durch:</span></p>
-                    {Unterstützer.map(item => <p>{item}</p>)}
+                    {Unterstützer.map(item => <p key={item}>{item}</p>)}
 
                   </div>
                 </div>
