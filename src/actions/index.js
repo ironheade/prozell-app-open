@@ -141,3 +141,11 @@ export const Prozessdaten_change = newState => {
     payload: newState,
   };
 };
+
+export const currentZellFormate_change = newState => {
+  return {
+    type: 'CURRENTZELLFORMATE_REDUCER',
+    payload: newState,
+  };
+};
+

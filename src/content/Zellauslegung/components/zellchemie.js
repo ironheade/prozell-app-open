@@ -43,6 +43,8 @@ export default function Zellchemie({ click }) {
   //Liste der aktuell auswählbaren Zellchemien
   const [currentZellchemien, setCurrentZellchemien] = useState(null);
 
+  
+
   //ruft die Tabelle aller möglichen Zellchemien aus der Datenbank ab
   tabelle_abrufen('Zellchemien').then(result => setCurrentZellchemien(result));
   //ruft die Tabelle aller möglichen Materialien aus der Datenbank ab
@@ -259,6 +261,7 @@ export default function Zellchemie({ click }) {
     },
   };
 
+
   function Summenprüfung(liste, string) {
     return (
       JSON.parse(zellchemie)
@@ -275,10 +278,24 @@ export default function Zellchemie({ click }) {
     );
   }
 
+
   const Kathodenmaterial_liste = ['Aktivmaterial Kathode', 'Additive Kathode'];
   const Anodenmaterial_liste = ['Aktivmaterial Anode', 'Additive Anode'];
   const Lösemittel_Kathode_liste = ['Lösemittel Kathode'];
   const Lösemittel_Anode_liste = ['Lösemittel Anode'];
+
+  /*
+  const [ErgbnissKnopfDisabled, setErgbnissKnopfDisabled] = useState(true)
+  
+  const [Kathodenmaterial, setKathodenmaterial] = useState(true)
+  const [Anodenmaterial, setAnodenmaterial] = useState(true)
+  const [Kathodenlösemittel, setKathodenlösemittel] = useState(true)
+  const [Anodenlösemittel, setAnodenlösemittel] = useState(true)
+  const [Ah, setAh] = useState(true)
+  const [GWh, setGWh] = useState(true)
+
+  Kathodenmaterial && Anodenmaterial && Kathodenlösemittel && Anodenlösemittel && Ah && GWh && console.log("check")
+*/
 
   return (
     <div>
@@ -287,31 +304,39 @@ export default function Zellchemie({ click }) {
           <Dropdown
             className="zellformate__dropdown"
             id="default"
-            //titleText="Zelltypen"
-            helperText="This is some helper text"
-            label="Dropdown menu options"
+            //helperText="This is some helper text"
+            label="Zellchemien"
             items={JSON.parse(currentZellchemien).map(
               item => item.Beschreibung
             )}
             onChange={event => auswahl_zellchemie(event)}
           />
-          {//Prüfung ob alle Vorraussetzungen für die Ergebnisse gegeben sind
-            zellchemie !== null && (
-              <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
-            )}
         </div>
       )}
-
+      <br/>
       {zellchemie !== null && (
+        //Prüfun ob Alle Vorraussetzungen für die Zellergebnisse gegeben sind, ansonste wird der Button disable zurück gegeben
         <div>
+          {!Summenprüfung(Kathodenmaterial_liste, 'Kathodenmaterialien') && 
+           !Summenprüfung(Anodenmaterial_liste, 'Anodenmaterialien') &&
+           !Summenprüfung(Lösemittel_Kathode_liste, 'Lösemittel Kathode') &&
+           !Summenprüfung(Lösemittel_Anode_liste, 'Lösemittel Anode') &&
+           (zellformatName !== null && zellformatName.Zellformat === "Pouchzelle" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"] === 0?false:true) &&
+           GWH_Jahr_AH_Zelle["GWh_pro_jahr"] !== 0 
+           ?
+          <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
+        :
+        <Button disabled>Ergebnisse</Button>
+        }
+        {/* Prüfun ob Alle Vorraussetzungen für die Zellergebnisse gegeben sind, ansonsten wird eine Warnung ausgesprochen  */}
           {Summenprüfung(Kathodenmaterial_liste, 'Kathodenmaterialien')}
           {Summenprüfung(Anodenmaterial_liste, 'Anodenmaterialien')}
           {Summenprüfung(Lösemittel_Kathode_liste, 'Lösemittel Kathode')}
           {Summenprüfung(Lösemittel_Anode_liste, 'Lösemittel Anode')}
-          {GWH_Jahr_AH_Zelle["GWh_pro_jahr"]===0 && <p style={{ color: 'red' }}>GWh/ Jahr eingeben</p>}
-          {zellformatName !== null && zellformatName.Zellformat === "Pouchzelle" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"]===0 && <p style={{ color: 'red' }}>AH/ Zelle eingeben</p>}
-          <h3>{zellchemieName}</h3>
+          {GWH_Jahr_AH_Zelle["GWh_pro_jahr"] === 0 && <p style={{ color: 'red' }}>GWh/ Jahr eingeben</p>}
+          {zellformatName !== null && zellformatName.Zellformat === "Pouchzelle" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"] === 0 && <p style={{ color: 'red' }}>AH/ Zelle eingeben</p>}
 
+          <h3>{zellchemieName}</h3>
 
           <Table useZebraStyles size="compact" className="zellchemie_table">
             <TableHead>
@@ -425,25 +450,23 @@ export default function Zellchemie({ click }) {
               filter="Elektrodenparameter Anode"
             />
           </Table>
+          {/* Darstellung der verschiedenen Materialien aus "materialinfors" mit der Möglichkeit, die Werte anzupassen
+      {JSON.parse(zellchemie).map(item=>console.log(item.Beschreibung))}
+      */}
+          <h2>Materialdetails</h2>
+          {materialInfos !== null && (
+            <Accordion>
+              {materialInfos.map(item => (
+                <MaterialInfoTable
+                  key={Object.keys(item)[0]}
+                  header={Object.keys(item)[0]}
+                  content={item[Object.keys(item)[0]]}
+                  onChange={material_anpassen}
+                />
+              ))}
+            </Accordion>
+          )}
         </div>
-      )}
-
-      {/* Darstellung der verschiedenen Materialien aus "materialinfors" mit der Möglichkeit, die Werte anzupassen
-{JSON.parse(zellchemie).map(item=>console.log(item.Beschreibung))}
-*/}
-
-      <h2>Materialdetails</h2>
-      {materialInfos !== null && (
-        <Accordion>
-          {materialInfos.map(item => (
-            <MaterialInfoTable
-              key={Object.keys(item)[0]}
-              header={Object.keys(item)[0]}
-              content={item[Object.keys(item)[0]]}
-              onChange={material_anpassen}
-            />
-          ))}
-        </Accordion>
       )}
     </div>
   );

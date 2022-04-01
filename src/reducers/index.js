@@ -14,6 +14,7 @@ import prozessRouteReducer from './prozessRouteReducer'
 import zellergebnisseReducer from './zellergebnisseReducer'
 import GWH_Jahr_AH_ZelleReducer from './GWH_Jahr_AH_ZelleReducer'
 import prozessschrittDatenReducer from './prozessschrittDatenReducer'
+import currentZellformateReducer from'./currentZellformateReducer'
 import * as reducer from './reducers.js'
 import { combineReducers } from 'redux';
 
@@ -35,7 +36,8 @@ const rootreducer = combineReducers({
   empty: emptyReducer,
   prozessRoute: prozessRouteReducer,
   GWH_Jahr_AH_Zelle: GWH_Jahr_AH_ZelleReducer,
-  prozessschrittDaten: prozessschrittDatenReducer
+  prozessschrittDaten: prozessschrittDatenReducer,
+  currentZellformate: currentZellformateReducer
 });
 
 export default rootreducer;

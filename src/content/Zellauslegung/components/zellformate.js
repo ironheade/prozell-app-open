@@ -5,6 +5,7 @@ import {
   zellformat_change,
   zellformat_name_state,
   GWh_Jahr_Ah_Zelle_change,
+  currentZellFormate_change
 } from '../../../actions/index';
 import {
   Table,
@@ -27,9 +28,9 @@ export default function Zellformate() {
   const currentCells = useSelector(state => state.alleZellen);
   //Ah pro Zelle und GWh/Jahr für die Fabrik separat gespeichert
   const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle);
-
   //Liste aller Möglichen Zellformate
-  const [currentZellformate, setCurrentZellformate] = useState('Pouchzelle');
+  const currentZellformate = useSelector(state => state.currentZellformate)
+  //const [currentZellformate, setCurrentZellformate] = useState(null);
 
   /*
   //Wichtige Funktion! Die Funtkion arbeitet immer dann wenn Zellinfo sich ändert -> kann doppelten API Abruf durchführen
@@ -51,11 +52,6 @@ export default function Zellformate() {
   //ruft nach Auswahl der Zelle die Informationen zur Zelle aus der Datenbank ab
   const Zell_handler = event => {
     const value = event.target.value;
-    console.log(zellformatName);
-    console.log({
-      ...JSON.parse(currentCells).filter(item => item.Dateiname === value)[0],
-    });
-    //dispatch(zellformat_change(value))
     dispatch(
       zellformat_name_state({
         ...JSON.parse(currentCells).filter(item => item.Dateiname === value)[0],
@@ -109,9 +105,7 @@ export default function Zellformate() {
             <Dropdown
               className="zellformate__dropdown"
               id="default"
-              //  titleText="Zelltypen"
-              helperText="This is some helper text"
-              label="Dropdown menu options"
+              label="Zellformate"
               items={[
                 ...new Set(
                   JSON.parse(currentCells).map(item => item.Zellformat)
@@ -119,34 +113,36 @@ export default function Zellformate() {
               ]}
               onChange={
                 ({ selectedItem }) =>
-                  setCurrentZellformate(selectedItem) &
+                  dispatch(currentZellFormate_change(selectedItem)) & 
                   dispatch(zellformat_change(null)) &
                   dispatch(zellformat_name_state(null))
                 //& setMountFalse()
               }
-              selectedItem={currentZellformate}
-            />
+              selectedItem={currentZellformate !== null ? currentZellformate: null}
+             />
+
           </div>
 
-          <div className="zellformate__radiobuttons" onChange={Zell_handler}>
-            {JSON.parse(currentCells).map(
-              item =>
-                item.Zellformat === currentZellformate && (
-                  <div key={item.id}>
-                    <input
-                      type="radio"
-                      value={item.Dateiname}
-                      name="Zellformat"
-                      defaultChecked={
-                        zellformatName !== null &&
-                        item.Beschreibung === zellformatName.Beschreibung
-                      }
-                    />
-                    <span>{item.Beschreibung}</span>
-                  </div>
-                )
-            )}
-          </div>
+            <div className="zellformate__radiobuttons" onChange={Zell_handler}>
+              {JSON.parse(currentCells).map(
+                item =>
+                  item.Zellformat === currentZellformate && (
+                    <div key={item.id}>
+                      <input
+                        type="radio"
+                        value={item.Dateiname}
+                        name="Zellformat"
+                        defaultChecked={
+                          zellformatName !== null &&
+                          item.Beschreibung === zellformatName.Beschreibung
+                        }
+                      />
+                      <span>{item.Beschreibung}</span>
+                    </div>
+                  )
+              )}
+            </div>
+          
 
           {zellformat !== null && (
             <div>
@@ -158,12 +154,13 @@ export default function Zellformate() {
                 invalidText="Ungültiger Wert"
                 helperText="GWh/Jahr"
                 value={GWH_Jahr_AH_Zelle['GWh_pro_jahr']}
-                onChange={e => 
-                  !isNaN(e.imaginaryTarget.valueAsNumber) &&
-                  setGWh_pro_jahr(e.imaginaryTarget.valueAsNumber)
+                onChange={e =>
+                  !isNaN(e.imaginaryTarget.valueAsNumber) ?
+                    setGWh_pro_jahr(e.imaginaryTarget.valueAsNumber) :
+                    setGWh_pro_jahr(0)
                 }
               />
-              {zellformatName.Zellformat === 'Pouchzelle' && 
+              {zellformatName.Zellformat === 'Pouchzelle' &&
                 <NumberInput
                   size="sm"
                   id="carbon-number"
@@ -171,8 +168,9 @@ export default function Zellformate() {
                   helperText="Ah/Zelle"
                   value={GWH_Jahr_AH_Zelle['Ah_pro_Zelle']}
                   onChange={e =>
-                    !isNaN(e.imaginaryTarget.valueAsNumber) &&
-                    setAh_pro_Zelle(e.imaginaryTarget.valueAsNumber)
+                    !isNaN(e.imaginaryTarget.valueAsNumber) ?
+                      setAh_pro_Zelle(e.imaginaryTarget.valueAsNumber) :
+                      setAh_pro_Zelle(0)
                   }
                 />
               }
@@ -214,7 +212,7 @@ export default function Zellformate() {
                       <TableCell>{item.Einheit}</TableCell>
                     </TableRow>
                   ))
-                  //)
+                    //)
                   }
                 </TableBody>
               </Table>
