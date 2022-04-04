@@ -188,7 +188,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     #____________________________________
     # Ab hier die Berechnung der einzelnen Zelltypen
-    if Zelltyp == "Pouchzelle":
+    if Zelltyp == "Pouchzelle gestapelt":
         Ah_pro_zelle = GWh_Jahr_Ah_Zelle["Ah_pro_Zelle"] #[Ah]
         #Maße der Zellfähnchen
         breite_anode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Anode"] #[mm]
@@ -241,7 +241,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         vol_nutz_zelle = A_Sep * (math.ceil(anzahl_WHE) * d_WHE/1000 + d_MWHE/1000) #[mm³]
      
     
-    if Zelltyp == "Hardcase":
+    if Zelltyp == "Hardcase gestapelt":
         #Maße der Zellfähnchen
         breite_anode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Anode"] #[mm]
         breite_kathode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Kathode"] #[mm]
@@ -354,7 +354,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
 
         vol_nutz_zelle = math.pi*radius_rundzelle*radius_rundzelle*hoehe_rundzelle #[mm³]
     
-    if Zelltyp == "Prismatisch":
+    if Zelltyp == "Hardcase gewickelt":
         #Außenmaße der Zelle
         breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"] #[mm]
         laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"] #[mm]
@@ -447,7 +447,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     #die Gesamtgewichte der Einzelbestandteile 
     #gewickelte Zellen haben keine modifizierte Wiederholeinheit, gestapelte Zellen schon
-    if Zelltyp == "Pouchzelle" or Zelltyp == "Hardcase":
+    if Zelltyp == "Pouchzelle gestapelt" or Zelltyp == "Hardcase gestapelt":
         gew_AK_ges = gew_AK*(anzahl_WHE+1) #[g] +1 für die modifizierte Wiederholeinheit
         gew_AB_ges = gew_AB*(anzahl_WHE+1)*2 #[g] +1 für die modifizierte Wiederholeinheit, *2 für die doppelseitige Beschichtung 
         gew_KK_ges = gew_KK*anzahl_WHE #[g]
@@ -455,7 +455,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         gew_Sep_ges = gew_Sep*(anzahl_WHE+1)*2 #[g] +1 für die modifizierte Wiederholeinheit, *2, da eine WHE 2 Separator Blätter enthält
         gew_ges = gew_elyt + gew_WHE*anzahl_WHE + gew_MWHE
     
-    if Zelltyp == "Rundzelle" or Zelltyp == "Prismatisch":
+    if Zelltyp == "Rundzelle" or Zelltyp == "Hardcase gewickelt":
         gew_AK_ges = gew_AK*anzahl_WHE #[g] 
         gew_AB_ges = gew_AB*anzahl_WHE*2 #[g] *2 für die doppelseitige Beschichtung 
         gew_KK_ges = gew_KK*anzahl_WHE #[g]

@@ -865,6 +865,9 @@ def MultiEx_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionar
     
     return schritt_dictionary
 
+def Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    return schritt_dictionary
+
 def MiKal_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 

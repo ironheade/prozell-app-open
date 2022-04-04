@@ -321,7 +321,7 @@ export default function Zellchemie({ click }) {
            !Summenprüfung(Anodenmaterial_liste, 'Anodenmaterialien') &&
            !Summenprüfung(Lösemittel_Kathode_liste, 'Lösemittel Kathode') &&
            !Summenprüfung(Lösemittel_Anode_liste, 'Lösemittel Anode') &&
-           (zellformatName !== null && zellformatName.Zellformat === "Pouchzelle" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"] === 0?false:true) &&
+           (zellformatName !== null && zellformatName.Zellformat === "Pouchzelle gestapelt" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"] === 0?false:true) &&
            GWH_Jahr_AH_Zelle["GWh_pro_jahr"] !== 0 
            ?
           <Button onClick={() => Zell_ergebnis()}>Ergebnisse</Button>
@@ -334,7 +334,7 @@ export default function Zellchemie({ click }) {
           {Summenprüfung(Lösemittel_Kathode_liste, 'Lösemittel Kathode')}
           {Summenprüfung(Lösemittel_Anode_liste, 'Lösemittel Anode')}
           {GWH_Jahr_AH_Zelle["GWh_pro_jahr"] === 0 && <p style={{ color: 'red' }}>GWh/ Jahr eingeben</p>}
-          {zellformatName !== null && zellformatName.Zellformat === "Pouchzelle" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"] === 0 && <p style={{ color: 'red' }}>AH/ Zelle eingeben</p>}
+          {zellformatName !== null && zellformatName.Zellformat === "Pouchzelle gestapelt" && GWH_Jahr_AH_Zelle["Ah_pro_Zelle"] === 0 && <p style={{ color: 'red' }}>AH/ Zelle eingeben</p>}
 
           <h3>{zellchemieName}</h3>
 

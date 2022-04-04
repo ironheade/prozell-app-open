@@ -160,7 +160,7 @@ export default function Zellformate() {
                     setGWh_pro_jahr(0)
                 }
               />
-              {zellformatName.Zellformat === 'Pouchzelle' &&
+              {zellformatName.Zellformat === 'Pouchzelle gestapelt' &&
                 <NumberInput
                   size="sm"
                   id="carbon-number"
