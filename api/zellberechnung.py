@@ -372,20 +372,24 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         Anz_wick = ((hoehe_festhuelle-2*r_w)/2-(2*sep_wick*d_Sep/1000))/(d_WHE/1000) #[-]
         
         #Breite des Wickelkerns
-        Breite_Kern = breite_festhuelle-4*sep_wick*d_Sep-2*Anz_wick*d_WHE #[mm]
+        Breite_Kern = breite_festhuelle-4*sep_wick*d_Sep/1000-2*Anz_wick*d_WHE/1000 #[mm]
         
         U_a = 2*math.pi*r_w+2*Breite_Kern #Umfang des Wickelkerns [mm]
         
         U_plus = 2*math.pi*d_WHE/1000 #Zuname jeder Wicklung [mm]
         
         l_bahn = (U_a-U_plus)*Anz_wick + U_a #[mm]
+
         
         #Rundzellen haben kein Zellfähnchen in dem Sinne, muss anders gelöst werden, z.B. Beschichtungsabstand
-        A_KK = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_KB = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode-Ableiter_hoehe_K,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_AK = flaeche_mit_zellf(l_bahn,hoehe_rundzelle-2*ueberstand_separator_anode,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
-        A_AB = flaeche_mit_zellf(l_bahn,hoehe_rundzelle-2*ueberstand_separator_anode-Ableiter_hoehe_A,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
-        
+        A_KK = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,laenge_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
+        A_KB = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,laenge_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode-Ableiter_hoehe_K,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
+        A_AK = flaeche_mit_zellf(l_bahn,laenge_festhuelle-2*ueberstand_separator_anode,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
+        A_AB = flaeche_mit_zellf(l_bahn,laenge_festhuelle-2*ueberstand_separator_anode-Ableiter_hoehe_A,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
+        print("A_KK: \n"+str(A_KK))
+        print("A_KB: \n"+str(A_KB))
+        print("A_AK: \n"+str(A_AK))
+        print("A_AB: \n"+str(A_AB))   
         # A_sep_innen = 0
         # A_sep_aussen = 0
         # for no_wick in range(int(sep_wick)):
@@ -409,12 +413,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
         #Anode
-        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode)
+        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_festhuelle-2*ueberstand_separator_anode)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
         bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
         S_MA = 1000/(l_bahn)*bahnen_bes_A
         #Kathode
-        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
+        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
         bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
         S_MK = 1000/(l_bahn-2*ueberstand_anode_kathode)*bahnen_bes_K
@@ -506,7 +510,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Anzahl Wiederholeinheiten","Wert":anzahl_WHE,"Einheit":"","Kategorie":"Maße und Flächen"},
         {"Beschreibung":"Fläche Anodenbeschichtung gesamt","Wert":round(A_AB_ges,2),"Einheit":"mm²","Kategorie":"Maße und Flächen"},
         {"Beschreibung":"Fläche Kathodenbeschichtung gesamt","Wert":round(A_KB_ges,2),"Einheit":"mm²","Kategorie":"Maße und Flächen"},
-        {"Beschreibung":"Balancing","Wert":0,"Einheit":"%","Kategorie":"Maße und Flächen"},
+        {"Beschreibung":"Balancing","Wert":round(Balancing,2),"Einheit":"%","Kategorie":"Maße und Flächen"},
         
         {"Beschreibung":"Gesamtdichte Anodenbeschichtung","Wert":round(Gesamtdichte_Anodenbeschichtung,2),"Einheit":"g/cm³","Kategorie":"Gewichte und Dichten"},
         {"Beschreibung":"Gesamtdichte Kathodenbeschichtung","Wert":round(Gesamtdichte_Kathodenbeschichtung,2),"Einheit":"g/cm³","Kategorie":"Gewichte und Dichten"},
