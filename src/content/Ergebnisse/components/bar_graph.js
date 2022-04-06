@@ -18,6 +18,7 @@ export default function MyStackedBarChart(props){
          'Ökonomische Abschreibung'
     ]
     //Normales Balkendiagramm
+    //Array mit den JSON Objekten nötig für das Balkendiagramm
     const data = []
     Kostenfaktoren.map(Kostenfaktor => //die Kostenfaktoren
         JSON.parse(props.data).map(item => //alle Items
@@ -34,7 +35,7 @@ export default function MyStackedBarChart(props){
                     )
                 )
             )
-
+    
     //aufsummiertes Balkendiagramm
     const data_stacked = [                            {
         "group":"Kostenfaktor",
@@ -67,8 +68,45 @@ export default function MyStackedBarChart(props){
         )
         data_stacked.shift()
 
-    const dryRoomStart = "Vereinzeln"
-    const dryRoomEnd = "Befüllöffnung verschließen"
+
+    //Array mit gerader Anzahl an Prozessschritten (Trockenraum ja, Trockenraum nein, Ja, Nein, ...)
+    var dryRoomRaw = []
+    JSON.parse(props.data).map(item => item.index === "Flächenbedarf Trockenraum" && dryRoomRaw.push(item))
+    dryRoomRaw = dryRoomRaw[0]
+    delete dryRoomRaw.index
+    delete dryRoomRaw.Einheit
+    const dryRoom = []
+
+    var tempList = []
+    function empty (array) {
+        array.length=0
+    }
+    Object.keys(dryRoomRaw).map((item, index) => 
+        dryRoomRaw[item] !== 0 
+        ? 
+        tempList.push(item)
+        : 
+        tempList.length !== 0 && dryRoom.push(tempList[0]) & dryRoom.push(tempList[tempList.length-1]) & empty(tempList)
+    )
+    tempList.length !==0 && dryRoom.push(tempList[0]) 
+    tempList.length !==0 && dryRoom.push(tempList[tempList.length-1]) 
+
+    //Bringt vorigen Array in Form: [[Ja,Nein],[Ja,Nein],...]
+    const dryRoomFormiert = dryRoom.reduce(function (rows, key, index) { 
+        return (index % 2 == 0 ? rows.push([key]) 
+          : rows[rows.length-1].push(key)) && rows;
+      }, []);
+
+    //Erstellt Array mit JSON Objekten für die Markierung in den folgenden options
+    const dryRoomArray = []
+    dryRoomFormiert.map(item =>
+                     
+        dryRoomArray.push({
+            startHighlight: item[0],
+            label: "Custom formatter",
+            endHighlight: item[1]
+          })
+        )
 
     const options = {
         "title": "Prozessroute",
@@ -98,12 +136,7 @@ export default function MyStackedBarChart(props){
                     "highlightStartMapsTo": "startHighlight",
                     "highlightEndMapsTo": "endHighlight",
                     "labelMapsTo": "label",
-                    "data": [
-                      {
-                        "startHighlight": dryRoomStart,
-                        "label": "Custom formatter",
-                        "endHighlight": dryRoomEnd
-                      }]
+                    "data": dryRoomArray                    
                   }
             },
 
@@ -112,7 +145,6 @@ export default function MyStackedBarChart(props){
         "height": "600px"
         
     }
-    
 
     return(
         <>

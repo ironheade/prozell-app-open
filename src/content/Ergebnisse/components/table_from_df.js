@@ -13,7 +13,6 @@ export default function DfTable(props){
     const data = JSON.parse(props.data)
 
     function getKeys(){
-        console.log(Object.keys(data[0]))
         return Object.keys(data[0])
       }
       

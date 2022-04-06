@@ -74,10 +74,19 @@ const LandingPage = () => {
     },
     {
       Version: "V1.3",
-      Datum: "05.04.2022", Änderungen:
+      Datum: "05.04.2022",
+      Änderungen:
         [
           "Fehlerbehebung in der Hardcase Wickelzelle"
         ]
+    },
+    {
+      Version: "V1.4",
+      Datum: "06.04.2022",
+      Änderungen: [
+        "Anzeige Trockenraum in der Ergebnisdarstellung korregiert",
+        "Platzhalter für weitere Graphen in dern Ergebnissen eingefügt"
+      ]
     }
   ]
 
@@ -136,18 +145,18 @@ const LandingPage = () => {
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
                 <div className="bx--row landing-page__tab-content">
                   <div className="bx--col-lg-12">
-                    {Versionskontrolle.map((item,index) =>
+                    {Versionskontrolle.map((item, index) =>
                       <div key={index}>
-                      <p>{item.Version} ({item.Datum})</p>
-                      {item.Änderungen !== [] && 
-                      <ul style={{ listStyle: "inherit", paddingLeft: 40 }}>
-                        {item.Änderungen.map((item,index) =>
-                          <li key={index}>{item}</li>
-                          )}
-                      </ul>
-                      }
+                        <p>{item.Version} ({item.Datum})</p>
+                        {item.Änderungen !== [] &&
+                          <ul style={{ listStyle: "inherit", paddingLeft: 40 }}>
+                            {item.Änderungen.map((item, index) =>
+                              <li key={index}>{item}</li>
+                            )}
+                          </ul>
+                        }
                       </div>
-                      )}
+                    )}
 
                   </div>
                   <div className="bx--col-lg-4">

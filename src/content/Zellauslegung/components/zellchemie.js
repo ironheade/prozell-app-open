@@ -165,7 +165,6 @@ export default function Zellchemie({ click }) {
 
   //Anpassen einzelner Werte der verwendeten Materialien im State, etwas komplizierter da der State verschachtelt ist
   function material_anpassen(Material, Beschreibung, neuerWert) {
-    console.log(Material, Beschreibung, neuerWert);
     let newState = [...materialInfos]; //shallow copy of old state
     var prevIndex = newState.findIndex(
       item => Object.keys(item)[0] === Material
@@ -228,7 +227,6 @@ export default function Zellchemie({ click }) {
       .then(data => {
         dispatch(zellergebnisse_change(data.Zellergebnisse));
       });
-    console.log(JSON.stringify(zellformatName));
     click()
   }
 
@@ -451,7 +449,6 @@ export default function Zellchemie({ click }) {
             />
           </Table>
           {/* Darstellung der verschiedenen Materialien aus "materialinfors" mit der Möglichkeit, die Werte anzupassen
-      {JSON.parse(zellchemie).map(item=>console.log(item.Beschreibung))}
       */}
           <h2>Materialdetails</h2>
           {materialInfos !== null && (

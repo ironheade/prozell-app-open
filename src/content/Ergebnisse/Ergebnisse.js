@@ -3,6 +3,9 @@ import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button, Tag } fro
 import { useSelector } from 'react-redux'
 import DfTable from './components/table_from_df'
 import MyStackedBarChart from './components/bar_graph'
+import GesamtkostenDonut from './components/GesamtkostenDonut';
+import Alluvial from './components/AlluvialChart';
+
 
 export default function Ergebnisse() {
 
@@ -74,7 +77,7 @@ export default function Ergebnisse() {
           <h1 className="__heading">Ergebnisse</h1>
         </div>
       </div>
-
+      
       {
         prozessschrittDaten !== null && Zellergebnisse !== null  
         &&
@@ -86,9 +89,15 @@ export default function Ergebnisse() {
 
       {ergebnissTabelle !== null &&
       <>
+      <h1>Produktionskosten</h1>
         <MyStackedBarChart data={ergebnissTabelle} Prozessroute={create_ProzessschrittArray()}/>
         <DfTable data={ergebnissTabelle}/>
-      </>
+        
+      <h1>Material/Kostenfluss (Platzhalter)</h1>
+        <Alluvial/>
+      <h1>Gesamtkosten Jahresproduktion (Platzhalter)</h1>
+        <GesamtkostenDonut/>   
+        </>   
       }
       <Accordion hidden={hintergrundDatenHidden}>
     <AccordionItem  title="Hintergrunddaten">

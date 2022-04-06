@@ -119,7 +119,6 @@ export default function Prozessroute() {
 
         var newState = [...prozessRoute]
 
-        newState.map(item => console.log(item))
         var stateIndex = newState.findIndex(object => Object.keys(object)[0] === Object.keys(newObject)[0])
         newState[stateIndex] = newObject
 
@@ -163,9 +162,7 @@ export default function Prozessroute() {
     //Anpassen einzelner Werte der verwendeten Prozessschritte im State, etwas komplizierter da der State verschachtelt ist
 
     function Prozessschritt_anpassen(Prozess, Beschreibung, neuerWert) {
-        console.log(Prozess, Beschreibung, neuerWert);
         let newState = [...prozessschrittDaten]; //shallow copy of old state
-        console.log(newState)
         var prevIndex = newState.findIndex(
             item => Object.keys(item)[0] === Prozess
         ); //index im State für das zu Änderndn Object
