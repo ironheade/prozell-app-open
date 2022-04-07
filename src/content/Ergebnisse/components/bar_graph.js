@@ -93,7 +93,7 @@ export default function MyStackedBarChart(props){
 
     //Bringt vorigen Array in Form: [[Ja,Nein],[Ja,Nein],...]
     const dryRoomFormiert = dryRoom.reduce(function (rows, key, index) { 
-        return (index % 2 == 0 ? rows.push([key]) 
+        return (index % 2 === 0 ? rows.push([key]) 
           : rows[rows.length-1].push(key)) && rows;
       }, []);
 

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button, Tag } from 'carbon-components-react';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import DfTable from './components/table_from_df'
 import MyStackedBarChart from './components/bar_graph'
 import GesamtkostenDonut from './components/GesamtkostenDonut';
 import Alluvial from './components/AlluvialChart';
-
+import { ergebnisTabelle_change } from '../../actions'
 
 export default function Ergebnisse() {
-
+  const dispatch = useDispatch();
   //Ergebnisse der Zellberechnung
   const Zellergebnisse = useSelector(state => state.zellergebnisse)
   //aktuelle Prozessroute
@@ -19,13 +19,13 @@ export default function Ergebnisse() {
   const materialInfos = useSelector(state => state.empty);
   //Infos zur aktuell ausgewählten Zellchemie
   const zellchemie = useSelector(state => state.zellchemie);
-  
+
   const oekonomischeParameter = useSelector(state => state.oekonomischeParameter);
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
   const gebaeude = useSelector(state => state.gebaeude);
 
-  const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
-
+  //const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
+  const ergebnisTabelle = useSelector(state => state.ergebnisTabelle)
   const [hintergrundDatenHidden, setHintergrundDatenHidden] = useState(true)
 
   //schickt alle Informationen an das Backend und ruft ein Ergebnis ab
@@ -47,19 +47,19 @@ export default function Ergebnisse() {
     })
       .then(res => res.json())
       .then(data => {
-        setErgebnissTabelle(data.Ergebnisse);
+        dispatch(ergebnisTabelle_change(data.Ergebnisse));
       });
-      setHintergrundDatenHidden(false)
-    }
+    setHintergrundDatenHidden(false)
+  }
 
-    //Erstellt einen Array mit den Prozessschritten in der richtigen Reihenfolge
-    function create_ProzessschrittArray() {
-      var newArray = []
-      prozessRoute.map(item => item[Object.keys(item)[0]].map(inner_item => //liste mit den Prozessschritten pro Abschnitt
-        newArray.push(inner_item))) //jeweils die Dateinamen
-      return(newArray)
+  //Erstellt einen Array mit den Prozessschritten in der richtigen Reihenfolge
+  function create_ProzessschrittArray() {
+    var newArray = []
+    prozessRoute.map(item => item[Object.keys(item)[0]].map(inner_item => //liste mit den Prozessschritten pro Abschnitt
+      newArray.push(inner_item))) //jeweils die Dateinamen
+    return (newArray)
 
-      }
+  }
 
 
   return (
@@ -77,64 +77,70 @@ export default function Ergebnisse() {
           <h1 className="__heading">Ergebnisse</h1>
         </div>
       </div>
+      <div id="alluvial"><Alluvial/></div>
       
+
+
       {
-        prozessschrittDaten !== null && Zellergebnisse !== null  
+        prozessschrittDaten !== null && Zellergebnisse !== null
         &&
         <Button onClick={Ergebnis}>Ergebnisse</Button>
       }
 
-      {prozessschrittDaten === null && <h3>Zellberechnung nicht vollständig</h3>}
+      {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
-      {ergebnissTabelle !== null &&
-      <>
-      <h1>Produktionskosten</h1>
-        <MyStackedBarChart data={ergebnissTabelle} Prozessroute={create_ProzessschrittArray()}/>
-        <DfTable data={ergebnissTabelle}/>
-        
-      <h1>Material/Kostenfluss (Platzhalter)</h1>
-        <Alluvial/>
-      <h1>Gesamtkosten Jahresproduktion (Platzhalter)</h1>
-        <GesamtkostenDonut/>   
-        </>   
+      {ergebnisTabelle !== null &&
+        <>
+          <h1>Produktionskosten</h1>
+
+          <MyStackedBarChart data={ergebnisTabelle} Prozessroute={create_ProzessschrittArray()} />
+          <DfTable data={ergebnisTabelle} />
+
+
+          <h1>Material/Kostenfluss (Platzhalter)</h1>
+          <Alluvial />
+          <h1>Gesamtkosten Jahresproduktion (Platzhalter)</h1>
+          <GesamtkostenDonut />
+
+        </>
       }
       <Accordion hidden={hintergrundDatenHidden}>
-    <AccordionItem  title="Hintergrunddaten">
-      <h1>Zellergebnisse</h1>
-      {Zellergebnisse !== null &&
-      <p>{Zellergebnisse}</p>}
+        <AccordionItem title="Hintergrunddaten">
+          <h1>Zellergebnisse</h1>
+          {Zellergebnisse !== null &&
+            <p>{Zellergebnisse}</p>}
 
-      <h1>Prozessroute</h1>
-      {prozessRoute !== null &&
-      <p>{JSON.stringify(prozessRoute)}</p>}
+          <h1>Prozessroute</h1>
+          {prozessRoute !== null &&
+            <p>{JSON.stringify(prozessRoute)}</p>}
 
-      <h1>Zellchemie</h1>
-      {zellchemie !== null &&
-      <p>{zellchemie}</p>}
+          <h1>Zellchemie</h1>
+          {zellchemie !== null &&
+            <p>{zellchemie}</p>}
 
-      <h1>Prozessdetails</h1>
-      {prozessschrittDaten !== null &&
-      <p>{JSON.stringify(prozessschrittDaten)}</p>}
+          <h1>Prozessdetails</h1>
+          {prozessschrittDaten !== null &&
+            <p>{JSON.stringify(prozessschrittDaten)}</p>}
 
-      <h1>Materialinfos</h1>
-      {materialInfos !== null &&
-      <p>{JSON.stringify(materialInfos)}</p>}
+          <h1>Materialinfos</h1>
+          {materialInfos !== null &&
+            <p>{JSON.stringify(materialInfos)}</p>}
 
-      <h1>Ökonomische Parameter</h1>
-      {oekonomischeParameter !== null &&
-      <p>{oekonomischeParameter}</p>}
+          <h1>Ökonomische Parameter</h1>
+          {oekonomischeParameter !== null &&
+            <p>{oekonomischeParameter}</p>}
 
-      <h1>Mitarbeiter und Logistik</h1>
-      {mitarbeiterLogistik !== null &&
-      <p>{mitarbeiterLogistik}</p>}
+          <h1>Mitarbeiter und Logistik</h1>
+          {mitarbeiterLogistik !== null &&
+            <p>{mitarbeiterLogistik}</p>}
 
-      <h1>Gebäude</h1>
-      {gebaeude !== null &&
-      <p>{gebaeude}</p>}
-          </AccordionItem>
+          <h1>Gebäude</h1>
+          {gebaeude !== null &&
+            <p>{gebaeude}</p>}
+        </AccordionItem>
 
-</Accordion>
+      </Accordion>
 
     </div>
   );

@@ -175,7 +175,7 @@ def Prälithiierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionar
 
 def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     #Anzahl Wiederholeinheiten anpassen, je nachdem ob wickel oder nicht
-    Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
+    Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100) #1,05
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
     

@@ -1,4 +1,5 @@
 import { DonutChart } from "@carbon/charts-react";
+import React from 'react'
 
 export default function GesamtkostenDonut(props) {
     const Data = [

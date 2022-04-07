@@ -10,12 +10,10 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { HashRouter as Router } from 'react-router-dom';
-//import { BrowserRouter as Router } from 'react-router-dom';
-//import { createStore } from 'redux';
 import rootreducer from './reducers';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { Provider as KeepAliveProvider } from 'react-keep-alive';
+
 
 //const store = createStore(rootreducer)
 
@@ -24,9 +22,9 @@ const store = configureStore({ reducer: rootreducer });
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <KeepAliveProvider>
+
         <App />
-      </KeepAliveProvider>
+
     </Router>
   </Provider>,
   document.getElementById('root')

@@ -1519,26 +1519,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@carbon/charts-react@npm:^0.54.12":
-  version: 0.54.12
-  resolution: "@carbon/charts-react@npm:0.54.12"
+"@carbon/charts-react@npm:^0.55.0":
+  version: 0.55.1
+  resolution: "@carbon/charts-react@npm:0.55.1"
   dependencies:
-    "@carbon/charts": ^0.54.12
+    "@carbon/charts": ^0.55.1
     "@carbon/icons-react": ^10.32.0
     "@carbon/telemetry": 0.0.0-alpha.6
   peerDependencies:
     react: ^16.0.0 || ^17.0.0
     react-dom: ^16.0.0 || ^17.0.0
-  checksum: 1d4ab5926f57c07efce3f1b66927442ef069206ff7d960c22759715a37fce6672cf810f87fca2ac16edfe29728b419042f1fa86d964ddca303f5987331bd5f6a
+  checksum: 0986338956ee49e2bd56415beb78313197621d61a11ab98ee8051ca04692ef7b76aee105377ea970990b2a17978e04ff6bead4e23a62664c05e84c8a5ac6da49
   languageName: node
   linkType: hard
 
-"@carbon/charts@npm:^0.54.12":
-  version: 0.54.12
-  resolution: "@carbon/charts@npm:0.54.12"
+"@carbon/charts@npm:^0.55.0, @carbon/charts@npm:^0.55.1":
+  version: 0.55.1
+  resolution: "@carbon/charts@npm:0.55.1"
   dependencies:
     "@carbon/colors": 10.29.0
-    "@carbon/telemetry": 0.0.0-alpha.6
+    "@carbon/telemetry": 0.1.0
     "@carbon/utils-position": 1.1.1
     carbon-components: 10.40.0
     d3-cloud: 1.2.5
@@ -1549,7 +1549,7 @@ __metadata:
     resize-observer-polyfill: 1.5.0
   peerDependencies:
     d3: 7.x
-  checksum: 73070acd7ab334beee71cbc7a14ba46e7151901f535d9de40b1e6215f87b86694b9c2909fda63fb48592f58f0993eeb482dd5322f41559a8895c3ab2fad57d2a
+  checksum: 9c6df712ebb84c02a5c417d19a574aaad29db2bebf676ba4ab8589b14a07055ecf307adbeec22c54cc0bebba6870a7df727b4d4182769c374a8417b3be2f9adf
   languageName: node
   linkType: hard
 
@@ -1622,6 +1622,15 @@ __metadata:
   bin:
     carbon-telemetry: bin/carbon-telemetry.js
   checksum: 4d31a35b55b080cf703cab1df2c6bcbf97cd619dd43f1181280b7645e7f60a7f143c8fb128b1e406bd7daf1a0ca13d345b2ab9011273bbbbf3ecab5e74328b90
+  languageName: node
+  linkType: hard
+
+"@carbon/telemetry@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@carbon/telemetry@npm:0.1.0"
+  bin:
+    carbon-telemetry: bin/carbon-telemetry.js
+  checksum: 0b2e4e906b6155d49daeda9bf0df9e8fa6e143299bab3cf699ec19b15322c9f10e5c65a8a82204691a47b27045c5a63a649f05274f456ba795094282e44f1767
   languageName: node
   linkType: hard
 
@@ -4774,8 +4783,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "carbon-tutorial@workspace:."
   dependencies:
-    "@carbon/charts": ^0.54.12
-    "@carbon/charts-react": ^0.54.12
+    "@carbon/charts": ^0.55.0
+    "@carbon/charts-react": ^0.55.0
     "@carbon/icons-react": 10.22.0
     "@commitlint/cli": 7.5.2
     "@commitlint/config-conventional": 7.5.0

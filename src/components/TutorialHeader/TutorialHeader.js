@@ -13,7 +13,7 @@ import {
   SideNavItems,
   HeaderSideNavItems,
 } from 'carbon-components-react';
-import { AppSwitcher20, Apple24, UserAvatar20 } from '@carbon/icons-react';
+import { Basketball24, Apple24, UserAvatar24 } from '@carbon/icons-react';
 import { Link } from 'react-router-dom';
 
 const TutorialHeader = () => (
@@ -72,10 +72,10 @@ const TutorialHeader = () => (
             <Apple24 />
           </HeaderGlobalAction>
           <HeaderGlobalAction aria-label="User Avatar">
-            <UserAvatar20 />
+            <UserAvatar24 />
           </HeaderGlobalAction>
           <HeaderGlobalAction aria-label="App Switcher">
-            <AppSwitcher20 />
+            <Basketball24 />
           </HeaderGlobalAction>
         </HeaderGlobalBar>
       </Header>

@@ -39,7 +39,7 @@ export default function AllgParameterTable(props) {
                   min={0}
                   id="carbon-number"
                   invalidText="Ungültiger Wert"
-                  value={item.Wert}
+                  value={item.Wert!==null ? item.Wert : 0}
                   onChange={e =>
                     props.onChange(item.Beschreibung, e.imaginaryTarget.valueAsNumber)
                   }

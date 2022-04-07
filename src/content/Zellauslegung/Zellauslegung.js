@@ -35,6 +35,7 @@ export default function Zellauslegung() {
           <h1 className="__heading">Zellauslegung &amp; Zellchemie</h1>
         </div>
       </div>
+
       <div className="bx--row landing-page__r2">
         <div className="bx--col bx--no-gutter">
           <Tabs {...props.tabs} aria-label="Tab navigation" selected={chosenTab}>

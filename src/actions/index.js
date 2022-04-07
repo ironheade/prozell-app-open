@@ -149,3 +149,10 @@ export const currentZellFormate_change = newState => {
   };
 };
 
+export const ergebnisTabelle_change = newState => {
+  return {
+    type: 'ERGEBNIS_TABELLE',
+    payload: newState,
+  };
+};
+

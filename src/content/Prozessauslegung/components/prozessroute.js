@@ -318,7 +318,8 @@ export default function Prozessroute() {
                                                         min={0}
                                                         id="carbon-number"
                                                         invalidText="Ungültiger Wert"
-                                                        value={item2.Wert}
+                                                        value={isNaN(item2.Wert)?0 : item2.Wert}
+                                                        //value={item2.Wert}
                                                         onChange={e => Prozessschritt_anpassen(Object.keys(item)[0], item2.Beschreibung, e.imaginaryTarget.valueAsNumber)}
                                                     />
                                                 </TableCell>
