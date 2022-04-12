@@ -157,7 +157,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     #____________________________________
             #Zellmaße die für alle Zellen gelten
-    eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
     
     elektrolytbefuellung = Zellformat["Wert"]["Elektrolytbefüllung"] #[%]
 
@@ -188,6 +187,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #____________________________________
     # Ab hier die Berechnung der einzelnen Zelltypen
     if Zelltyp == "Pouchzelle gestapelt":
+        eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
+
         Ah_pro_zelle = GWh_Jahr_Ah_Zelle["Ah_pro_Zelle"] #[Ah]
         #Maße der Zellfähnchen
         breite_anode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Anode"] #[mm]
@@ -241,6 +242,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
      
     
     if Zelltyp == "Hardcase gestapelt":
+        eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
         #Maße der Zellfähnchen
         breite_anode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Anode"] #[mm]
         breite_kathode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Kathode"] #[mm]
@@ -299,6 +301,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
     
     if Zelltyp == "Rundzelle":
+        eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
         #Außenmaße der Runzelle
         radius_rundzelle = Zellformat["Wert"]["Radius Rundzelle"] #[mm]
         hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"] #[mm]
