@@ -77,9 +77,6 @@ export default function Ergebnisse() {
           <h1 className="__heading">Ergebnisse</h1>
         </div>
       </div>
-      <div id="alluvial"><Alluvial/></div>
-      
-
 
       {
         prozessschrittDaten !== null && Zellergebnisse !== null

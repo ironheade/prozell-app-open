@@ -4,6 +4,11 @@ import Oberfläche from '../../resources/Anleitung_icons/interface.svg';
 import searching from '../../resources/Anleitung_icons/searching.svg';
 import services from '../../resources/Anleitung_icons/services.svg';
 import sharing from '../../resources/Anleitung_icons/sharing.svg';
+import flachwickel from '../../resources/Anleitung_icons/flachwickel.png'
+import rundzelle from '../../resources/Anleitung_icons/rundzelle.png'
+import stapel from '../../resources/Anleitung_icons/stapel.png'
+import hardcase_stapel from '../../resources/Anleitung_icons/hardcase_stapel.png'
+
 
 export default function Anleitung() {
   function Spacer() {
@@ -97,6 +102,10 @@ export default function Anleitung() {
           takimata sanctus est Lorem ipsum dolor sit amet.
         </p>
       </div>
+      <img src={flachwickel} style={{ height: 600, marginTop: 35 }} />
+      <img src={rundzelle} style={{ height: 600, marginTop: 35 }} />
+      <img src={hardcase_stapel} style={{ height: 500, marginTop: 35 }} />
+      <img src={stapel} style={{ height: 500, marginTop: 35 }} />
     </>
   );
 }

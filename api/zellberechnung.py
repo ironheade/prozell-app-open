@@ -19,10 +19,10 @@ import math
 # 6. Größe Gigafabrik in GWh/Jahr [float] -> muss aus dem Frontend in eigenen redux state, kann sich mit Gesamtladung teilen
 # -> Hülle fehlt noch gesamt    
 
-Zellchemie = '[{"id":1,"Beschreibung":"NCM 622","Kategorie":"Aktivmaterial Kathode","Wert":97.0,"Einheit":"%"},{"id":2,"Beschreibung":"Graphit","Kategorie":"Aktivmaterial Anode","Wert":96.5,"Einheit":"%"},{"id":3,"Beschreibung":"Kupferfolie 10 \u00b5m","Kategorie":"Kollektorfolie Anode","Wert":null,"Einheit":"%"},{"id":4,"Beschreibung":"Aluminiumfolie 8 \u00b5m","Kategorie":"Kollektorfolie Kathode","Wert":null,"Einheit":"%"},{"id":6,"Beschreibung":"Wasser","Kategorie":"L\u00f6semittel Anode","Wert":3.0,"Einheit":"%"},{"id":10,"Beschreibung":"Zellspannung","Kategorie":"Allgemeine Parameter","Wert":3.7,"Einheit":"V"},{"id":11,"Beschreibung":"Irreversibler Formierungsverlust","Kategorie":"Allgemeine Parameter","Wert":10.0,"Einheit":"%"},{"id":12,"Beschreibung":"Zieldichte Beschichtung Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":3.0,"Einheit":"g\/cm\u00b3"},{"id":13,"Beschreibung":"Beschichtungsporosit\u00e4t Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":25.0,"Einheit":"%"},{"id":14,"Beschreibung":"Fl\u00e4chenspezifische Kapazit\u00e4t Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":4.0,"Einheit":"mAh\/cm\u00b2"},{"id":15,"Beschreibung":"Feststoffgehalt Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":60.0,"Einheit":"%"},{"id":16,"Beschreibung":"Zieldichte Beschichtung Anode","Kategorie":"Elektrodenparameter Anode","Wert":1.6,"Einheit":"g\/cm\u00b3"},{"id":17,"Beschreibung":"Beschichtungsporosit\u00e4t Anode","Kategorie":"Elektrodenparameter Anode","Wert":34.0,"Einheit":"%"},{"id":18,"Beschreibung":"Fl\u00e4chenspezifische Kapazit\u00e4t Anode","Kategorie":"Elektrodenparameter Anode","Wert":3.2,"Einheit":"mAh\/cm\u00b2"},{"id":19,"Beschreibung":"Feststoffgehalt Anode","Kategorie":"Elektrodenparameter Anode","Wert":60.0,"Einheit":"%"},{"id":20,"Beschreibung":"Kalkulierter Anoden\u00fcberschuss","Kategorie":"Elektrodenparameter Anode","Wert":10.0,"Einheit":"%"},{"id":21,"Beschreibung":"NMP","Kategorie":"L\u00f6semittel Kathode","Wert":63.4,"Einheit":"%"},{"id":22,"Beschreibung":"ProZell Separator","Kategorie":"Separator","Wert":null,"Einheit":"%"},{"id":23,"Beschreibung":"K-Leitru\u00df 1","Kategorie":"Additive Kathode","Wert":3.0,"Einheit":"%"},{"id":24,"Beschreibung":"K-Leitru\u00df 2","Kategorie":"Additive Kathode","Wert":0.0,"Einheit":"%"},{"id":25,"Beschreibung":"K-Additiv","Kategorie":"Additive Kathode","Wert":1.0,"Einheit":"%"},{"id":26,"Beschreibung":"K-Binder 1","Kategorie":"Additive Kathode","Wert":3.0,"Einheit":"%"},{"id":27,"Beschreibung":"K-Binder 2","Kategorie":"Additive Kathode","Wert":0.0,"Einheit":"%"},{"id":28,"Beschreibung":"A-Leitru\u00df 1","Kategorie":"Additive Anode","Wert":1.0,"Einheit":"%"},{"id":29,"Beschreibung":"A-Leitru\u00df 2","Kategorie":"Additive Anode","Wert":0.0,"Einheit":"%"},{"id":31,"Beschreibung":"A-Binder 1","Kategorie":"Additive Anode","Wert":1.0,"Einheit":"%"},{"id":32,"Beschreibung":"A-Binder 2","Kategorie":"Additive Anode","Wert":1.5,"Einheit":"%"},{"id":33,"Beschreibung":"1M LiPF6 (EC: EMC 3:7 wt%) + 2 wt% VC","Kategorie":"Elektrolyt","Wert":null,"Einheit":"%"}]'
-Materialinfos = '[{"NCM 622":[{"id":3,"Beschreibung":"spezifische Kapazität","Wert":160,"Einheit":"mAh/g"},{"id":4,"Beschreibung":"Dichte","Wert":0.476,"Einheit":"g/cm³"},{"id":5,"Beschreibung":"Preis","Wert":25.75,"Einheit":"€/kg"}]},{"Graphit":[{"id":1,"Beschreibung":"spezifische Kapazität","Wert":330,"Einheit":"mAh/g"},{"id":2,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Preis","Wert":7.46,"Einheit":"€/kg"}]},{"Kupferfolie 10 µm":[{"id":1,"Beschreibung":"Dicke","Wert":10,"Einheit":"µm"},{"id":2,"Beschreibung":"Dichte","Wert":8.96,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Breite","Wert":600,"Einheit":"mm"},{"id":4,"Beschreibung":"Preis","Wert":0.44,"Einheit":"€/m"}]},{"Aluminiumfolie 8 µm":[{"id":1,"Beschreibung":"Dicke","Wert":8,"Einheit":"µm"},{"id":2,"Beschreibung":"Dichte","Wert":2.7,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Breite","Wert":600,"Einheit":"mm"},{"id":4,"Beschreibung":"Preis","Wert":0.2,"Einheit":"€/m"}]},{"Wasser":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":0.01,"Einheit":"€/kg"}]},{"NMP":[{"id":1,"Beschreibung":"Dichte","Wert":1.2,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":2.39,"Einheit":"€/kg"}]},{"ProZell Separator":[{"id":1,"Beschreibung":"Dicke","Wert":20,"Einheit":"µm"},{"id":2,"Beschreibung":"Dichte","Wert":10,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Porosität","Wert":40,"Einheit":"%"},{"id":4,"Beschreibung":"Breite","Wert":600,"Einheit":"mm"},{"id":5,"Beschreibung":"Preis","Wert":0.5,"Einheit":"€/m"}]},{"K-Leitruß 1":[{"id":1,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"K-Leitruß 2":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"K-Additiv":[{"id":1,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":10,"Einheit":"€/kg"}]},{"K-Binder 1":[{"id":1,"Beschreibung":"Dichte","Wert":1.3,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":18,"Einheit":"€/kg"}]},{"K-Binder 2":[{"id":1,"Beschreibung":"Dichte","Wert":1.3,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":18,"Einheit":"€/kg"}]},{"A-Leitruß 1":[{"id":1,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"A-Leitruß 2":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"A-Binder 1":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":1.5,"Einheit":"€/kg"}]},{"A-Binder 2":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":1.5,"Einheit":"€/kg"}]},{"1M LiPF6 (EC: EMC 3:7 wt%) + 2 wt% VC":[{"id":1,"Beschreibung":"Dichte","Wert":1.3,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":7.44,"Einheit":"€/kg"}]}]'
-Zellformat = '[{"id":1,"Beschreibung":"Breite Anode","Wert":null,"Einheit":"mm"},{"id":2,"Beschreibung":"L\u00e4nge Anode","Wert":null,"Einheit":"mm"},{"id":3,"Beschreibung":"Breite Zellf\u00e4hnchen Anode","Wert":22.0,"Einheit":"mm"},{"id":4,"Beschreibung":"L\u00e4nge Zellf\u00e4hnchen Anode","Wert":30.0,"Einheit":"mm"},{"id":5,"Beschreibung":"Breite Kathode","Wert":null,"Einheit":"mm"},{"id":6,"Beschreibung":"L\u00e4nge Kathode","Wert":null,"Einheit":"mm"},{"id":7,"Beschreibung":"Breite Zellf\u00e4hnchen Kathode","Wert":22.0,"Einheit":"mm"},{"id":8,"Beschreibung":"L\u00e4nge Zellf\u00e4hnchen Kathode","Wert":32.5,"Einheit":"mm"},{"id":9,"Beschreibung":"Eckenradius","Wert":5.0,"Einheit":"mm"},{"id":10,"Beschreibung":"Breite Festh\u00fclle","Wert":null,"Einheit":"mm"},{"id":11,"Beschreibung":"L\u00e4nge Festh\u00fclle","Wert":null,"Einheit":"mm"},{"id":12,"Beschreibung":"H\u00f6he Festh\u00fclle","Wert":null,"Einheit":"mm"},{"id":13,"Beschreibung":"Radius Rundzelle","Wert":10.5,"Einheit":"mm"},{"id":14,"Beschreibung":"H\u00f6he Rundzelle","Wert":70.0,"Einheit":"mm"},{"id":15,"Beschreibung":"Radius Wickelkern","Wert":3.0,"Einheit":"mm"},{"id":16,"Beschreibung":"Zusatzwicklungen Separator","Wert":3.0,"Einheit":"[-]"},{"id":17,"Beschreibung":"Abstand Separator - H\u00fclle","Wert":2.0,"Einheit":"mm"},{"id":18,"Beschreibung":"\u00dcberstand Separator - Anode","Wert":2.0,"Einheit":"mm"},{"id":19,"Beschreibung":"\u00dcberstand Anode - Kathode","Wert":2.0,"Einheit":"mm"},{"id":20,"Beschreibung":"Unterdruck Zelle","Wert":2.0,"Einheit":"mbar"},{"id":21,"Beschreibung":"Elektrolytbef\u00fcllung","Wert":80.0,"Einheit":"%"},{"id":22,"Beschreibung":"Sicherheitsabstand Schneiden","Wert":20.0,"Einheit":"mm"},{"id":23,"Beschreibung":"Beschichtungsabstand Kathode","Wert":20.0,"Einheit":"mm"},{"id":24,"Beschreibung":"Beschichtungsabstand Anode","Wert":20.0,"Einheit":"mm"},{"id":25,"Beschreibung":"Breite Kathodenkollektor","Wert":300.0,"Einheit":"mm"},{"id":26,"Beschreibung":"Breite Anodenkollektor","Wert":300.0,"Einheit":"mm"}]'
-Weitere_Zellinfos = '{"id":13,"Beschreibung":"21700","Zellformat":"Rundzelle","Dateiname":"Zelle_21700"}'
+#Zellchemie = '[{"id":1,"Beschreibung":"NCM 622","Kategorie":"Aktivmaterial Kathode","Wert":97.0,"Einheit":"%"},{"id":2,"Beschreibung":"Graphit","Kategorie":"Aktivmaterial Anode","Wert":96.5,"Einheit":"%"},{"id":3,"Beschreibung":"Kupferfolie 10 \u00b5m","Kategorie":"Kollektorfolie Anode","Wert":null,"Einheit":"%"},{"id":4,"Beschreibung":"Aluminiumfolie 8 \u00b5m","Kategorie":"Kollektorfolie Kathode","Wert":null,"Einheit":"%"},{"id":6,"Beschreibung":"Wasser","Kategorie":"L\u00f6semittel Anode","Wert":3.0,"Einheit":"%"},{"id":10,"Beschreibung":"Zellspannung","Kategorie":"Allgemeine Parameter","Wert":3.7,"Einheit":"V"},{"id":11,"Beschreibung":"Irreversibler Formierungsverlust","Kategorie":"Allgemeine Parameter","Wert":10.0,"Einheit":"%"},{"id":12,"Beschreibung":"Zieldichte Beschichtung Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":3.0,"Einheit":"g\/cm\u00b3"},{"id":13,"Beschreibung":"Beschichtungsporosit\u00e4t Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":25.0,"Einheit":"%"},{"id":14,"Beschreibung":"Fl\u00e4chenspezifische Kapazit\u00e4t Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":4.0,"Einheit":"mAh\/cm\u00b2"},{"id":15,"Beschreibung":"Feststoffgehalt Kathode","Kategorie":"Elektrodenparameter Kathode","Wert":60.0,"Einheit":"%"},{"id":16,"Beschreibung":"Zieldichte Beschichtung Anode","Kategorie":"Elektrodenparameter Anode","Wert":1.6,"Einheit":"g\/cm\u00b3"},{"id":17,"Beschreibung":"Beschichtungsporosit\u00e4t Anode","Kategorie":"Elektrodenparameter Anode","Wert":34.0,"Einheit":"%"},{"id":18,"Beschreibung":"Fl\u00e4chenspezifische Kapazit\u00e4t Anode","Kategorie":"Elektrodenparameter Anode","Wert":3.2,"Einheit":"mAh\/cm\u00b2"},{"id":19,"Beschreibung":"Feststoffgehalt Anode","Kategorie":"Elektrodenparameter Anode","Wert":60.0,"Einheit":"%"},{"id":20,"Beschreibung":"Kalkulierter Anoden\u00fcberschuss","Kategorie":"Elektrodenparameter Anode","Wert":10.0,"Einheit":"%"},{"id":21,"Beschreibung":"NMP","Kategorie":"L\u00f6semittel Kathode","Wert":63.4,"Einheit":"%"},{"id":22,"Beschreibung":"ProZell Separator","Kategorie":"Separator","Wert":null,"Einheit":"%"},{"id":23,"Beschreibung":"K-Leitru\u00df 1","Kategorie":"Additive Kathode","Wert":3.0,"Einheit":"%"},{"id":24,"Beschreibung":"K-Leitru\u00df 2","Kategorie":"Additive Kathode","Wert":0.0,"Einheit":"%"},{"id":25,"Beschreibung":"K-Additiv","Kategorie":"Additive Kathode","Wert":1.0,"Einheit":"%"},{"id":26,"Beschreibung":"K-Binder 1","Kategorie":"Additive Kathode","Wert":3.0,"Einheit":"%"},{"id":27,"Beschreibung":"K-Binder 2","Kategorie":"Additive Kathode","Wert":0.0,"Einheit":"%"},{"id":28,"Beschreibung":"A-Leitru\u00df 1","Kategorie":"Additive Anode","Wert":1.0,"Einheit":"%"},{"id":29,"Beschreibung":"A-Leitru\u00df 2","Kategorie":"Additive Anode","Wert":0.0,"Einheit":"%"},{"id":31,"Beschreibung":"A-Binder 1","Kategorie":"Additive Anode","Wert":1.0,"Einheit":"%"},{"id":32,"Beschreibung":"A-Binder 2","Kategorie":"Additive Anode","Wert":1.5,"Einheit":"%"},{"id":33,"Beschreibung":"1M LiPF6 (EC: EMC 3:7 wt%) + 2 wt% VC","Kategorie":"Elektrolyt","Wert":null,"Einheit":"%"}]'
+#Materialinfos = '[{"NCM 622":[{"id":3,"Beschreibung":"spezifische Kapazität","Wert":160,"Einheit":"mAh/g"},{"id":4,"Beschreibung":"Dichte","Wert":0.476,"Einheit":"g/cm³"},{"id":5,"Beschreibung":"Preis","Wert":25.75,"Einheit":"€/kg"}]},{"Graphit":[{"id":1,"Beschreibung":"spezifische Kapazität","Wert":330,"Einheit":"mAh/g"},{"id":2,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Preis","Wert":7.46,"Einheit":"€/kg"}]},{"Kupferfolie 10 µm":[{"id":1,"Beschreibung":"Dicke","Wert":10,"Einheit":"µm"},{"id":2,"Beschreibung":"Dichte","Wert":8.96,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Breite","Wert":600,"Einheit":"mm"},{"id":4,"Beschreibung":"Preis","Wert":0.44,"Einheit":"€/m"}]},{"Aluminiumfolie 8 µm":[{"id":1,"Beschreibung":"Dicke","Wert":8,"Einheit":"µm"},{"id":2,"Beschreibung":"Dichte","Wert":2.7,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Breite","Wert":600,"Einheit":"mm"},{"id":4,"Beschreibung":"Preis","Wert":0.2,"Einheit":"€/m"}]},{"Wasser":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":0.01,"Einheit":"€/kg"}]},{"NMP":[{"id":1,"Beschreibung":"Dichte","Wert":1.2,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":2.39,"Einheit":"€/kg"}]},{"ProZell Separator":[{"id":1,"Beschreibung":"Dicke","Wert":20,"Einheit":"µm"},{"id":2,"Beschreibung":"Dichte","Wert":10,"Einheit":"g/cm³"},{"id":3,"Beschreibung":"Porosität","Wert":40,"Einheit":"%"},{"id":4,"Beschreibung":"Breite","Wert":600,"Einheit":"mm"},{"id":5,"Beschreibung":"Preis","Wert":0.5,"Einheit":"€/m"}]},{"K-Leitruß 1":[{"id":1,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"K-Leitruß 2":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"K-Additiv":[{"id":1,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":10,"Einheit":"€/kg"}]},{"K-Binder 1":[{"id":1,"Beschreibung":"Dichte","Wert":1.3,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":18,"Einheit":"€/kg"}]},{"K-Binder 2":[{"id":1,"Beschreibung":"Dichte","Wert":1.3,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":18,"Einheit":"€/kg"}]},{"A-Leitruß 1":[{"id":1,"Beschreibung":"Dichte","Wert":2.25,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"A-Leitruß 2":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":5.07,"Einheit":"€/kg"}]},{"A-Binder 1":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":1.5,"Einheit":"€/kg"}]},{"A-Binder 2":[{"id":1,"Beschreibung":"Dichte","Wert":1,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":1.5,"Einheit":"€/kg"}]},{"1M LiPF6 (EC: EMC 3:7 wt%) + 2 wt% VC":[{"id":1,"Beschreibung":"Dichte","Wert":1.3,"Einheit":"g/cm³"},{"id":2,"Beschreibung":"Preis","Wert":7.44,"Einheit":"€/kg"}]}]'
+#Zellformat = '[{"id":1,"Beschreibung":"Breite Anode","Wert":null,"Einheit":"mm"},{"id":2,"Beschreibung":"L\u00e4nge Anode","Wert":null,"Einheit":"mm"},{"id":3,"Beschreibung":"Breite Zellf\u00e4hnchen Anode","Wert":22.0,"Einheit":"mm"},{"id":4,"Beschreibung":"L\u00e4nge Zellf\u00e4hnchen Anode","Wert":30.0,"Einheit":"mm"},{"id":5,"Beschreibung":"Breite Kathode","Wert":null,"Einheit":"mm"},{"id":6,"Beschreibung":"L\u00e4nge Kathode","Wert":null,"Einheit":"mm"},{"id":7,"Beschreibung":"Breite Zellf\u00e4hnchen Kathode","Wert":22.0,"Einheit":"mm"},{"id":8,"Beschreibung":"L\u00e4nge Zellf\u00e4hnchen Kathode","Wert":32.5,"Einheit":"mm"},{"id":9,"Beschreibung":"Eckenradius","Wert":5.0,"Einheit":"mm"},{"id":10,"Beschreibung":"Breite Festh\u00fclle","Wert":null,"Einheit":"mm"},{"id":11,"Beschreibung":"L\u00e4nge Festh\u00fclle","Wert":null,"Einheit":"mm"},{"id":12,"Beschreibung":"H\u00f6he Festh\u00fclle","Wert":null,"Einheit":"mm"},{"id":13,"Beschreibung":"Radius Rundzelle","Wert":10.5,"Einheit":"mm"},{"id":14,"Beschreibung":"H\u00f6he Rundzelle","Wert":70.0,"Einheit":"mm"},{"id":15,"Beschreibung":"Radius Wickelkern","Wert":3.0,"Einheit":"mm"},{"id":16,"Beschreibung":"Zusatzwicklungen Separator","Wert":3.0,"Einheit":"[-]"},{"id":17,"Beschreibung":"Abstand Separator - H\u00fclle","Wert":2.0,"Einheit":"mm"},{"id":18,"Beschreibung":"\u00dcberstand Separator - Anode","Wert":2.0,"Einheit":"mm"},{"id":19,"Beschreibung":"\u00dcberstand Anode - Kathode","Wert":2.0,"Einheit":"mm"},{"id":20,"Beschreibung":"Unterdruck Zelle","Wert":2.0,"Einheit":"mbar"},{"id":21,"Beschreibung":"Elektrolytbef\u00fcllung","Wert":80.0,"Einheit":"%"},{"id":22,"Beschreibung":"Sicherheitsabstand Schneiden","Wert":20.0,"Einheit":"mm"},{"id":23,"Beschreibung":"Beschichtungsabstand Kathode","Wert":20.0,"Einheit":"mm"},{"id":24,"Beschreibung":"Beschichtungsabstand Anode","Wert":20.0,"Einheit":"mm"},{"id":25,"Beschreibung":"Breite Kathodenkollektor","Wert":300.0,"Einheit":"mm"},{"id":26,"Beschreibung":"Breite Anodenkollektor","Wert":300.0,"Einheit":"mm"}]'
+#Weitere_Zellinfos = '{"id":13,"Beschreibung":"21700","Zellformat":"Rundzelle","Dateiname":"Zelle_21700"}'
 
 def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Zellinfos_raw, GWh_Jahr_Ah_Zelle_raw):
     #____________________________________
@@ -160,8 +160,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
     
     elektrolytbefuellung = Zellformat["Wert"]["Elektrolytbefüllung"] #[%]
-    
-    Sicherheitsabstand_schneiden = Zellformat["Wert"]["Sicherheitsabstand Schneiden"] #[mm]
+
     Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
     Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
     Breite_Kathodenkollektor = read_zellinfo(Kollektorfolie_Kathode)["Wert"]["Breite"] #[mm]
@@ -356,23 +355,32 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     if Zelltyp == "Hardcase gewickelt":
         #Außenmaße der Zelle
-        breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"] #[mm]
-        laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"] #[mm]
-        hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"] #[mm]
+        Wandstärke = Zellformat["Wert"]["Wandstärke"] #[mm]
+
+        Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
+        Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
+        
+        
+        breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"]-2*Wandstärke #[mm]
+        laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"]-2*Wandstärke #[mm]
+        hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
+
     
         #Innenabstände der Separatoren
         ueberstand_separator_anode = Zellformat["Wert"]["Überstand Separator - Anode"] #[mm]
         ueberstand_anode_kathode = Zellformat["Wert"]["Überstand Anode - Kathode"] #[mm]
-        
+        abs_zellwickel_deckel = Zellformat["Wert"]["Abstand Zellwickel - Deckel"] #[mm]
+        abs_ableiter_huelle = Zellformat["Wert"]["Abstand Ableiter - Hülle"] #[mm]
+
         #Weitere Angaben Prismatische Zelle
         sep_wick = Zellformat["Wert"]["Zusatzwicklungen Separator"] #zusätzliche Separatorwicklungen
         r_w = Zellformat["Wert"]["Radius Wickelkern"] #[mm] Radius Wickelkern
-        
+
         #Anzahl Wicklungen
-        Anz_wick = ((hoehe_festhuelle-2*r_w)/2-(2*sep_wick*d_Sep/1000))/(d_WHE/1000) #[-]
-        
+        Anz_wick = ((laenge_festhuelle-2*r_w)/2-(2*sep_wick*d_Sep/1000))/(d_WHE/1000) #[-]
+
         #Breite des Wickelkerns
-        Breite_Kern = breite_festhuelle-4*sep_wick*d_Sep/1000-2*Anz_wick*d_WHE/1000 #[mm]
+        Breite_Kern = hoehe_festhuelle-4*sep_wick*d_Sep/1000-2*Anz_wick*d_WHE/1000-abs_zellwickel_deckel #[mm]
         
         U_a = 2*math.pi*r_w+2*Breite_Kern #Umfang des Wickelkerns [mm]
         
@@ -380,25 +388,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
         l_bahn = (U_a-U_plus)*Anz_wick + U_a #[mm]
 
-        
-        #Rundzellen haben kein Zellfähnchen in dem Sinne, muss anders gelöst werden, z.B. Beschichtungsabstand
-        A_KK = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,laenge_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_KB = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,laenge_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode-Ableiter_hoehe_K,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_AK = flaeche_mit_zellf(l_bahn,laenge_festhuelle-2*ueberstand_separator_anode,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
-        A_AB = flaeche_mit_zellf(l_bahn,laenge_festhuelle-2*ueberstand_separator_anode-Ableiter_hoehe_A,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
-        print("A_KK: \n"+str(A_KK))
-        print("A_KB: \n"+str(A_KB))
-        print("A_AK: \n"+str(A_AK))
-        print("A_AB: \n"+str(A_AB))   
-        # A_sep_innen = 0
-        # A_sep_aussen = 0
-        # for no_wick in range(int(sep_wick)):
-        #     A_sep_innen+=laenge_festhuelle*2*math.pi*(r_w+no_wick*d_Sep/1000)
-        #     A_sep_aussen+=laenge_festhuelle*2*math.pi*(radius_rundzelle-no_wick*d_Sep/1000)
-            
-        # A_Sep = flaeche_mit_zellf(l_bahn, hoehe_rundzelle,0,0, eckenradius_elektrode)+A_sep_innen+A_sep_aussen #Fläche Separator [mm²]
-        
-        A_Sep = flaeche_mit_zellf(l_bahn, laenge_festhuelle,0,0, eckenradius_elektrode) #[mm²]
+        A_KK = (l_bahn-2*ueberstand_anode_kathode-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
+        A_KB = (l_bahn-2*ueberstand_anode_kathode-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        A_AK = (l_bahn-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
+        A_AB = (l_bahn-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+
+        A_Sep = l_bahn*hoehe_festhuelle
 
         l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
@@ -409,23 +404,87 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AK_ges = A_AK
         A_KK_ges = A_KK
         A_Sep_ges = A_Sep*2
-        
+              
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
         #Anode
-        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_festhuelle-2*ueberstand_separator_anode)
+        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode+Beschichtungsabstand_Anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
+        if (bahnen_bes_A % 2) != 0 and bahnen_bes_A != 1:
+            bahnen_bes_A = bahnen_bes_A-1
         bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
-        S_MA = 1000/(l_bahn)*bahnen_bes_A
+        S_MA = 1000/(l_bahn-2*ueberstand_separator_anode)*bahnen_bes_A
+
         #Kathode
-        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
+        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode+Beschichtungsabstand_Kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
+        if (bahnen_bes_K % 2) != 0 and bahnen_bes_K != 1:
+            bahnen_bes_K = bahnen_bes_K-1
         bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
-        S_MK = 1000/(l_bahn-2*ueberstand_anode_kathode)*bahnen_bes_K
-
+        S_MK = 1000/(l_bahn-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)*bahnen_bes_K
+        
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
+        
+        print("vol_nutz_zelle")
+        print(vol_nutz_zelle)  
+        
+                        
+        print("breite_festhuelle")
+        print(breite_festhuelle)
+        print("laenge_festhuelle")
+        print(laenge_festhuelle)
+        print("hoehe_festhuelle")
+        print(hoehe_festhuelle)
 
-    
+        print("ueberstand_separator_anode")
+        print(ueberstand_separator_anode)
+        print("ueberstand_anode_kathode")
+        print(ueberstand_anode_kathode)
+                
+        print("sep_wick")
+        print(sep_wick)
+        print("r_w")
+        print(r_w)
+        
+        print("Anz_wick")
+        print(Anz_wick)
+        
+        print("Breite_Kern")
+        print(Breite_Kern)
+        print("U_a")
+        print(U_a)
+        print("U_plus")
+        print(U_plus)
+        print("l_bahn")
+        print(l_bahn)
+                
+        print("A_KK: \n"+str(A_KK))
+        print("A_KB: \n"+str(A_KB))
+        print("A_AK: \n"+str(A_AK))
+        print("A_AB: \n"+str(A_AB))   
+        
+        print("A_Sep")
+        print(A_Sep)
+        print("l_WHE")
+        print(l_WHE)
+        
+        print("bahnen_bes_A_ausn")
+        print(bahnen_bes_A_ausn)
+        print("bahnen_bes_A")
+        print(bahnen_bes_A)
+        print("bahnen_bes_A_ausn")
+        print(bahnen_bes_A_ausn)
+        print("S_MA")
+        print(S_MA)  
+        
+        print("bahnen_bes_K_ausn")
+        print(bahnen_bes_K_ausn)
+        print("bahnen_bes_K")
+        print(bahnen_bes_K)
+        print("bahnen_bes_K_ausn")
+        print(bahnen_bes_K_ausn)
+        print("S_MK")
+        print(S_MK)  
     #____________________________________
     # Ab hier wieder gesammelte Berechnung für alle Zelltypen
     
@@ -472,7 +531,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Q_ges = l_WHE*anzahl_WHE/1000 #gesamte Ladung einer Zelle in Ah
     Zellen_pro_Jahr = GWh_pro_jahr*1000000000/(Q_ges*U) #*1 Mrd wegen Giga
     spez_energie = U*Q_ges*1000/gew_ges #[Wh/kg] *1000 -> Gewicht Zelle g zu kg
-    Balancing = (1-(A_AB*C_flsp_A)/(A_KB*C_flsp_K))*100
+    Balancing = (1-(A_KB*C_flsp_K)/(A_AB*C_flsp_A))*100
     
     #Auflistung aller Kosten einer Zelle
     Gesamtkosten_Anodenbeschichtung = Kosten_Anodenbeschichtung * gew_AB_ges/1000 #[€]
