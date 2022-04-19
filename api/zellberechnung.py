@@ -156,7 +156,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     
     #____________________________________
-            #Zellmaße die für alle Zellen gelten
+    #Zellmaße die für alle Zellen gelten
     
     elektrolytbefuellung = Zellformat["Wert"]["Elektrolytbefüllung"] #[%]
 
