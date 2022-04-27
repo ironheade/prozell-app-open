@@ -90,13 +90,14 @@ export default function Ergebnisse() {
       {ergebnisTabelle !== null &&
         <>
           <h1>Produktionskosten</h1>
-
+          <p style={{"backgroundColor":"#feedf4", "width":"200px"}}> Trockenraum rot markiert</p>
           <MyStackedBarChart data={ergebnisTabelle} Prozessroute={create_ProzessschrittArray()} />
           <DfTable data={ergebnisTabelle} />
 
-
+          <div style={{"height":"100px"}}></div>
           <h1>Material/Kostenfluss (Platzhalter)</h1>
           <Alluvial />
+          <div style={{"height":"100px"}}></div>
           <h1>Gesamtkosten Jahresproduktion (Platzhalter)</h1>
           <GesamtkostenDonut />
 

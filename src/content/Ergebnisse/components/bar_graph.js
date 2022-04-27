@@ -109,7 +109,7 @@ export default function MyStackedBarChart(props){
         )
 
     const options = {
-        "title": "Prozessroute",
+        //title: "Prozessroute",
         "legend": {
             "position": "left",
 
@@ -150,11 +150,11 @@ export default function MyStackedBarChart(props){
         <>
             <StackedBarChart
                 data={data}
-                options={options}>
+                options={{...options,"title":"Kosten Produktion pro Jahr"}}>
             </StackedBarChart>
             <StackedBarChart
                 data={data_stacked}
-                options={options}>
+                options={{...options,"title":"Kosten Produktion kummuliert pro Jahr"}}>
             </StackedBarChart>
         </>
     )

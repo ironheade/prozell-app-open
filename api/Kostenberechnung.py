@@ -141,6 +141,7 @@ def Kostenberechnung(Zellergebnisse_raw,
          "Kathodenkollektor": Kathodenkollektor_menge,
          "Separator":Separator_menge,
          "Elektrolyt":Elektrolyt_menge,
+         "Anzahl Maschinen":"",
          "Neue Materialien":"",
          "Flächenbedarf":"",
          "Flächenbedarf Trockenraum":"",
@@ -167,6 +168,7 @@ def Kostenberechnung(Zellergebnisse_raw,
          "Kathodenkollektor":"m",
          "Separator":"m",
          "Elektrolyt":"l",
+         "Anzahl Maschinen":"-",
          "Neue Materialien":"-",
          "Flächenbedarf":"m²",
          "Flächenbedarf Trockenraum":"m²",
@@ -214,12 +216,6 @@ def Kostenberechnung(Zellergebnisse_raw,
     for schritt in reversed(Prozessroute_array_raw):        #Prozessschritte in umgekehrter Reihenfolge durchgehen
         Prozess_name = schritt                          #Kopie des Schritts zur Umwandlung in Funktionsname, ersetzen aller Sonderzeichen durch "_"
         Prozess_name = Prozess_name.replace(' ','_').replace('-','_').replace('/','_')    
-        
-        #print(Prozess_name)
-        #print(read_prozessInfo(schritt))
-        #print(Zellergebnisse)
-        #print(schritt_dictionary)
-        
         #Übergebene Parameter and die Funtionen zu jedem Schritt: read_prozessInfo(schritt):  , 
         schritt_dictionary = getattr(Prozessfunktionen, Prozess_name)(read_prozessInfo(schritt), #df mit den Infos zum Prozesschritt
                                                                       Zellergebnisse, #Zellergebnisse: Ergebnisse der Zellberechnung
@@ -235,30 +231,6 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     print(schritt_dictionary)
     
-
-    
-
-
-    #df.to_excel("output.xlsx", sheet_name='Sheet_name_1') #df exportieren
-    
-        #print(schritt_dictionary)
-        
-        #hier werden die Zwischenergebnisse in das Haupt-df eingetragen
-        # for key in schritt_dictionary:
-        #     # Eintrag Zahl oder str?
-        #     g_to_t = ["Anodenbeschichtung","Kathodenbeschichtung","Separator","Elektrolyt"]
-        #     m_to_km = ["Anodenkollektor","Kathodenkollektor"]
-        #     if key in g_to_t:
-        #         df[schritt][key]=round(schritt_dictionary[key]/1000000,2)
-        #         df_ausfuehrlich[schritt][key]=round(schritt_dictionary[key]/1000000,2)
-        #     elif key in m_to_km:
-        #         df[schritt][key]=round(schritt_dictionary[key]/1000,2)                
-        #         df_ausfuehrlich[schritt][key]=round(schritt_dictionary[key]/1000,2)    
-        #     else:
-        #         df[schritt][key]=schritt_dictionary[key]
-        #         df_ausfuehrlich[schritt][key]=schritt_dictionary[key]
-    
-    # print(schritt_dictionary)
     
     
     #____________________________________
@@ -297,26 +269,26 @@ def Kostenberechnung(Zellergebnisse_raw,
             df[schritt]["Materialkosten"]=0
             
         #Energiekosten
-        df[schritt]["Energiekosten"] = df[schritt]["Energiebedarf"]*0.18
+        df[schritt]["Energiekosten"] = df[schritt]["Energiebedarf"]*Strompreis
         
         #Personalkosten
         df[schritt]["Personalkosten"] = (df[schritt]["Personlabedarf Facharbeiter"]*Stundensatz_facharbeiter + df[schritt]["Personalbedarf Hilfskraft"]*Stundensatz_hilfskraft)*Betriebstage*24
 
         #Instandhaltungskosten
-        df[schritt]["Instandhaltungskosten"] = df[schritt]["Investition"]*(1+(Instandhaltungskostensatz/100))
+        df[schritt]["Instandhaltungskosten"] = df[schritt]["Investition"]*(Instandhaltungskostensatz/100)
         
         #Flächenkosten
         df[schritt]["Flächenkosten"] = df[schritt]["Flächenbedarf"]*Flächenkosten_Produktionshalle+df[schritt]["Flächenbedarf Trockenraum"]*Flächenkosten_Trockenraum
     
         #Kalkulatorische Zinsen
-        df[schritt]["Kalkulatorische Zinsen"]=df[schritt]["Investition"]*1.1*Zinssatz_Kapitalmarkt/0.5
+        df[schritt]["Kalkulatorische Zinsen"]=df[schritt]["Investition"]*1.1*Zinssatz_Kapitalmarkt/100/0.5
         
         #Ökonomische Abschreibung
         df[schritt]["Ökonomische Abschreibung"]=df[schritt]["Investition"]/Nutzungsdauer
     #Abschluss Anterograde Wertstromkalkulation   
     
     
-    
+    #OVERHEAD KOSTEN
     #____________________________________
     #Flächenkalkulation    
 

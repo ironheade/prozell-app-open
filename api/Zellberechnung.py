@@ -34,7 +34,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     # flaeche_mit_zellf errechnet die Fäche eines Sheets mit Zellfähnchen, inklusive der Radien
     def flaeche_mit_zellf(breite, laenge, breite_zellf, laenge_zellf, radius):
-        return breite*laenge+breite_zellf*laenge_zellf-4*(radius*radius-math.pi*radius*radius/4)
+        return breite*laenge+breite_zellf*laenge_zellf-(4*radius**2-math.pi*radius**2)
+    def flaeche_ohne_zellf(breite, laenge, radius):
+        return breite*laenge-(3*radius**2-math.pi*radius**2)
     
     
     #_________________________________ 
@@ -160,29 +162,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     elektrolytbefuellung = Zellformat["Wert"]["Elektrolytbefüllung"] #[%]
 
-    Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
-    Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
     Breite_Kathodenkollektor = read_zellinfo(Kollektorfolie_Kathode)["Wert"]["Breite"] #[mm]
     Breite_Anodenkollektor = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Breite"] #[mm]
     Breite_Separator = read_zellinfo(Separator)["Wert"]["Breite"] #[mm]
     
     #HARDCODED WERTE, BITTE ÄNDERN!
     #leeeeeres Bla Bla (bisher nur ausgelegt für Pouchzelle, nur dafür da das die Berechnung bei den anderen weiterhin funktioniert)
-    #Für WickelZellen
-    Ableiter_hoehe_A = 10 #[mm]
-    Ableiter_hoehe_K = 10 #[mm]
-    
-    #Für Sheetzellen
-    #Anode
-    Schneid_abs_aus_A = 10 #[mm]
-    Schneid_abs_bahnr_A = 10 #[mm]
-    Schneid_abd_gg_bahnr_A = 10 #[mm]
-    
-    #Kathode
-    Schneid_abs_aus_K = 10 #[mm]
-    Schneid_abs_bahnr_K = 10 #[mm]
-    Schneid_abd_gg_bahnr_K = 10 #[mm]
-    
     
     #____________________________________
     # Ab hier die Berechnung der einzelnen Zelltypen
@@ -202,14 +187,22 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         laenge_anode = Zellformat["Wert"]["Länge Anode"] #[mm]
         laenge_kathode = Zellformat["Wert"]["Länge Kathode"] #[mm]
         
+        #Abstände beim Schneiden der Sheets
+        Schneid_abs_aus_A = Zellformat["Wert"]["Sicherheitsabstand Schneiden Anode"] #[mm] Abstand nach außen und zwischen den beschichteten Bahnen
+        Schneid_abs_aus_K = Zellformat["Wert"]["Sicherheitsabstand Schneiden Kathode"] #[mm] Abstand nach außen und zwischen den beschichteten Bahnen
+        Schneid_abs_bahnr_A = Zellformat["Wert"]["Beschichtungsabstand Anode in Bahnrichtung"] #[mm] Abstand zwischen den Sheets in Bahnrichtung
+        Schneid_abs_bahnr_K = Zellformat["Wert"]["Beschichtungsabstand Kathode in Bahnrichtung"] #[mm] Abstand zwischen den Sheets in Bahnrichtung
+        Schneid_abd_gg_bahnr_A = Zellformat["Wert"]["Beschichtungsabstand Anode quer zur Bahn"] #[mm] Abstand zwischen den Sheets gegen Bahnrichtung
+        Schneid_abd_gg_bahnr_K = Zellformat["Wert"]["Beschichtungsabstand Kathode quer zur Bahn"] #[mm] Abstand zwischen den Sheets gegen Bahnrichtung
+        
         #Überstand Separator über die Anode, für die Flächenberechnung des Separators
         ueberstand_separator_anode = Zellformat["Wert"]["Überstand Separator - Anode"] #[mm]
     
         #Flächen der Bestandteile (Sheets)
         A_KK = flaeche_mit_zellf(breite_kathode,laenge_kathode,breite_kathode_zellf,laenge_kathode_zellf,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_KB = flaeche_mit_zellf(breite_kathode,laenge_kathode,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
+        A_KB = flaeche_ohne_zellf(breite_kathode,laenge_kathode,eckenradius_elektrode) #Fläche Kathode [mm²]
         A_AK = flaeche_mit_zellf(breite_anode,laenge_anode,breite_anode_zellf,laenge_anode_zellf,eckenradius_elektrode) #Fläche Anode [mm²]
-        A_AB = flaeche_mit_zellf(breite_anode,laenge_anode,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
+        A_AB = flaeche_ohne_zellf(breite_anode,laenge_anode,eckenradius_elektrode) #Fläche Anode [mm²]
         A_Sep = flaeche_mit_zellf(breite_anode+2*ueberstand_separator_anode,laenge_anode+2*ueberstand_separator_anode,0,0, eckenradius_elektrode) #Fläche Separator [mm²]
     
         
@@ -227,21 +220,22 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
         #Anode
-        bahnen_bes_A_ausn = (Breite_Anodenkollektor-2*Schneid_abs_aus_A+Schneid_abd_gg_bahnr_A)/(laenge_anode+laenge_anode_zellf+Schneid_abd_gg_bahnr_A)
+        bahnen_bes_A_ausn = (Breite_Anodenkollektor-Schneid_abs_aus_A)/(2*(laenge_anode+laenge_anode_zellf)+Schneid_abs_aus_A+Schneid_abd_gg_bahnr_A)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
         bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
-        S_MA = 1000/(breite_anode+Schneid_abs_bahnr_A)*bahnen_bes_A
+        S_MA = 1000/(breite_anode+Schneid_abs_bahnr_A)*bahnen_bes_A*2
         #Kathode
-        bahnen_bes_K_ausn = (Breite_Kathodenkollektor-2*Schneid_abs_aus_K+Schneid_abd_gg_bahnr_K)/(laenge_kathode+laenge_kathode_zellf+Schneid_abd_gg_bahnr_K)
+        bahnen_bes_K_ausn = (Breite_Kathodenkollektor-Schneid_abs_aus_K)/(2*(laenge_kathode+laenge_kathode_zellf)+Schneid_abs_aus_K+Schneid_abd_gg_bahnr_K)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
         bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
-        S_MK = 1000/(breite_kathode+Schneid_abs_bahnr_K)*bahnen_bes_K          
+        S_MK = 1000/(breite_kathode+Schneid_abs_bahnr_K)*bahnen_bes_K*2          
         
         #nutzbarere Innenraum der Zelle, Fläche des Separators * Höhe des desammten Stacks + die modifizierte WHE
         vol_nutz_zelle = A_Sep * (math.ceil(anzahl_WHE) * d_WHE/1000 + d_MWHE/1000) #[mm³]
      
     
     if Zelltyp == "Hardcase gestapelt":
+        Wandstärke = Zellformat["Wert"]["Wandstärke"] #[mm]
         eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
         #Maße der Zellfähnchen
         breite_anode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Anode"] #[mm]
@@ -250,9 +244,17 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         laenge_kathode_zellf = Zellformat["Wert"]["Länge Zellfähnchen Kathode"] #[mm]
 
         #Außenmaße der Zelle
-        breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"] #[mm]
-        laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"] #[mm]
-        hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"] #[mm]
+        breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"]-2*Wandstärke #[mm]
+        laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"]-2*Wandstärke #[mm]
+        hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
+        
+        #Abstände beim Schneiden der Sheets
+        Schneid_abs_aus_A = Zellformat["Wert"]["Sicherheitsabstand Schneiden Anode"] #[mm] Abstand nach außen und zwischen den beschichteten Bahnen
+        Schneid_abs_aus_K = Zellformat["Wert"]["Sicherheitsabstand Schneiden Kathode"] #[mm] Abstand nach außen und zwischen den beschichteten Bahnen
+        Schneid_abs_bahnr_A = Zellformat["Wert"]["Beschichtungsabstand Anode in Bahnrichtung"] #[mm] Abstand zwischen den Sheets in Bahnrichtung
+        Schneid_abs_bahnr_K = Zellformat["Wert"]["Beschichtungsabstand Kathode in Bahnrichtung"] #[mm] Abstand zwischen den Sheets in Bahnrichtung
+        Schneid_abd_gg_bahnr_A = Zellformat["Wert"]["Beschichtungsabstand Anode quer zur Bahn"] #[mm] Abstand zwischen den Sheets gegen Bahnrichtung
+        Schneid_abd_gg_bahnr_K = Zellformat["Wert"]["Beschichtungsabstand Kathode quer zur Bahn"] #[mm] Abstand zwischen den Sheets gegen Bahnrichtung
                 
         #Innenabstände der Separatoren
         abstand_separator_huelle = Zellformat["Wert"]["Abstand Separator - Hülle"] #[mm]
@@ -267,9 +269,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
         #Flächen der Bestandteile (Sheets)        
         A_KK = flaeche_mit_zellf(breite_kathode,laenge_kathode,breite_kathode_zellf,laenge_kathode_zellf,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_KB = flaeche_mit_zellf(breite_kathode,laenge_kathode,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
+        A_KB = flaeche_ohne_zellf(breite_kathode,laenge_kathode,eckenradius_elektrode) #Fläche Kathode [mm²]
         A_AK = flaeche_mit_zellf(breite_anode,laenge_anode,breite_anode_zellf,laenge_anode_zellf,eckenradius_elektrode) #Fläche Anode [mm²]
-        A_AB = flaeche_mit_zellf(breite_anode,laenge_anode,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
+        A_AB = flaeche_ohne_zellf(breite_anode,laenge_anode,eckenradius_elektrode) #Fläche Anode [mm²]
         A_Sep = flaeche_mit_zellf(breite_festhuelle-2*abstand_separator_huelle, laenge_festhuelle-2*abstand_separator_huelle, 0, 0, eckenradius_elektrode)
 
         l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
@@ -287,24 +289,32 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
         #Anode
-        bahnen_bes_A_ausn = (Breite_Anodenkollektor-2*Schneid_abs_aus_A+Schneid_abd_gg_bahnr_A)/(laenge_anode+laenge_anode_zellf+Schneid_abd_gg_bahnr_A)
+        bahnen_bes_A_ausn = (Breite_Anodenkollektor-Schneid_abs_aus_A)/(2*(laenge_anode+laenge_anode_zellf)+Schneid_abs_aus_A+Schneid_abd_gg_bahnr_A)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
         bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
-        S_MA = 1000/(breite_anode+Schneid_abs_bahnr_A)*bahnen_bes_A
+        S_MA = 1000/(breite_anode+Schneid_abs_bahnr_A)*bahnen_bes_A*2
         #Kathode
-        bahnen_bes_K_ausn = (Breite_Kathodenkollektor-2*Schneid_abs_aus_K+Schneid_abd_gg_bahnr_K)/(laenge_kathode+laenge_kathode_zellf+Schneid_abd_gg_bahnr_K)
+        bahnen_bes_K_ausn = (Breite_Kathodenkollektor-Schneid_abs_aus_K)/(2*(laenge_kathode+laenge_kathode_zellf)+Schneid_abs_aus_K+Schneid_abd_gg_bahnr_K)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
         bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
-        S_MK = 1000/(breite_kathode+Schneid_abs_bahnr_K)*bahnen_bes_K        
+        S_MK = 1000/(breite_kathode+Schneid_abs_bahnr_K)*bahnen_bes_K*2            
         
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
         
     
     if Zelltyp == "Rundzelle":
-        eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
+        Wandstärke = Zellformat["Wert"]["Wandstärke"] #[mm]
         #Außenmaße der Runzelle
-        radius_rundzelle = Zellformat["Wert"]["Radius Rundzelle"] #[mm]
-        hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"] #[mm]
+        radius_rundzelle = Zellformat["Wert"]["Radius Rundzelle"]-Wandstärke #[mm]
+        hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"]-2*Wandstärke #[mm]
+
+        Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
+        Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
+        
+        abs_zellwickel_deckel = Zellformat["Wert"]["Abstand Zellwickel - Deckel"] #[mm]
+        
+        Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
+        Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
 
         #Innenabstände der Separatoren
         ueberstand_separator_anode = Zellformat["Wert"]["Überstand Separator - Anode"] #[mm]
@@ -316,12 +326,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
 
         #l_bahn beschreibt die länge des Anoden-Kathodenverbundes ohne Separatorüberstand, also die Anodenlänge
         l_bahn = ((radius_rundzelle-2*sep_wick*d_Sep/1000)**2-(r_w+2*sep_wick*d_Sep/1000)**2)*math.pi/(d_WHE/1000) #[mm]
-        
-        #Rundzellen haben kein Zellfähnchen in dem Sinne, muss anders gelöst werden, z.B. Beschichtungsabstand
-        A_KK = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_KB = flaeche_mit_zellf(l_bahn-2*ueberstand_anode_kathode,hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode-Ableiter_hoehe_K,0,0,eckenradius_elektrode) #Fläche Kathode [mm²]
-        A_AK = flaeche_mit_zellf(l_bahn,hoehe_rundzelle-2*ueberstand_separator_anode,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
-        A_AB = flaeche_mit_zellf(l_bahn,hoehe_rundzelle-2*ueberstand_separator_anode-Ableiter_hoehe_A,0,0,eckenradius_elektrode) #Fläche Anode [mm²]
+               
+        #Ich gehe davon aus, dass der Ableiter umgeknickt wird und dmenetsprechend keinen Platz benötigt. 
+        A_KK = (hoehe_rundzelle-abs_zellwickel_deckel-2*ueberstand_separator_anode-2*ueberstand_anode_kathode+Beschichtungsabstand_Kathode)*(l_bahn-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
+        A_KB = (hoehe_rundzelle-abs_zellwickel_deckel-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)*(l_bahn-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
+        A_AK = (hoehe_rundzelle-abs_zellwickel_deckel-2*ueberstand_separator_anode+Beschichtungsabstand_Anode)*(l_bahn-2*ueberstand_separator_anode)
+        A_AB = (hoehe_rundzelle-abs_zellwickel_deckel-2*ueberstand_separator_anode)*(l_bahn-2*ueberstand_separator_anode)
         
         A_sep_innen = 0
         A_sep_aussen = 0
@@ -329,7 +339,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
             A_sep_innen+=hoehe_rundzelle*2*math.pi*(r_w+no_wick*d_Sep/1000)
             A_sep_aussen+=hoehe_rundzelle*2*math.pi*(radius_rundzelle-no_wick*d_Sep/1000)
             
-        A_Sep = flaeche_mit_zellf(l_bahn, hoehe_rundzelle,0,0, eckenradius_elektrode)+A_sep_innen+A_sep_aussen #Fläche Separator [mm²]
+        A_Sep = l_bahn*(hoehe_rundzelle-abs_zellwickel_deckel)+A_sep_innen+A_sep_aussen #Fläche Separator [mm²]
 
         l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
@@ -344,15 +354,20 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
         #Anode
-        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode)
+        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(hoehe_rundzelle-abs_zellwickel_deckel-2*ueberstand_separator_anode+Beschichtungsabstand_Anode)
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
+        if (bahnen_bes_A % 2) != 0 and bahnen_bes_A != 1:
+            bahnen_bes_A = bahnen_bes_A-1
         bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
-        S_MA = 1000/(l_bahn)*bahnen_bes_A
+        S_MA = 1000/(l_bahn-2*ueberstand_separator_anode)*bahnen_bes_A
+
         #Kathode
-        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_rundzelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)
+        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(hoehe_rundzelle-abs_zellwickel_deckel-2*ueberstand_separator_anode-2*ueberstand_anode_kathode+Beschichtungsabstand_Kathode)
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
+        if (bahnen_bes_K % 2) != 0 and bahnen_bes_K != 1:
+            bahnen_bes_K = bahnen_bes_K-1
         bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
-        S_MK = 1000/(l_bahn-2*ueberstand_anode_kathode)*bahnen_bes_K
+        S_MK = 1000/(l_bahn-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)*bahnen_bes_K
 
         vol_nutz_zelle = math.pi*radius_rundzelle*radius_rundzelle*hoehe_rundzelle #[mm³]
     
@@ -368,7 +383,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"]-2*Wandstärke #[mm]
         hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
 
-    
+        Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
+        Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
         #Innenabstände der Separatoren
         ueberstand_separator_anode = Zellformat["Wert"]["Überstand Separator - Anode"] #[mm]
         ueberstand_anode_kathode = Zellformat["Wert"]["Überstand Anode - Kathode"] #[mm]
