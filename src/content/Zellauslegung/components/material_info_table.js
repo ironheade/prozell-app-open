@@ -27,6 +27,9 @@ export default function MaterialInfoTable(props) {
             <TableHeader>
               <p>Einheit</p>
             </TableHeader>
+            <TableHeader>
+              <p>Quelle</p>
+            </TableHeader>
           </TableRow>
         </TableHead>
 
@@ -50,6 +53,7 @@ export default function MaterialInfoTable(props) {
                 />
               </TableCell>
               <TableCell>{item.Einheit}</TableCell>
+              <TableCell>{item.Quelle}</TableCell>
             </TableRow>
           ))}
         </TableBody>

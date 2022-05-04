@@ -156,3 +156,10 @@ export const ergebnisTabelle_change = newState => {
   };
 };
 
+export const quellen = newState => {
+  return {
+    type: 'QUELLEN',
+    payload: newState,
+  };
+};
+

@@ -16,6 +16,7 @@ import {
   mitarbeiter_logistik_state,
   zellmaterialien_state,
   alle_zellen_laden,
+  quellen
 } from './actions';
 
 const App = () => {
@@ -47,6 +48,9 @@ const App = () => {
   );
   tabelle_abrufen('Zellformate').then(data =>
     dispatch(alle_zellen_laden(data))
+  );
+  tabelle_abrufen('quellen').then(data =>
+    dispatch(quellen(data))
   );
 
   return (

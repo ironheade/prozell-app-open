@@ -452,7 +452,7 @@ export default function Zellchemie({ click }) {
       */}
           <h2>Materialdetails</h2>
           {materialInfos !== null && (
-            <Accordion>
+            <Accordion >
               {materialInfos.map(item => (
                 <MaterialInfoTable
                   key={Object.keys(item)[0]}

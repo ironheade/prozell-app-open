@@ -26,6 +26,9 @@ export default function AllgParameterTable(props) {
           <TableHeader>
             <p>Besonderheit</p>
           </TableHeader>
+          <TableHeader>
+            <p>Quelle</p>
+          </TableHeader>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -47,6 +50,7 @@ export default function AllgParameterTable(props) {
               </TableCell>
               <TableCell>{item.Einheit}</TableCell>
               <TableCell>{item.Besonderheit}</TableCell>
+              <TableCell>{item.Quelle}</TableCell>
             </TableRow>
           ))}
       </TableBody>

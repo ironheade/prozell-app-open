@@ -303,6 +303,7 @@ export default function Prozessroute() {
                                             <TableHeader>Wert</TableHeader>
                                             <TableHeader>Einheit</TableHeader>
                                             <TableHeader>Besonderheit</TableHeader>
+                                            <TableHeader>Quelle</TableHeader>
                                         </TableRow>
                                     </TableHead>
 
@@ -328,6 +329,9 @@ export default function Prozessroute() {
                                                 </TableCell>
                                                 <TableCell>
                                                     {item2.Besonderheit}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {item2.Quelle}
                                                 </TableCell>
                                             </TableRow>
                                         )}

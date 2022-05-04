@@ -9,9 +9,10 @@ import {
 import { InfoSection, InfoCard } from '../../components/Info';
 import PersonFavorite32 from '@carbon/icons-react/lib/person--favorite/32';
 import Application32 from '@carbon/icons-react/lib/application/32';
-
+import  tabelle_abrufen  from '../../functions/tabelle_abrufen'
 import { Apple32 } from '@carbon/icons-react';
 import Anleitung from './Anleitung';
+import { useSelector } from "react-redux";
 
 const props = {
   tabs: {
@@ -28,6 +29,9 @@ const props = {
 const LandingPage = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [chosenTab, setChosenTab] = useState(0)
+  const quellen = useSelector(state => state.quellen)
+
+  console.log(quellen)
 
   useEffect(() => {
     fetch('/time')
@@ -168,6 +172,27 @@ const LandingPage = () => {
                     {Unterstützer.map(item => <p key={item}>{item}</p>)}
 
                   </div>
+                </div>
+              </div>
+            </Tab>
+            <Tab {...props.tab} label="Quellen" onClick={() => setChosenTab(3)}>
+              <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
+                <div className="bx--row landing-page__tab-content">
+                  <div className="bx--col-lg-16">
+                    <h3>Quellen</h3>
+                  <table style={{borderSpacing:"10px",borderCollapse:"separate"}}>
+                    <tbody>
+                    {quellen !== null && JSON.parse(quellen).map(item =>
+                      <tr key={item.id}>
+                        <td>[{item.Nachname}, {item.Jahr}]</td>
+                        <td>      </td>
+                        <td>{item.Nachname}, {item.Vorname} ({item.Jahr}), "{item.Titel}", {item.Verlag}, {item.doi !== null && item.doi} {item.ISBN!== null && item.ISBN}</td>
+                      </tr>
+                      )}
+                      </tbody>
+                  </table>
+                  </div>
+
                 </div>
               </div>
             </Tab>
