@@ -7,7 +7,7 @@ import { StackedBarChart } from "@carbon/charts-react";
 export default function MyStackedBarChart(props){
 
     const Prozessroute = props.Prozessroute
-
+/*
     const Kostenfaktoren = [
         "Materialkosten", 
          'Personalkosten', 
@@ -17,6 +17,8 @@ export default function MyStackedBarChart(props){
          'Kalkulatorische Zinsen', 
          'Ökonomische Abschreibung'
     ]
+    */
+    const Kostenfaktoren = props.Kostenfaktoren
     //Normales Balkendiagramm
     //Array mit den JSON Objekten nötig für das Balkendiagramm
     const data = []

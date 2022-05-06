@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button, Tag } from 'carbon-components-react';
+import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button } from 'carbon-components-react';
 import { useSelector, useDispatch } from 'react-redux'
 import DfTable from './components/table_from_df'
 import MyStackedBarChart from './components/bar_graph'
 import GesamtkostenDonut from './components/GesamtkostenDonut';
 import Alluvial from './components/AlluvialChart';
 import { ergebnisTabelle_change } from '../../actions'
+import SimpleTable from './components/simple_table';
+import SimpleTableNested from './components/simple_table_nested'
+import SimpleTableProzessroute from './components/simple_table_prozessroute'
 
 export default function Ergebnisse() {
   const dispatch = useDispatch();
@@ -23,6 +26,7 @@ export default function Ergebnisse() {
   const oekonomischeParameter = useSelector(state => state.oekonomischeParameter);
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
   const gebaeude = useSelector(state => state.gebaeude);
+  const rueckgewinnung = useSelector(state => state.rueckgewinnung);
 
   //const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
   const ergebnisTabelle = useSelector(state => state.ergebnisTabelle)
@@ -61,6 +65,16 @@ export default function Ergebnisse() {
 
   }
 
+  const Kostenfaktoren = [
+    "Materialkosten",
+    'Personalkosten',
+    'Energiekosten',
+    'Instandhaltungskosten',
+    'Flächenkosten',
+    'Kalkulatorische Zinsen',
+    'Ökonomische Abschreibung'
+  ]
+
 
   return (
     <div className="bx--grid bx--grid--full-width ergebnisse">
@@ -84,27 +98,89 @@ export default function Ergebnisse() {
         <Button onClick={Ergebnis}>Ergebnisse</Button>
       }
 
+
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
       {ergebnisTabelle !== null &&
         <>
+
           <h1>Produktionskosten</h1>
-          <p style={{"backgroundColor":"#feedf4", "width":"200px"}}> Trockenraum rot markiert</p>
-          <MyStackedBarChart data={ergebnisTabelle} Prozessroute={create_ProzessschrittArray()} />
+          <p style={{ "backgroundColor": "#feedf4", "width": "200px" }}> Trockenraum rot markiert</p>
+          <MyStackedBarChart data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} Prozessroute={create_ProzessschrittArray()} />
           <DfTable data={ergebnisTabelle} />
 
-          <div style={{"height":"100px"}}></div>
+          <div style={{ "height": "100px" }}></div>
           <h1>Material/Kostenfluss (Platzhalter)</h1>
           <Alluvial />
-          <div style={{"height":"100px"}}></div>
-          <h1>Gesamtkosten Jahresproduktion (Platzhalter)</h1>
-          <GesamtkostenDonut />
+          <div style={{ "height": "100px" }}></div>
+          <h1>Gesamtkosten Jahresproduktion</h1>
+          <GesamtkostenDonut data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} />
 
         </>
       }
       <Accordion hidden={hintergrundDatenHidden}>
         <AccordionItem title="Hintergrunddaten">
+          <div id="ErgebnisAccordion">
+
+            <div className='subdiv'>
+              <h1>Zellergebnisse</h1>
+              {Zellergebnisse !== null &&
+                <SimpleTable data={Zellergebnisse} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Prozessroute</h1>
+              {prozessRoute !== null &&
+                <SimpleTableProzessroute data={prozessRoute} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Zellchemie</h1>
+              {zellchemie !== null &&
+                <SimpleTable data={zellchemie} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Prozessdetails</h1>
+              {prozessschrittDaten !== null &&
+                <SimpleTableNested data={prozessschrittDaten} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Materialinfos</h1>
+              {materialInfos !== null &&
+                <SimpleTableNested data={materialInfos} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Ökonomische Parameter</h1>
+              {oekonomischeParameter !== null &&
+                <SimpleTable data={oekonomischeParameter} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Mitarbeiter und Logistik</h1>
+              {mitarbeiterLogistik !== null &&
+                <SimpleTable data={mitarbeiterLogistik} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Gebäude</h1>
+              {gebaeude !== null &&
+                <SimpleTable data={gebaeude} />}
+            </div>
+
+            <div className='subdiv'>
+              <h1>Rückgewinnung</h1>
+              {rueckgewinnung !== null &&
+                <SimpleTable data={rueckgewinnung} />}
+            </div>
+
+          </div>
+        </AccordionItem>
+
+        <AccordionItem title="Hintergrunddaten JSON Format">
           <h1>Zellergebnisse</h1>
           {Zellergebnisse !== null &&
             <p>{Zellergebnisse}</p>}
@@ -136,6 +212,14 @@ export default function Ergebnisse() {
           <h1>Gebäude</h1>
           {gebaeude !== null &&
             <p>{gebaeude}</p>}
+
+          <h1>Rückgewinnung</h1>
+          {rueckgewinnung !== null &&
+            <p>{rueckgewinnung}</p>}
+
+          <h1>Ergebnisse</h1>
+          {ergebnisTabelle !== null &&
+            <p>{ergebnisTabelle}</p>}
         </AccordionItem>
 
       </Accordion>

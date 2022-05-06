@@ -137,7 +137,7 @@ const LandingPage = () => {
               </div>
             </Tab>
             <Tab {...props.tab} label="Anleitung" onClick={() => setChosenTab(1)}>
-              <div className="bx--grid" style={{ paddingLeft: 300, paddindRight: 300 }}>
+              <div className="bx--grid" id="Anleitung" >
                 <div className="bx--row  landing-page__tab-content">
 
                   <Anleitung />

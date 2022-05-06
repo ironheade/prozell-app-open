@@ -19,6 +19,7 @@ import quellenReducer from './quellenReducer'
 import * as reducer from './reducers.js'
 import { combineReducers } from 'redux';
 import ergebnisTabellenReducer from './ergebnisTabellenReducer';
+import rueckgewinnungReducer from './rueckgewinnungReducer'
 
 
 
@@ -41,6 +42,7 @@ const rootreducer = combineReducers({
   prozessschrittDaten: prozessschrittDatenReducer,
   currentZellformate: currentZellformateReducer,
   ergebnisTabelle: ergebnisTabellenReducer,
+  rueckgewinnung: rueckgewinnungReducer,
   quellen: quellenReducer
 });
 

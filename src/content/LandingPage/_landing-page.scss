@@ -52,11 +52,17 @@
 
 .centerbox {
   display: flex;
-
   justify-content: center;
 }
 
 .anleitungstext {
   font-size: large;
   text-align:justify;
+}
+
+@media only screen and (min-width: 1350px) {
+  #Anleitung{
+    padding-left: 300px;
+    padding-right: 200px;
+  }
 }

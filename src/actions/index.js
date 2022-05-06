@@ -156,6 +156,14 @@ export const ergebnisTabelle_change = newState => {
   };
 };
 
+export const rueckgewinnung_state = newState => {
+  return {
+    type: 'RUECKGEWINNUNG',
+    payload: newState,
+  };
+};
+
+
 export const quellen = newState => {
   return {
     type: 'QUELLEN',

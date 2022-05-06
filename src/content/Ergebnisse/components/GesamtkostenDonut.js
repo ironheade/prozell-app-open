@@ -1,49 +1,70 @@
 import { DonutChart } from "@carbon/charts-react";
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 export default function GesamtkostenDonut(props) {
-    const Data = [
+    const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle);
+    const data = JSON.parse(props.data) //die Tabelle der Produktionsergebnisse
+    const Kostenfaktoren = props.Kostenfaktoren //die betrachteten Kostenfaktoren
+    const Produktionskosten = [] //die Produktionskosten aufsummiert für die Kostenfaktorens
+    var Produktionskosten_gesamt = 0 //die gesamten Produktionskosten
+    const Overheadkosten = []
+    var Overheadkosten_gesamt = 0
+
+
+
+    Kostenfaktoren.map(Kostenfaktor => //durch die Kostenfaktoren gehen
+        data.map(item => item.index === Kostenfaktor && //die Zeile aus den Ergebnissen für den Kostenfaktor
+            Produktionskosten.push(
+                {
+                    "group": item.index, 
+                    "value": (Object.keys(item).map(key => key !== "Einheit" && key !== "index" && item[key]).reduce((result, number) => result + number))
+                })
+        ))
+
+    Produktionskosten.map(item => Produktionskosten_gesamt = Produktionskosten_gesamt + item.value) //Aufsummieren der Produktionskosten für die gesamten Produktionskosten
+
+    const OverheadKosten = [
         {
-            "group": "2V2N 9KYPM version 1",
-            "value": 20000
+            "group": "Personal",
+            "value": 20000000
         },
         {
-            "group": "L22I P66EP L22I P66EP L22I P66EP",
-            "value": 65000
+            "group": "Fläche",
+            "value": 6500000
         },
         {
-            "group": "JQAI 2M4L1",
-            "value": 75000
+            "group": "Klimatisierung",
+            "value": 7500000
         },
         {
-            "group": "J9DZ F37AP",
-            "value": 1200
+            "group": "Steuer",
+            "value": 1200000
         },
         {
-            "group": "YEL48 Q6XK YEL48",
-            "value": 10000
-        },
-        {
-            "group": "Misc",
-            "value": 25000
+            "group": "Investitions-Overhead",
+            "value": 10000000
         }
     ]
 
-    const DataGesamt = [
+    OverheadKosten.map(item => Overheadkosten_gesamt = Overheadkosten_gesamt + item.value) //Aufsummieren der Produktionskosten für die gesamten Produktionskosten
+
+    const Gesamtkosten = [
         {
             "group": "Produktion",
-            "value": 20000
+            "value": Produktionskosten_gesamt
         },
         {
             "group": "Overhead",
-            "value": 65000
+            "value": Overheadkosten_gesamt
         }
     ]
+
     const Options = {
         "resizable": true,
-        "donut": {
-            "center": {
-                "label": "Browsers"
+        "legend": {
+            "truncation": {
+                "numCharacter": 45,
             }
         },
         "height": "400px"
@@ -53,13 +74,44 @@ export default function GesamtkostenDonut(props) {
             <div className="bx--grid bx--grid--full-width">
                 <div className="bx--row">
                     <div className="bx--col-lg-5">
-                        <DonutChart data={DataGesamt} options={{...Options,title: "Gesamt"}} />
+
+                        <DonutChart data={Produktionskosten} options={{...Options, 
+                            title: "Produktionskosten",
+                            donut: {
+                                "center": {
+                                    "label": "€/KWh",
+                                    "numberFormatter": (number) => Math.round(number/GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000)/100   
+                                }
+                            }
+                        }} />
+
                     </div>
                     <div className="bx--col-lg-5">
-                        <DonutChart data={Data} options={{...Options,title: "Produktion"}} />
+
+                        <DonutChart data={OverheadKosten} options={{ ...Options, 
+                            title: "Overheadkosten (Platzhalter)",
+                            donut: {
+                                "center": {
+                                    "label": "€/KW",
+                                    "numberFormatter": (number) => Math.round(number/GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000)/100                    
+                                }
+                            }
+                            }} />
+
                     </div>
                     <div className="bx--col-lg-5">
-                        <DonutChart data={Data} options={{...Options,title: "Overhead"}} />
+
+                        <DonutChart data={Gesamtkosten} options={{...Options, 
+                            title: "Gesamtkosten",
+                            donut: {
+                                "center": {
+                                    "label": "€/KWh",
+                                    "numberFormatter": (number) => Math.round(number/GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000)/100  
+                                }
+                            }
+
+                        }} />
+
                     </div>
                 </div>
             </div>
