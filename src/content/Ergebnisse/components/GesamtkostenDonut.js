@@ -10,14 +10,19 @@ export default function GesamtkostenDonut(props) {
     var Produktionskosten_gesamt = 0 //die gesamten Produktionskosten
     const Overheadkosten = []
     var Overheadkosten_gesamt = 0
+    const Materialkosten = []
 
-
-
+    Object.keys(props.data_kosten).map(item => 
+        Materialkosten.push({
+            "group": item,
+            "value": props.data_kosten[item]
+        }))
+    
     Kostenfaktoren.map(Kostenfaktor => //durch die Kostenfaktoren gehen
         data.map(item => item.index === Kostenfaktor && //die Zeile aus den Ergebnissen für den Kostenfaktor
             Produktionskosten.push(
                 {
-                    "group": item.index, 
+                    "group": item.index,
                     "value": (Object.keys(item).map(key => key !== "Einheit" && key !== "index" && item[key]).reduce((result, number) => result + number))
                 })
         ))
@@ -73,14 +78,30 @@ export default function GesamtkostenDonut(props) {
         <>
             <div className="bx--grid bx--grid--full-width">
                 <div className="bx--row">
+                <div className="bx--col-lg-5">
+
+<DonutChart data={Gesamtkosten} options={{
+    ...Options,
+    title: "Gesamtkosten",
+    donut: {
+        "center": {
+            "label": "€/KWh",
+            "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
+        }
+    }
+
+}} />
+
+</div>
                     <div className="bx--col-lg-5">
 
-                        <DonutChart data={Produktionskosten} options={{...Options, 
+                        <DonutChart data={Produktionskosten} options={{
+                            ...Options,
                             title: "Produktionskosten",
                             donut: {
                                 "center": {
                                     "label": "€/KWh",
-                                    "numberFormatter": (number) => Math.round(number/GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000)/100   
+                                    "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
                                 }
                             }
                         }} />
@@ -88,25 +109,29 @@ export default function GesamtkostenDonut(props) {
                     </div>
                     <div className="bx--col-lg-5">
 
-                        <DonutChart data={OverheadKosten} options={{ ...Options, 
+                        <DonutChart data={OverheadKosten} options={{
+                            ...Options,
                             title: "Overheadkosten (Platzhalter)",
                             donut: {
                                 "center": {
                                     "label": "€/KW",
-                                    "numberFormatter": (number) => Math.round(number/GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000)/100                    
+                                    "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
                                 }
                             }
-                            }} />
+                        }} />
 
                     </div>
+
+
                     <div className="bx--col-lg-5">
 
-                        <DonutChart data={Gesamtkosten} options={{...Options, 
-                            title: "Gesamtkosten",
+                        <DonutChart data={Materialkosten} options={{
+                            ...Options,
+                            title: "Materialkosten",
                             donut: {
                                 "center": {
                                     "label": "€/KWh",
-                                    "numberFormatter": (number) => Math.round(number/GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000)/100  
+                                    "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
                                 }
                             }
 

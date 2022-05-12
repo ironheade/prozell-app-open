@@ -9,6 +9,9 @@ import { ergebnisTabelle_change } from '../../actions'
 import SimpleTable from './components/simple_table';
 import SimpleTableNested from './components/simple_table_nested'
 import SimpleTableProzessroute from './components/simple_table_prozessroute'
+import DownloadButton from './components/DownloadButton';
+
+
 
 export default function Ergebnisse() {
   const dispatch = useDispatch();
@@ -30,6 +33,8 @@ export default function Ergebnisse() {
 
   //const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
   const ergebnisTabelle = useSelector(state => state.ergebnisTabelle)
+  const [materialkosten,setMaterialkosten] = useState(null)
+  const [materialverlust, setMaterialverlust] = useState(null)
   const [hintergrundDatenHidden, setHintergrundDatenHidden] = useState(true)
 
   //schickt alle Informationen an das Backend und ruft ein Ergebnis ab
@@ -52,6 +57,8 @@ export default function Ergebnisse() {
       .then(res => res.json())
       .then(data => {
         dispatch(ergebnisTabelle_change(data.Ergebnisse));
+        setMaterialkosten(JSON.parse(data.Materialkosten));
+        setMaterialverlust(JSON.parse(data.Rückgewinnung))
       });
     setHintergrundDatenHidden(false)
   }
@@ -99,23 +106,31 @@ export default function Ergebnisse() {
       }
 
 
+
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
-      {ergebnisTabelle !== null &&
+      {ergebnisTabelle !== null && materialkosten !== null &&
         <>
 
           <h1>Produktionskosten</h1>
           <p style={{ "backgroundColor": "#feedf4", "width": "200px" }}> Trockenraum rot markiert</p>
           <MyStackedBarChart data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} Prozessroute={create_ProzessschrittArray()} />
+          <div style={{
+            display:"flex", 
+        flexDirection:"row"
+        }}>
+          <h3>Ergebnistabelle</h3>
+          <DownloadButton name="Ergebnistabelle" data={ergebnisTabelle}/>
+          </div>
           <DfTable data={ergebnisTabelle} />
 
           <div style={{ "height": "100px" }}></div>
-          <h1>Material/Kostenfluss (Platzhalter)</h1>
-          <Alluvial />
+          <h1>Kostenfluss</h1>
+          <Alluvial data = {materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung}/>
           <div style={{ "height": "100px" }}></div>
           <h1>Gesamtkosten Jahresproduktion</h1>
-          <GesamtkostenDonut data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} />
+          <GesamtkostenDonut data_kosten={materialkosten} data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} />
 
         </>
       }
@@ -124,57 +139,48 @@ export default function Ergebnisse() {
           <div id="ErgebnisAccordion">
 
             <div className='subdiv'>
-              <h1>Zellergebnisse</h1>
               {Zellergebnisse !== null &&
-                <SimpleTable data={Zellergebnisse} />}
+                <SimpleTable name="Zellergebnisse" data={Zellergebnisse} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Prozessroute</h1>
               {prozessRoute !== null &&
                 <SimpleTableProzessroute data={prozessRoute} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Zellchemie</h1>
               {zellchemie !== null &&
-                <SimpleTable data={zellchemie} />}
+                <SimpleTable name="Zellchemie" data={zellchemie} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Prozessdetails</h1>
               {prozessschrittDaten !== null &&
-                <SimpleTableNested data={prozessschrittDaten} />}
+                <SimpleTableNested name="Prozessdetails" data={prozessschrittDaten} />}
             </div>
 
-            <div className='subdiv'>
-              <h1>Materialinfos</h1>
+            <div className='subdiv'> 
               {materialInfos !== null &&
-                <SimpleTableNested data={materialInfos} />}
+                <SimpleTableNested name="Materialinfos" data={materialInfos} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Ökonomische Parameter</h1>
               {oekonomischeParameter !== null &&
-                <SimpleTable data={oekonomischeParameter} />}
+                <SimpleTable name="Ökonomische Parameter" data={oekonomischeParameter} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Mitarbeiter und Logistik</h1>
               {mitarbeiterLogistik !== null &&
-                <SimpleTable data={mitarbeiterLogistik} />}
+                <SimpleTable name="Mitarbeiter und Logistik" data={mitarbeiterLogistik} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Gebäude</h1>
               {gebaeude !== null &&
-                <SimpleTable data={gebaeude} />}
+                <SimpleTable name="Gebäude" data={gebaeude} />}
             </div>
 
             <div className='subdiv'>
-              <h1>Rückgewinnung</h1>
               {rueckgewinnung !== null &&
-                <SimpleTable data={rueckgewinnung} />}
+                <SimpleTable name="Rückgewinnung" data={rueckgewinnung} />}
             </div>
 
           </div>

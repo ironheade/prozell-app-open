@@ -8,6 +8,7 @@ import json
 import Zellberechnung
 import Kostenberechnung
 from flask_cors import CORS
+import locale
 
 
 app = Flask(__name__)
@@ -20,7 +21,10 @@ def greetings():
 
 @app.route('/time')
 def get_current_time():
-    return {'time': time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())}
+    t0 = time.time()
+    t1 = t0 + 60
+    locale.setlocale(locale.LC_TIME, "de_DE") # swedish
+    return {'time': time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(t1))}
 
 @app.route('/Zellformate')
 def get_Zellformate():
@@ -108,8 +112,15 @@ def get_ergebnisse():
         Mitarbeiter_Logistik,
         Gebaeude
     )
-    Ergebnisse = Ergebnisse.to_json(orient="records")
-    return {'Ergebnisse': Ergebnisse}
+    Materialkosten = json.dumps(Ergebnisse[1]) #dict to json
+    Rückgewinnung = json.dumps(Ergebnisse[2]) #dict to json 
+    Ergebnisse = Ergebnisse[0].to_json(orient="records") #df to json
+
+    print(Rückgewinnung)
+    return {'Ergebnisse': Ergebnisse,
+            'Materialkosten':Materialkosten,
+            'Rückgewinnung':Rückgewinnung
+            }
 
 @app.route('/Zellergebnisse', methods=['POST'])
 def get_zellergebnisse():

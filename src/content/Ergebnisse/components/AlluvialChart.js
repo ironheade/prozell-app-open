@@ -2,186 +2,80 @@ import { AlluvialChart } from "@carbon/charts-react";
 import React from 'react'
 
 
-export default function Alluvial() {
+export default function Alluvial(props) {
 
-    const DataMaterial = [
+    const nodes =  [
         {
-            "source": "Trägerfolie Kathode",
-            "target": "Zelle",
-            "value": 28
+            "name": "Zelle",
+            "category": "Ziel"
         },
         {
-            "source": "Trägerfolie Kathode",
-            "target": "Rückgewinnung",
-            "value": 4
+            "name": "Rückgewinnung",
+            "category": "Ziel"
         },
         {
-            "source": "Trägerfolie Kathode",
-            "target": "Verlust",
-            "value": 3
-        },
-        {
-            "source": "Aktivmaterial Anode",
-            "target": "Zelle",
-            "value": 38
-        },
-        {
-            "source": "Aktivmaterial Anode",
-            "target": "Rückgewinnung",
-            "value": 5
-        },
-        {
-            "source": "Aktivmaterial Anode",
-            "target": "Verlust",
-            "value": 2
-        },
-        {
-            "source": "Aktivmaterial Kathode",
-            "target": "Zelle",
-            "value": 23
-        },
-        {
-            "source": "Aktivmaterial Kathode",
-            "target": "Rückgewinnung",
-            "value": 9
-        },
-        {
-            "source": "Aktivmaterial Kathode",
-            "target": "Verlust",
-            "value": 1
-        },
-        {
-            "source": "Trägerfolie Anode",
-            "target": "Zelle",
-            "value": 44
-        },
-        {
-            "source": "Trägerfolie Anode",
-            "target": "Rückgewinnung",
-            "value": 3
-        },
-        {
-            "source": "Trägerfolie Anode",
-            "target": "Verlust",
-            "value": 3
-        },
-        {
-            "source": "Elektrolyt",
-            "target": "Zelle",
-            "value": 14
-        },
-        {
-            "source": "Elektrolyt",
-            "target": "Rückgewinnung",
-            "value": 1
-        },
-        {
-            "source": "Elektrolyt",
-            "target": "Verlust",
-            "value": 1
-        }
+            "name": "Verlust",
+            "category": "Ziel"
+        } 
     ]
 
-    const DataKosten = [
-        {
-            "source": "Trägerfolie Kathode",
-            "target": "Zelle",
-            "value": 18
-        },
-        {
-            "source": "Trägerfolie Kathode",
-            "target": "Rückgewinnung",
-            "value": 4
-        },
-        {
-            "source": "Trägerfolie Kathode",
-            "target": "Verlust",
-            "value": 3
-        },
-        {
-            "source": "Aktivmaterial Anode",
-            "target": "Zelle",
-            "value": 78
-        },
-        {
-            "source": "Aktivmaterial Anode",
-            "target": "Rückgewinnung",
-            "value": 5
-        },
-        {
-            "source": "Aktivmaterial Anode",
-            "target": "Verlust",
-            "value": 2
-        },
-        {
-            "source": "Aktivmaterial Kathode",
-            "target": "Zelle",
-            "value": 103
-        },
-        {
-            "source": "Aktivmaterial Kathode",
-            "target": "Rückgewinnung",
-            "value": 9
-        },
-        {
-            "source": "Aktivmaterial Kathode",
-            "target": "Verlust",
-            "value": 1
-        },
-        {
-            "source": "Trägerfolie Anode",
-            "target": "Zelle",
-            "value": 24
-        },
-        {
-            "source": "Trägerfolie Anode",
-            "target": "Rückgewinnung",
-            "value": 3
-        },
-        {
-            "source": "Trägerfolie Anode",
-            "target": "Verlust",
-            "value": 3
-        },
-        {
-            "source": "Elektrolyt",
-            "target": "Zelle",
-            "value": 14
-        },
-        {
-            "source": "Elektrolyt",
-            "target": "Rückgewinnung",
-            "value": 1
-        },
-        {
-            "source": "Elektrolyt",
-            "target": "Verlust",
-            "value": 1
-        }
-    ]
+    const rueckgewinnung = {}
+    JSON.parse(props.rueckgewinnung).map(item => rueckgewinnung[item.Beschreibung]=item.Wert)
+    const data = []
+    props.data !== null && props.data.map(item => 
+        data.push({...item,rueckgewinnung:rueckgewinnung[item.Material]})
+        )
+    const DataMaterial = []
+    data.map(item =>
+        DataMaterial.push(
+            {
+                "source": item.Material,
+                "target": "Zelle",
+                "value": Math.round(item.Zelle/item.Gesamt*props.data_kosten[item.Material])
+            },
+            {
+                "source": item.Material,
+                "target": "Rückgewinnung",
+                "value": Math.round(((item.Gesamt-item.Zelle)/item.Gesamt)*item.rueckgewinnung/100*props.data_kosten[item.Material])
+            },
+            {
+                "source": item.Material,
+                "target": "Verlust",
+                "value": Math.round(((item.Gesamt-item.Zelle)/item.Gesamt)*(1-item.rueckgewinnung/100)*props.data_kosten[item.Material])
+            }
+
+        ) &
+        nodes.push({"name":item.Material,"category": "Ausgangsmaterial"})
+        )
 
 
     const Options = {
         "alluvial": {
-            "nodes": [
+            "nodes": 
+            
+            [
                 {
-                    "name": "Trägerfolie Kathode",
+                    "name": "Anodenbeschichtung",
                     "category": "Ausgangsmaterial"
                 },
                 {
-                    "name": "Aktivmaterial Anode",
+                    "name": "Kathodenbeschichtung",
                     "category": "Ausgangsmaterial"
                 },
                 {
-                    "name": "Aktivmaterial Kathode",
+                    "name": "Anodenkollektor",
+                    "category": "Ausgangsmaterial"
+                },
+                {
+                    "name": "Kathodenkollektor",
+                    "category": "Ausgangsmaterial"
+                },
+                {
+                    "name": "Separator",
                     "category": "Ausgangsmaterial"
                 },
                 {
                     "name": "Elektrolyt",
-                    "category": "Ausgangsmaterial"
-                },
-                {
-                    "name": "Trägerfolie Anode",
                     "category": "Ausgangsmaterial"
                 },
                 {
@@ -197,9 +91,13 @@ export default function Alluvial() {
                     "category": "Ziel"
                 }
             ]
+            
+
         },
         "height": "600px",
+/*
         "color": {
+
             "scale": {
                 "Aktivmaterial Anode": "#da1e28",
                 "Trägerfolie Kathode": "#b28600",
@@ -211,10 +109,13 @@ export default function Alluvial() {
                 "Verlust": "#009d9a",
 
             },
+            
             "gradient": {
                 "enabled": true
             }
         }
+        */
+
     }
 
 
@@ -222,22 +123,26 @@ export default function Alluvial() {
       
     return (
         <div className="bx--grid bx--grid--full-width">
+            {DataMaterial !== [] &&
             <div className="bx--row">
-                <div className="bx--col-lg-8">
+                <div className="bx--col-lg-16">
                     <AlluvialChart
                         data={DataMaterial}
-                        options={{ ...Options, title: "Materialfluss" }}
+                        options={{ ...Options, title: "Kostenfluss in €" }}
                     />
 
                 </div>
+                {/* 
                 <div className="bx--col-lg-8">
                 <AlluvialChart
-                        data={DataKosten}
+                        data={DataMaterial2}
                         options={{ ...Options, title: "Kostenfluss" }}
                     />
 
                 </div>
+                */}
             </div>
+}
         </div>
     )
 }

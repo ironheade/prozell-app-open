@@ -211,7 +211,23 @@ def Kostenberechnung(Zellergebnisse_raw,
                                ]
     
     #____________________________________
+    #Materialrückgewinnung
+    #Zelle: Das Material, welches am Ende in der Zelle landet
+    #Gesamt: Das die Menge des Materials, die zum Prozess zugeeführt wird 
+    rueckgewinnung_dict_temp = [{"Material":"Anodenbeschichtung","Zelle":Anodenbeschichtung_menge,"Gesamt":""},
+                           {"Material":"Kathodenbeschichtung","Zelle":Kathodenbeschichtung_menge,"Gesamt":""},
+                           {"Material":"Anodenkollektor","Zelle":Anodenkollektor_menge,"Gesamt":""},
+                           {"Material":"Kathodenkollektor","Zelle":Kathodenkollektor_menge,"Gesamt":""},
+                           {"Material":"Separator","Zelle":Separator_menge,"Gesamt":""},
+                           {"Material":"Elektrolyt","Zelle":Elektrolyt_menge,"Gesamt":""},
+                           ]
+    rueckgewinnung_dict = []
+    
+    #____________________________________
     #Retrograde Materialflusskalkulation
+    
+    
+    print(schritt_dictionary)
     
     for schritt in reversed(Prozessroute_array_raw):        #Prozessschritte in umgekehrter Reihenfolge durchgehen
         Prozess_name = schritt                          #Kopie des Schritts zur Umwandlung in Funktionsname, ersetzen aller Sonderzeichen durch "_"
@@ -230,6 +246,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     #Abschluss Retrograde Materialflusskalkulation
     
     print(schritt_dictionary)
+    
     
     
     
@@ -256,6 +273,8 @@ def Kostenberechnung(Zellergebnisse_raw,
     Zinssatz_Kapitalmarkt = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"] #[%]
     Nutzungsdauer = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"] #[%]
     
+    
+    Materialkosten_dict = {}
     for schritt in Prozessroute_array_raw:
         
         #Materialkosten
@@ -263,7 +282,18 @@ def Kostenberechnung(Zellergebnisse_raw,
             liste = df[schritt]["Neue Materialien"].split(";")
             kosten = 0
             for material in liste:
+                cost = df[schritt][material]*Materialkosten[material+"_kosten"] 
                 kosten += df[schritt][material]*Materialkosten[material+"_kosten"] 
+                Materialkosten_dict.update({material:round(cost,2)})
+                
+                for rueck_material in rueckgewinnung_dict_temp:
+                    if material == rueck_material["Material"]:
+                        rueck_material["Gesamt"]=df[schritt][material]
+                        rueckgewinnung_dict.append(rueck_material)
+                        #print(material)
+                        #print(df[schritt][material])
+                        #print(rueckgewinnung_dict[rueckgewinnung_dict.index(rueck_material)])
+                        
             df[schritt]["Materialkosten"]=kosten
         else:
             df[schritt]["Materialkosten"]=0
@@ -343,6 +373,8 @@ def Kostenberechnung(Zellergebnisse_raw,
     #____________________________________
     #Umformen des df
     
+    print(Materialkosten_dict)
+    
     #Einheiten einfügen
     df["Einheit"] = df.index.to_series().map(schritt_dictionary_einheiten)
     #Index wieder als Spalte einfügen
@@ -352,5 +384,5 @@ def Kostenberechnung(Zellergebnisse_raw,
     #Reihenfolge im df drehen
     df = df.iloc[:, ::-1] 
     
-    return(df)
+    return(df,Materialkosten_dict, rueckgewinnung_dict)
 #Kostenberechnung()

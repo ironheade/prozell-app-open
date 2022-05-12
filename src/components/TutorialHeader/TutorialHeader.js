@@ -23,6 +23,7 @@ const TutorialHeader = () => (
         <SkipToContent />
         <HeaderMenuButton
           aria-label="Open menu"
+          isCollapsible
           onClick={onClickSideNavExpand}
           isActive={isSideNavExpanded}
         />
@@ -46,7 +47,9 @@ const TutorialHeader = () => (
         <SideNav
           aria-label="Side navigation"
           expanded={isSideNavExpanded}
-          isPersistent={false}>
+
+          isPersistent={false}
+          >
           <SideNavItems>
             <HeaderSideNavItems>
               <HeaderMenuItem element={Link} to="/">

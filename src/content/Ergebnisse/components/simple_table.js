@@ -1,4 +1,5 @@
 import React from "react";
+import DownloadButton from "./DownloadButton";
 
 export default function SimpleTable(props){
     const headers = Object.keys(JSON.parse(props.data)[0])
@@ -6,6 +7,13 @@ export default function SimpleTable(props){
     return(
 
         <>
+        <div style={{
+            display:"flex", 
+        flexDirection:"row",
+        //alignItems:"center"
+        }}>
+        <h3 >{props.name}</h3><DownloadButton  name={props.name} data={props.data}/>
+        </div>
         <table>
         {/*<table id="simpleTable"> */}
             <tbody>

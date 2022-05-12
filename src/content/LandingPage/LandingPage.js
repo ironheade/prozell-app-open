@@ -7,12 +7,10 @@ import {
   Tab,
 } from 'carbon-components-react';
 import { InfoSection, InfoCard } from '../../components/Info';
-import PersonFavorite32 from '@carbon/icons-react/lib/person--favorite/32';
-import Application32 from '@carbon/icons-react/lib/application/32';
-import  tabelle_abrufen  from '../../functions/tabelle_abrufen'
-import { Apple32 } from '@carbon/icons-react';
 import Anleitung from './Anleitung';
 import { useSelector } from "react-redux";
+import DownloadButton from '../Ergebnisse/components/DownloadButton';
+import { BatteryCharging32, ChartNetwork32,  Education32 } from '@carbon/icons-react';
 
 const props = {
   tabs: {
@@ -30,8 +28,6 @@ const LandingPage = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [chosenTab, setChosenTab] = useState(0)
   const quellen = useSelector(state => state.quellen)
-
-  console.log(quellen)
 
   useEffect(() => {
     fetch('/time')
@@ -116,7 +112,7 @@ const LandingPage = () => {
                     <h2 className="landing-page__subheading">
                       Was ist der ProZell Kostenrechner?
                     </h2>
-                    <p>Last refresh: {currentTime}</p>
+                    <p>Seite aufgerufen: {currentTime}</p>
                     <p className="landing-page__p">
                       Der ProZell Kostenrechner ist die flexible Umsetzung eines
                       Modells zur Bepreisung der einzelnen Prozesschritte einer
@@ -179,18 +175,25 @@ const LandingPage = () => {
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
                 <div className="bx--row landing-page__tab-content">
                   <div className="bx--col-lg-16">
-                    <h3>Quellen</h3>
-                  <table style={{borderSpacing:"10px",borderCollapse:"separate"}}>
-                    <tbody>
-                    {quellen !== null && JSON.parse(quellen).map(item =>
-                      <tr key={item.id}>
-                        <td>[{item.Nachname}, {item.Jahr}]</td>
-                        <td>      </td>
-                        <td>{item.Nachname}, {item.Vorname} ({item.Jahr}), "{item.Titel}", {item.Verlag}, {item.doi !== null && item.doi} {item.ISBN!== null && item.ISBN}</td>
-                      </tr>
-                      )}
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "row",
+
+                    }}>
+                      <h3>Quellen</h3>
+                      <DownloadButton name="Quellen" data={quellen} />
+                    </div>
+                    <table style={{ borderSpacing: "10px", borderCollapse: "separate" }}>
+                      <tbody>
+                        {quellen !== null && JSON.parse(quellen).map(item =>
+                          <tr key={item.id}>
+                            <td>[{item.Nachname}, {item.Jahr}]</td>
+                            <td>      </td>
+                            <td>{item.Nachname}, {item.Vorname} ({item.Jahr}), "{item.Titel}", {item.Verlag}{item.doi !== null && ", " + item.doi}{item.ISBN !== null && ", " + item.ISBN}</td>
+                          </tr>
+                        )}
                       </tbody>
-                  </table>
+                    </table>
                   </div>
 
                 </div>
@@ -199,21 +202,30 @@ const LandingPage = () => {
           </Tabs>
         </div>
       </div>
-      <InfoSection heading="Principles" className="landing-page__r3">
+      <InfoSection heading="Institute" className="landing-page__r3">
         <InfoCard
-          heading="Carbon is Open"
-          body="It's a distributed effort, guided by the principles of the open-source movement. Carbon's users are also it's makers, and everyone is encouraged to contribute."
-          icon={<PersonFavorite32 />}
+          heading="Instiut für Partikeltechnik IPAT"
+          body={
+            <div><p style={{ fontSize: "10pt" }}>Wir sind an Themen der Grundlagenforschung und -lehre genauso wie an unterschiedlichsten Anwendungsfeldern partikulärer Systeme interessiert – wobei die Gebiete Mobilität, Lebenswissenschaften und Materialien im Fokus stehen.</p>
+              <a href="https://www.tu-braunschweig.de/ipat" target="_blank" style={{ color: "black" }}>IPAT</a></div>
+          }
+          icon={<Education32 />}
         />
         <InfoCard
-          heading="Carbon is Modular"
-          body="Carbon's modularity ensures maximum flexibility in execution. It's components are designed to work seamlessly with each other, in whichever combination suits the needs of the user."
-          icon={<Application32 />}
+          heading="Battery LabFactory Braunschweig BLB"
+          body={
+            <div><p style={{ fontSize: "10pt" }}>Die Battery LabFactory Braunschweig (BLB) ist ein Forschungszentrum der TU Braunschweig. Das Forschungsspektrum umfasst den gesamten Wertschöpfungskreislauf von der Material- und Elektrodenherstellung über die Zellfertigung bis hin zur Systemintegration und zum Recycling zur Schließung des Materialkreislaufes.</p>
+              <a href="https://www.tu-braunschweig.de/blb" target="_blank" style={{ color: "black" }}>BLB</a></div>
+          }
+          icon={<BatteryCharging32 />}
         />
         <InfoCard
-          heading="Carbon is Consistent"
-          body="Based on the comprehensive IBM Design Language, every element and component of Carbon was designed from the ground up to work elegantly together to ensure consistent, cohesive user experiences."
-          icon={<Apple32 />}
+          heading="Kompetenzcluster ProZell"
+          body={
+            <div><p style={{ fontSize: "10pt" }}>Das Ziel des Kompetenzclusters zur Batteriezellproduktion ist es, den Produktionsprozess von Batteriezellen und dessen Einfluss auf die Zelleigenschaften und die Produktentstehungskosten zu erforschen und zu verbessern</p>
+              <a href="https://prozell-cluster.de/" target="_blank" style={{ color: "black" }}>ProZell Cluster</a></div>
+          }
+          icon={<ChartNetwork32 />}
         />
       </InfoSection>
     </div>
