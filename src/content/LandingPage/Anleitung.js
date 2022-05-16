@@ -22,7 +22,7 @@ export default function Anleitung() {
   }
 
   function Img(props) {
-    return <img src={props.source} style={{ height: 200, marginTop: 35 }} />;
+    return <img src={props.source} alt={props.alt} style={{ height: 200, marginTop: 35 }} />;
   }
 
   const Legende = [
@@ -71,12 +71,12 @@ export default function Anleitung() {
         </p>
       </div>
       <div className="bx--col-lg-5 centerbox">
-        <Img source={Oberfläche} />
+        <Img alt="Oberfläche" source={Oberfläche} />
       </div>
       <Spacer />
 
       <div className="bx--col-lg-5 centerbox">
-        <Img source={searching} />
+        <Img alt="searching" source={searching} />
       </div>
 
       <div className="bx--col-lg-9">
@@ -115,12 +115,12 @@ export default function Anleitung() {
         </p>
       </div>
       <div className="bx--col-lg-5 centerbox">
-        <Img source={services} />
+        <Img alt="services" source={services} />
       </div>
       <Spacer />
 
       <div className="bx--col-lg-5 centerbox">
-        <Img source={sharing} />
+        <Img alt="sharing" source={sharing} />
       </div>
 
       <div className="bx--col-lg-9">
@@ -145,22 +145,22 @@ export default function Anleitung() {
         <div className="bx--row">
 
           <div className="bx--col-lg-8">
-            <img src={wickel_hardcase} style={{ height: 500, marginTop: 35 }} />
+            <img alt="wickel_hardcase" src={wickel_hardcase} style={{ height: 500, marginTop: 35 }} />
             <figcaption>Hardcase gewickelt</figcaption>
           </div>
 
           <div className="bx--col-lg-8">
-            <img src={rundzelle} style={{ height: 500, marginTop: 35 }} />
+            <img alt="rundzelle" src={rundzelle} style={{ height: 500, marginTop: 35 }} />
             <figcaption>Rundzelle</figcaption>
           </div>
 
           <div className="bx--col-lg-8">
-            <img src={stapel_hardcase} style={{ height: 400, marginTop: 35 }} />
+            <img alt="stapel_hardcase" src={stapel_hardcase} style={{ height: 400, marginTop: 35 }} />
             <figcaption>Hardcase gestapelt</figcaption>
           </div>
 
           <div className="bx--col-lg-8">
-            <img src={stapel_pouch} style={{ height: 300, marginTop: 35 }} />
+            <img alt="stapel_pouch" src={stapel_pouch} style={{ height: 300, marginTop: 35 }} />
             <figcaption>Pouchzelle gestapelt</figcaption>
           </div>
 
@@ -172,12 +172,12 @@ export default function Anleitung() {
         <div className="bx--row">
 
           <div className="bx--col-lg-8">
-            <img src={coil_stapel} style={{ height: 300, marginTop: 35 }} />
+            <img alt="coil_stapel" src={coil_stapel} style={{ height: 300, marginTop: 35 }} />
             <figcaption>Coil Wickelzelle</figcaption>
           </div>
 
           <div className="bx--col-lg-8">
-            <img src={coil_wickel} style={{ height: 260, marginTop: 35 }} />
+            <img alt="coil_wickel" src={coil_wickel} style={{ height: 260, marginTop: 35 }} />
             <figcaption>Coil Stapelzelle</figcaption>
           </div>
 
@@ -189,12 +189,12 @@ export default function Anleitung() {
         <div className="bx--row">
 
           <div className="bx--col-lg-8">
-            <img src={whe} style={{ height: 260, marginTop: 35 }} />
+            <img alt="whe" src={whe} style={{ height: 260, marginTop: 35 }} />
             <figcaption>Wiederholeinheit</figcaption>
           </div>
 
           <div className="bx--col-lg-8">
-            <img src={abstand} style={{ height: 300, marginTop: 35 }} />
+            <img alt="abstand" src={abstand} style={{ height: 300, marginTop: 35 }} />
             <figcaption>Abstände Wiederholeinheit</figcaption>
           </div>
 
@@ -206,12 +206,12 @@ export default function Anleitung() {
         <div className="bx--row">
 
           <div className="bx--col-lg-6">
-            <img src={sheet_stapel} style={{ height: 300, marginTop: 35 }} />
+            <img alt="sheet_stapel" src={sheet_stapel} style={{ height: 300, marginTop: 35 }} />
             <figcaption>Blatt Stapelzelle</figcaption>
           </div>
 
           <div className="bx--col-lg-8">
-            <img src={sheet_wickel} style={{ height: 190, marginTop: 35 }} />
+            <img alt="sheet_wickel" src={sheet_wickel} style={{ height: 190, marginTop: 35 }} />
             <figcaption>Blatt Wickelzelle</figcaption>
           </div>
 

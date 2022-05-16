@@ -93,6 +93,7 @@ export default function Zellchemie({ click }) {
   //Wichtige Funktion! Die Funtkion arbeitet immer dann wenn Zellinfo sich ändert -> kann doppelten API Abruf durchführen
   //Funktion wird immer dann durchgeführt wenn such {Zellinfo} ändert (ausser beim ersten mal, dafür ist didMount da)
   //wenn Zellinfo = null muss auch didMount = false, verhindert das initiale rendern
+  
   const didMount = useRef(false);
   useEffect(() => {
     didMount.current ? fill_materials() : (didMount.current = true);

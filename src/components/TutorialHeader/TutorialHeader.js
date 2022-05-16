@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Header,
   HeaderContainer,
@@ -12,9 +12,11 @@ import {
   SideNav,
   SideNavItems,
   HeaderSideNavItems,
+  Button,
 } from 'carbon-components-react';
-import { Basketball24, Apple24, UserAvatar24 } from '@carbon/icons-react';
+import {UserAvatar24 } from '@carbon/icons-react';
 import { Link } from 'react-router-dom';
+
 
 const TutorialHeader = () => (
   <HeaderContainer
@@ -71,15 +73,11 @@ const TutorialHeader = () => (
           </SideNavItems>
         </SideNav>
         <HeaderGlobalBar>
-          <HeaderGlobalAction aria-label="Notifications">
-            <Apple24 />
-          </HeaderGlobalAction>
-          <HeaderGlobalAction aria-label="User Avatar">
+
+          <HeaderGlobalAction aria-label="User Avatar" onClick={()=> console.log("bla")}>
             <UserAvatar24 />
           </HeaderGlobalAction>
-          <HeaderGlobalAction aria-label="App Switcher">
-            <Basketball24 />
-          </HeaderGlobalAction>
+
         </HeaderGlobalBar>
       </Header>
     )}

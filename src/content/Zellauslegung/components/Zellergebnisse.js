@@ -10,8 +10,6 @@ import {
 } from 'carbon-components-react';
 import { DonutChart } from '@carbon/charts-react';
 
-import { CSVLink } from 'react-csv';
-
 export default function Zellergebnisse() {
   const Zellergebnisse = useSelector(state => state.zellergebnisse);
 
@@ -31,17 +29,6 @@ export default function Zellergebnisse() {
       .map(item =>
         donutData.push({ group: item.Beschreibung, value: item.Wert })
       );
-
-  const headers = [
-    { label: 'Beschreibung', key: 'Beschreibung' },
-    { label: 'Wert', key: 'Wert' },
-    { label: 'Einheit', key: 'Einheit' },
-  ];
-
-  const csvReport = {
-    headers: headers,
-    filename: 'Clue_Mediator_Report.csv',
-  };
 
   var costDonutData = [];
   var excludeListCost = [

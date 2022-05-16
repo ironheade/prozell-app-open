@@ -4,13 +4,14 @@ import {
   BreadcrumbItem,
   Button,
   Tabs,
-  Tab,
+  Tab
 } from 'carbon-components-react';
 import { InfoSection, InfoCard } from '../../components/Info';
 import Anleitung from './Anleitung';
 import { useSelector } from "react-redux";
 import DownloadButton from '../Ergebnisse/components/DownloadButton';
-import { BatteryCharging32, ChartNetwork32,  Education32 } from '@carbon/icons-react';
+import { BatteryCharging32, ChartNetwork32, Education32 } from '@carbon/icons-react';
+import NutzerGenerator from './Nutzer_generator';
 
 const props = {
   tabs: {
@@ -90,6 +91,7 @@ const LandingPage = () => {
     }
   ]
 
+
   return (
     <div className="bx--grid bx--grid--full-width landing-page">
       <div className="bx--row __banner">
@@ -120,7 +122,13 @@ const LandingPage = () => {
                       Prozessschritte und zur weiteren Optimierung der
                       Prozessroute.
                     </p>
+                    
+
+
+
                     <Button onClick={() => setChosenTab(1)}>Anleitung</Button>
+                    <NutzerGenerator/>
+
                   </div>
                   <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
                     <img
@@ -206,24 +214,24 @@ const LandingPage = () => {
         <InfoCard
           heading="Instiut für Partikeltechnik IPAT"
           body={
-            <div><p style={{ fontSize: "10pt" }}>Wir sind an Themen der Grundlagenforschung und -lehre genauso wie an unterschiedlichsten Anwendungsfeldern partikulärer Systeme interessiert – wobei die Gebiete Mobilität, Lebenswissenschaften und Materialien im Fokus stehen.</p>
-              <a href="https://www.tu-braunschweig.de/ipat" target="_blank" style={{ color: "black" }}>IPAT</a></div>
+            <><span style={{ fontSize: "10pt" }}>Wir sind an Themen der Grundlagenforschung und -lehre genauso wie an unterschiedlichsten Anwendungsfeldern partikulärer Systeme interessiert – wobei die Gebiete Mobilität, Lebenswissenschaften und Materialien im Fokus stehen.</span><br />
+              <a rel="noreferrer" href="https://www.tu-braunschweig.de/ipat" target="_blank" style={{ color: "black" }}>IPAT</a></>
           }
           icon={<Education32 />}
         />
         <InfoCard
           heading="Battery LabFactory Braunschweig BLB"
           body={
-            <div><p style={{ fontSize: "10pt" }}>Die Battery LabFactory Braunschweig (BLB) ist ein Forschungszentrum der TU Braunschweig. Das Forschungsspektrum umfasst den gesamten Wertschöpfungskreislauf von der Material- und Elektrodenherstellung über die Zellfertigung bis hin zur Systemintegration und zum Recycling zur Schließung des Materialkreislaufes.</p>
-              <a href="https://www.tu-braunschweig.de/blb" target="_blank" style={{ color: "black" }}>BLB</a></div>
+            <><span style={{ fontSize: "10pt" }}>Die Battery LabFactory Braunschweig (BLB) ist ein Forschungszentrum der TU Braunschweig. Das Forschungsspektrum umfasst den gesamten Wertschöpfungskreislauf von der Material- und Elektrodenherstellung über die Zellfertigung bis hin zur Systemintegration und zum Recycling zur Schließung des Materialkreislaufes.</span><br />
+              <a rel="noreferrer" href="https://www.tu-braunschweig.de/blb" target="_blank" style={{ color: "black" }}>BLB</a></>
           }
           icon={<BatteryCharging32 />}
         />
         <InfoCard
           heading="Kompetenzcluster ProZell"
           body={
-            <div><p style={{ fontSize: "10pt" }}>Das Ziel des Kompetenzclusters zur Batteriezellproduktion ist es, den Produktionsprozess von Batteriezellen und dessen Einfluss auf die Zelleigenschaften und die Produktentstehungskosten zu erforschen und zu verbessern</p>
-              <a href="https://prozell-cluster.de/" target="_blank" style={{ color: "black" }}>ProZell Cluster</a></div>
+            <><span style={{ fontSize: "10pt" }}>Das Ziel des Kompetenzclusters zur Batteriezellproduktion ist es, den Produktionsprozess von Batteriezellen und dessen Einfluss auf die Zelleigenschaften und die Produktentstehungskosten zu erforschen und zu verbessern.</span><br />
+              <a rel="noreferrer" href="https://prozell-cluster.de/" target="_blank" style={{ color: "black" }}>ProZell Cluster</a></>
           }
           icon={<ChartNetwork32 />}
         />

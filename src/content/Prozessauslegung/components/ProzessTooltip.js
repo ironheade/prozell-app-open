@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Tooltip } from 'carbon-components-react';
 
 export default function ProzessTooltip(props) {
@@ -220,7 +220,7 @@ export default function ProzessTooltip(props) {
                         <p>{item.text}</p>
                         <br />
                         {item.quelle !== null &&
-                            <a style={{ color: "white" }} href={item.quelle} target="_blank">mehr erfahren</a>}
+                            <a rel="noreferrer" style={{ color: "white" }} href={item.quelle} target="_blank">mehr erfahren</a>}
 
                     </Tooltip>
                 )}

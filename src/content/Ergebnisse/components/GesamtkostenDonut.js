@@ -8,16 +8,16 @@ export default function GesamtkostenDonut(props) {
     const Kostenfaktoren = props.Kostenfaktoren //die betrachteten Kostenfaktoren
     const Produktionskosten = [] //die Produktionskosten aufsummiert für die Kostenfaktorens
     var Produktionskosten_gesamt = 0 //die gesamten Produktionskosten
-    const Overheadkosten = []
+    //const Overheadkosten = []
     var Overheadkosten_gesamt = 0
     const Materialkosten = []
 
-    Object.keys(props.data_kosten).map(item => 
+    Object.keys(props.data_kosten).map(item =>
         Materialkosten.push({
             "group": item,
             "value": props.data_kosten[item]
         }))
-    
+
     Kostenfaktoren.map(Kostenfaktor => //durch die Kostenfaktoren gehen
         data.map(item => item.index === Kostenfaktor && //die Zeile aus den Ergebnissen für den Kostenfaktor
             Produktionskosten.push(
@@ -72,71 +72,29 @@ export default function GesamtkostenDonut(props) {
                 "numCharacter": 45,
             }
         },
-        "height": "400px"
+        "height": "400px",
+        "donut": {
+            "center": {
+                "label": "€/KWh",
+                "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
+            }
+        }
     }
     return (
         <>
             <div className="bx--grid bx--grid--full-width">
                 <div className="bx--row">
-                <div className="bx--col-lg-5">
-
-<DonutChart data={Gesamtkosten} options={{
-    ...Options,
-    title: "Gesamtkosten",
-    donut: {
-        "center": {
-            "label": "€/KWh",
-            "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
-        }
-    }
-
-}} />
-
-</div>
                     <div className="bx--col-lg-5">
-
-                        <DonutChart data={Produktionskosten} options={{
-                            ...Options,
-                            title: "Produktionskosten",
-                            donut: {
-                                "center": {
-                                    "label": "€/KWh",
-                                    "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
-                                }
-                            }
-                        }} />
-
+                        <DonutChart data={Gesamtkosten} options={{...Options, title: "Gesamtkosten"}} />
                     </div>
                     <div className="bx--col-lg-5">
-
-                        <DonutChart data={OverheadKosten} options={{
-                            ...Options,
-                            title: "Overheadkosten (Platzhalter)",
-                            donut: {
-                                "center": {
-                                    "label": "€/KW",
-                                    "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
-                                }
-                            }
-                        }} />
-
+                        <DonutChart data={Produktionskosten} options={{...Options, title: "Produktionskosten"}} />
                     </div>
-
-
                     <div className="bx--col-lg-5">
-
-                        <DonutChart data={Materialkosten} options={{
-                            ...Options,
-                            title: "Materialkosten",
-                            donut: {
-                                "center": {
-                                    "label": "€/KWh",
-                                    "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
-                                }
-                            }
-
-                        }} />
-
+                        <DonutChart data={OverheadKosten} options={{...Options, title: "Overheadkosten (Platzhalter)"}} />
+                    </div>
+                    <div className="bx--col-lg-5">
+                        <DonutChart data={Materialkosten} options={{...Options, title: "Materialkosten"}} />
                     </div>
                 </div>
             </div>

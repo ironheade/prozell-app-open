@@ -4,7 +4,7 @@ Created on Wed Feb 24 10:08:39 2021
 
 @author: bendzuck
 """
-import pandas as pd
+
 import math
 
 #____________________________________
@@ -69,10 +69,11 @@ def Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
     Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
 
-    Anz_Maschinen = Anlagen_Anode+Anlagen_Kathode
+    Anz_Maschinen = "{} Mischer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode)
 
     Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])+float(df["Wert"]["Investition einmalig"])
+    #Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])+float(df["Wert"]["Investition einmalig"])
+    Investition = Anlagen_Anode *float(df["Wert"]["Investition Anode"]) + Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+float(df["Wert"]["Investition einmalig"])
     Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
     Energiebedarf = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
    
@@ -127,14 +128,28 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_
     Meter_Anode_pro_Minute = Meter_Anode_pro_Tag/(24*60)
     Meter_Kathode_pro_Minute = Meter_Kathode_pro_Tag/(24*60)
     
-    Anlagen_Anode = math.ceil(Meter_Anode_pro_Minute/float(df["Wert"]["Beschichtungsgeschwindigkeit Anode"]))
-    Anlagen_Kathode = math.ceil(Meter_Kathode_pro_Minute/float(df["Wert"]["Beschichtungsgeschwindigkeit Kathode"]))
+    
+    Anodenkollektorfolie = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Anode"].index.tolist()[0]
+    meter_anodenkollektorfolie_pro_rolle = read_zellinfo(Anodenkollektorfolie,Materialinfos)["Wert"]["Rollenlänge"]
+    Kathodenkollektorfolie = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Kathode"].index.tolist()[0]
+    meter_kathodenkollektorfolie_pro_rolle = read_zellinfo(Kathodenkollektorfolie,Materialinfos)["Wert"]["Rollenlänge"]
+    
+    Zeit_pro_Coil_Anode = meter_anodenkollektorfolie_pro_rolle/float(df["Wert"]["Beschichtungsgeschwindigkeit Anode"])
+    Verlust_durch_Nebenzeit_Anode = float(df["Wert"]["Nebenzeiten Anode"])/Zeit_pro_Coil_Anode #[%]
+    
+    Zeit_pro_Coil_Kathode = meter_kathodenkollektorfolie_pro_rolle/float(df["Wert"]["Beschichtungsgeschwindigkeit Kathode"])
+    Verlust_durch_Nebenzeit_Kathode = float(df["Wert"]["Nebenzeiten Kathode"])/Zeit_pro_Coil_Kathode #[%]
+    
+    Anlagen_Anode = math.ceil(Meter_Anode_pro_Minute/float(df["Wert"]["Beschichtungsgeschwindigkeit Anode"])*(1+Verlust_durch_Nebenzeit_Anode))
+    Anlagen_Kathode = math.ceil(Meter_Kathode_pro_Minute/float(df["Wert"]["Beschichtungsgeschwindigkeit Kathode"])*(1+Verlust_durch_Nebenzeit_Kathode))
 
-    Anz_Maschinen = Anlagen_Anode+Anlagen_Kathode
+    Anz_Maschinen = "{} Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode)
 
     Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
 
-    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
+    Investition = Anlagen_Anode*float(df["Wert"]["Investition Anode"]) + Anlagen_Kathode*float(df["Wert"]["Investition Kathode"])
+
+    #Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
     
     Energiebedarf_Anode = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"]))*24*arbeitstage_pro_jahr #[kWh]
     Energiebedarf_Kathode = (Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr #[kWh]

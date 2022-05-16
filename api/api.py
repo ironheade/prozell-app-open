@@ -3,10 +3,10 @@ from flask import Flask, request
 import sqlite3
 import pandas as pd
 import os
-import sys
 import json
 import Zellberechnung
 import Kostenberechnung
+from password_creator import generate_users , user_check
 from flask_cors import CORS
 import locale
 
@@ -51,6 +51,30 @@ def get_tabelle():
     db.close()
         
     return {'tabelle':tabelle}
+
+@app.route('/user_check',methods=['POST'])
+def check_user():
+    Nutzer = request.get_json()["Nutzer"]
+    Passwort = request.get_json()["Passwort"]    
+    check = user_check(Nutzer,Passwort)
+    print(check)
+    if check == None:
+        return "false"
+    else:
+        return check
+    
+
+@app.route('/nutzer_generieren',methods=['POST'])
+def nutzer_generieren():
+    Anzahl = request.get_json()["Anzahl"]
+    Startzeit = request.get_json()["Startzeit"]
+    Endzeit = request.get_json()["Endzeit"]
+    StartzeitMS = request.get_json()["StartzeitMS"]
+    EndzeitMS = request.get_json()["EndzeitMS"]
+
+    Nutzer = generate_users(Anzahl,Startzeit,Endzeit,StartzeitMS,EndzeitMS)
+    #return {'Nutzer': Nutzer}
+    return Nutzer
 
 @app.route('/Zellwahl',methods=['POST'])
 def get_Zellwahl():

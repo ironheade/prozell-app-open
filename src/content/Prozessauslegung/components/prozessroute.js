@@ -10,8 +10,7 @@ import {
     Button,
     NumberInput,
     Accordion,
-    AccordionItem,
-    Tooltip
+    AccordionItem
 } from 'carbon-components-react';
 import { useSelector, useDispatch } from "react-redux";
 import {

@@ -282,8 +282,11 @@ def Kostenberechnung(Zellergebnisse_raw,
             liste = df[schritt]["Neue Materialien"].split(";")
             kosten = 0
             for material in liste:
+                print(material)
                 cost = df[schritt][material]*Materialkosten[material+"_kosten"] 
+                print(cost)
                 kosten += df[schritt][material]*Materialkosten[material+"_kosten"] 
+                print(kosten)
                 Materialkosten_dict.update({material:round(cost,2)})
                 
                 for rueck_material in rueckgewinnung_dict_temp:
