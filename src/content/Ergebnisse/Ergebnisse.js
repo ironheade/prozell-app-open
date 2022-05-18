@@ -10,6 +10,7 @@ import SimpleTable from './components/simple_table';
 import SimpleTableNested from './components/simple_table_nested'
 import SimpleTableProzessroute from './components/simple_table_prozessroute'
 import DownloadButton from './components/DownloadButton';
+import Treemap from './components/Treemap';
 
 
 
@@ -33,8 +34,13 @@ export default function Ergebnisse() {
 
   //const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
   const ergebnisTabelle = useSelector(state => state.ergebnisTabelle)
-  const [materialkosten,setMaterialkosten] = useState(null)
+  const [materialkosten, setMaterialkosten] = useState(null)
   const [materialverlust, setMaterialverlust] = useState(null)
+  const [baukosten, setBaukosten] = useState(null)
+  const [flaechenverteilung, setFlaechenverteilung] = useState(null)
+
+
+
   const [hintergrundDatenHidden, setHintergrundDatenHidden] = useState(true)
 
   //schickt alle Informationen an das Backend und ruft ein Ergebnis ab
@@ -58,7 +64,9 @@ export default function Ergebnisse() {
       .then(data => {
         dispatch(ergebnisTabelle_change(data.Ergebnisse));
         setMaterialkosten(JSON.parse(data.Materialkosten));
-        setMaterialverlust(JSON.parse(data.Rückgewinnung))
+        setMaterialverlust(JSON.parse(data.Rückgewinnung));
+        setBaukosten(JSON.parse(data.Baukosten));
+        setFlaechenverteilung(JSON.parse(data.Flächenverteilung))
       });
     setHintergrundDatenHidden(false)
   }
@@ -104,35 +112,40 @@ export default function Ergebnisse() {
         &&
         <Button onClick={Ergebnis}>Ergebnisse</Button>
       }
-
-
+      
 
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
-      {ergebnisTabelle !== null && materialkosten !== null &&
+      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null &&
         <>
 
           <h1>Produktionskosten</h1>
           <p style={{ "backgroundColor": "#feedf4", "width": "200px" }}> Trockenraum rot markiert</p>
           <MyStackedBarChart data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} Prozessroute={create_ProzessschrittArray()} />
           <div style={{
-            display:"flex", 
-        flexDirection:"row"
-        }}>
-          <h3>Ergebnistabelle</h3>
-          <DownloadButton name="Ergebnistabelle" data={ergebnisTabelle}/>
+            display: "flex",
+            flexDirection: "row"
+          }}>
+            <h3>Ergebnistabelle</h3>
+            <DownloadButton name="Ergebnistabelle" data={ergebnisTabelle} />
           </div>
           <DfTable data={ergebnisTabelle} />
 
           <div style={{ "height": "100px" }}></div>
           <h1>Kostenfluss</h1>
-          <Alluvial data = {materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung}/>
+          <Alluvial data={materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung} />
           <div style={{ "height": "100px" }}></div>
           <h1>Gesamtkosten Jahresproduktion</h1>
-          <GesamtkostenDonut data_kosten={materialkosten} data={ergebnisTabelle} Kostenfaktoren={Kostenfaktoren} />
+          <GesamtkostenDonut 
+            data_kosten={materialkosten}
+            data={ergebnisTabelle}
+            Kostenfaktoren={Kostenfaktoren}
+            baukosten={baukosten} />
 
+          {flaechenverteilung !== null && <Treemap data={flaechenverteilung}/>}
         </>
+        
       }
       <Accordion hidden={hintergrundDatenHidden}>
         <AccordionItem title="Hintergrunddaten">
@@ -158,7 +171,7 @@ export default function Ergebnisse() {
                 <SimpleTableNested name="Prozessdetails" data={prozessschrittDaten} />}
             </div>
 
-            <div className='subdiv'> 
+            <div className='subdiv'>
               {materialInfos !== null &&
                 <SimpleTableNested name="Materialinfos" data={materialInfos} />}
             </div>

@@ -126,7 +126,7 @@ def get_ergebnisse():
 
     #print(Kostenberechnung.Kostenberechnung())
     #print(Ergebnisse)
-    Ergebnisse = Kostenberechnung.Kostenberechnung(
+    Rechenrgebnisse = Kostenberechnung.Kostenberechnung(
         Zellergebnisse,
         Zellchemie,
         Prozessroute_array,
@@ -136,14 +136,18 @@ def get_ergebnisse():
         Mitarbeiter_Logistik,
         Gebaeude
     )
-    Materialkosten = json.dumps(Ergebnisse[1]) #dict to json
-    Rückgewinnung = json.dumps(Ergebnisse[2]) #dict to json 
-    Ergebnisse = Ergebnisse[0].to_json(orient="records") #df to json
+    Ergebnisse = Rechenrgebnisse[0].to_json(orient="records") #df to json
+    Materialkosten = json.dumps(Rechenrgebnisse[1]) #dict to json
+    Rückgewinnung = json.dumps(Rechenrgebnisse[2]) #dict to json 
+    Baukosten = json.dumps(Rechenrgebnisse[3]) #dict to json 
+    Flächenverteilung = json.dumps(Rechenrgebnisse[4]) #dict to json 
 
     print(Rückgewinnung)
     return {'Ergebnisse': Ergebnisse,
             'Materialkosten':Materialkosten,
-            'Rückgewinnung':Rückgewinnung
+            'Rückgewinnung':Rückgewinnung,
+            'Baukosten':Baukosten,
+            'Flächenverteilung':Flächenverteilung
             }
 
 @app.route('/Zellergebnisse', methods=['POST'])

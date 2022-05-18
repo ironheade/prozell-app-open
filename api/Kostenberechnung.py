@@ -9,6 +9,7 @@ import json
 import math
 import ast
 import Prozessfunktionen
+from Flaechenberechnung import flaechenberechnung
 
 
 #____________________________________
@@ -190,26 +191,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     #erste Spalte zum Index umformen
     df = df.set_index('index')
-    
-    #Prozessschritte, die umgesetzt sind
-    Prozessroute_array_test = ["Mischen",
-                               #"MultiEx Mischen",
-                                "Beschichten und Trocknen",
-                               "Kalandrieren",
-                               "Längsschneiden",
-                               "Vereinzeln",
-                               "Stapeln",
-                               #"Wickeln",
-                               "Kontaktieren",
-                               "Assemblieren",
-                               "Pouchbeutel / Gehäuse verschließen",
-                               "Elektrolyt dosieren",
-                               "Befüllöffnung verschließen",
-                               "Formieren",
-                               "Reifelagern",
-                               "Prüfen und Klassifizieren"
-                               ]
-    
+        
     #____________________________________
     #Materialrückgewinnung
     #Zelle: Das Material, welches am Ende in der Zelle landet
@@ -245,7 +227,18 @@ def Kostenberechnung(Zellergebnisse_raw,
     #____________________________________
     #Abschluss Retrograde Materialflusskalkulation
     
-    print(schritt_dictionary)
+    
+    #____________________________________
+    #Berechnung der jährlichen Flächenkosten/m², der Investkosten für den Bau und der Flächen 
+
+    flaeche_normalraum = sum(list(df.loc["Flächenbedarf"]))
+    flaeche_trockenraum = sum(list(df.loc["Flächenbedarf Trockenraum"]))
+
+    flachenergebnisse = flaechenberechnung(flaeche_normalraum,flaeche_trockenraum, Gebaeude, Oekonomische_Parameter)
+    grundstueckskosten = flachenergebnisse[0]
+    flaechenverteilung = flachenergebnisse[1]
+
+    flaechenkosten_jaehrlich = flachenergebnisse[2]
     
     
     
@@ -268,9 +261,10 @@ def Kostenberechnung(Zellergebnisse_raw,
     Stundensatz_hilfskraft = Mitarbeiter_und_Logistik["Wert"]["Stundensatz Hilfskraft"] #[€/h]
     Stundensatz_facharbeiter = Mitarbeiter_und_Logistik["Wert"]["Stundensatz Facharbeiter"] #[€/h]
     Instandhaltungskostensatz = Oekonomische_Parameter["Wert"]["Instandhaltungskostensatz"] #[%]
-    Flächenkosten_Produktionshalle = Gebaeude["Wert"]["Flächenkosten Produktionshalle"] #[€/m²] dauerhafte Kosten pro Jahr?
-    Flächenkosten_Trockenraum = Gebaeude["Wert"]["Flächenkosten Trockenraum"]  #[€/m²] dauerhafte Kosten pro Jahr?
-    Zinssatz_Kapitalmarkt = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"] #[%]
+    Flächenkosten_Produktionshalle = flaechenkosten_jaehrlich #[€/m²] dauerhafte Kosten pro Jahr?
+    Flächenkosten_Trockenraum = flaechenkosten_jaehrlich  #[€/m²] dauerhafte Kosten pro Jahr?
+    Stromverbrauch_Trockenraum_Flächennormiert = Gebaeude["Wert"]["Energie Trockenraum flächennormiert"]  #[€/m²] dauerhafte Kosten pro Jahr?
+    Zinssatz_Kapitalmarkt = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"]/100 #[%]
     Nutzungsdauer = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"] #[%]
     
     
@@ -302,7 +296,7 @@ def Kostenberechnung(Zellergebnisse_raw,
             df[schritt]["Materialkosten"]=0
             
         #Energiekosten
-        df[schritt]["Energiekosten"] = df[schritt]["Energiebedarf"]*Strompreis
+        df[schritt]["Energiekosten"] = df[schritt]["Energiebedarf"]*Strompreis+df[schritt]["Flächenbedarf Trockenraum"]*Stromverbrauch_Trockenraum_Flächennormiert*Betriebstage
         
         #Personalkosten
         df[schritt]["Personalkosten"] = (df[schritt]["Personlabedarf Facharbeiter"]*Stundensatz_facharbeiter + df[schritt]["Personalbedarf Hilfskraft"]*Stundensatz_hilfskraft)*Betriebstage*24
@@ -387,5 +381,5 @@ def Kostenberechnung(Zellergebnisse_raw,
     #Reihenfolge im df drehen
     df = df.iloc[:, ::-1] 
     
-    return(df,Materialkosten_dict, rueckgewinnung_dict)
+    return(df,Materialkosten_dict, rueckgewinnung_dict,grundstueckskosten,flaechenverteilung)
 #Kostenberechnung()

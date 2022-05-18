@@ -12,6 +12,9 @@ export default function GesamtkostenDonut(props) {
     var Overheadkosten_gesamt = 0
     const Materialkosten = []
 
+    console.log(props.baukosten)
+
+
     Object.keys(props.data_kosten).map(item =>
         Materialkosten.push({
             "group": item,
@@ -80,6 +83,22 @@ export default function GesamtkostenDonut(props) {
             }
         }
     }
+
+    const FlaechenOptions = {
+        "resizable": true,
+        "legend": {
+            "truncation": {
+                "numCharacter": 45,
+            }
+        },
+        "height": "400px",
+        "donut": {
+            "center": {
+                "label": "€"
+            }
+        }
+    } 
+
     return (
         <>
             <div className="bx--grid bx--grid--full-width">
@@ -95,6 +114,9 @@ export default function GesamtkostenDonut(props) {
                     </div>
                     <div className="bx--col-lg-5">
                         <DonutChart data={Materialkosten} options={{...Options, title: "Materialkosten"}} />
+                    </div>
+                    <div className="bx--col-lg-5">
+                        <DonutChart data={props.baukosten} options={{...FlaechenOptions, title: "Baukosten"}} />
                     </div>
                 </div>
             </div>

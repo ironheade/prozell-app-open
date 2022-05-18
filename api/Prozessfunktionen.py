@@ -68,14 +68,20 @@ def Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
 
     Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
     Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
+    
+    Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Mischer pro Dosierer"]))
+    Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Mischer pro Dosierer"]))
 
-    Anz_Maschinen = "{} Mischer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode)
+    Anz_Maschinen = "{} Mischer Anode, {} Kathode, {} Dosierer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode,Anlagen_Dosierer_Anode,Anlagen_Dosierer_Kathode)
 
     Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
     #Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])+float(df["Wert"]["Investition einmalig"])
-    Investition = Anlagen_Anode *float(df["Wert"]["Investition Anode"]) + Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+float(df["Wert"]["Investition einmalig"])
-    Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
+    Investition = Anlagen_Anode *float(df["Wert"]["Investition Anode"]) + Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+float(df["Wert"]["Investition einmalig"])+(Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Investition Dosierer"])
+    Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"]) + (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Anlagengrundfläche Dosierer"])
     Energiebedarf = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
+   
+    Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+  
    
     Facharbeiter = Anzahl_Anlagen*float(df["Wert"]["Personal Facharbeiter"])
     Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
@@ -86,7 +92,7 @@ def Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
         "Investition":Investition,
         "Anzahl Maschinen": Anz_Maschinen,
         "Flächenbedarf":Flächenbedarf,
-        "Flächenbedarf Trockenraum":0,
+        "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
         "Personlabedarf Facharbeiter":Facharbeiter,
         "Personalbedarf Hilfskraft":Hilfskraft,
         "Energiebedarf":Energiebedarf,
@@ -367,6 +373,7 @@ def Vereinzeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
                 }      
     materialien_null_setzen(liste,schritt_dictionary)    
     return schritt_dictionary
+
 
 def Laminieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary

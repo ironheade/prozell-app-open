@@ -129,15 +129,13 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Gesamtdichte_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
     Kosten_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*read_zellinfo(x)["Wert"]["Dichte"]/Gesamtdichte_Anodenbeschichtung for x in Bestandteile_Anodenbeschichtung) #€/kg
     Kosten_Anodenkollektor = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Preis"] #[€/m]
- 
-    
+        
     Bestandteile_Kathodenbeschichtung=Additive_Kathode #ohne Lösemittel
     Bestandteile_Kathodenbeschichtung.append(Aktivmaterial_Kathode) 
     Gesamtdichte_Kathodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
     Kosten_Kathodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*read_zellinfo(x)["Wert"]["Dichte"]/Gesamtdichte_Kathodenbeschichtung for x in Bestandteile_Kathodenbeschichtung) #€/kg
     Kosten_Kathodenkollektor = read_zellinfo(Kollektorfolie_Kathode)["Wert"]["Preis"] #[€/m]
-    
-            
+                
     Kosten_Separator = read_zellinfo(Separator)["Wert"]["Preis"] #[€/m]
     Kosten_Elektrolyt = read_zellinfo(Elektrolyt)["Wert"]["Preis"] #[€/kg]
             
@@ -214,7 +212,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AB_ges = A_AB*(anzahl_WHE+1)*2
         A_KB_ges = A_KB*anzahl_WHE*2
         A_AK_ges = A_AK*(anzahl_WHE+1)*2
-        A_KK_ges = A_KK*anzahl_WHE*2
+        A_KK_ges = A_KK*anzahl_WHE*2.
         A_Sep_ges = A_Sep*(anzahl_WHE+1)*2
 
         #Meter Elektrode/Sheet
