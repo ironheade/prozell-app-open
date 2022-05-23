@@ -20,6 +20,7 @@ import * as reducer from './reducers.js'
 import { combineReducers } from 'redux';
 import ergebnisTabellenReducer from './ergebnisTabellenReducer';
 import rueckgewinnungReducer from './rueckgewinnungReducer'
+import loggedInReducer from './loggedInReducer';
 
 
 
@@ -43,7 +44,8 @@ const rootreducer = combineReducers({
   currentZellformate: currentZellformateReducer,
   ergebnisTabelle: ergebnisTabellenReducer,
   rueckgewinnung: rueckgewinnungReducer,
-  quellen: quellenReducer
+  quellen: quellenReducer,
+  loggedIn: loggedInReducer 
 });
 
 export default rootreducer;

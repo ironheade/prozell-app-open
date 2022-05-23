@@ -93,10 +93,11 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     U = Zellchemie["Wert"]["Zellspannung"] #Zellspannung in Volt [V]
     delta_irr = Zellchemie["Wert"]["Irreversibler Formierungsverlust"] #Irreversibler Formierungsverlust in Prozent [%]
+    C_flsp = Zellchemie["Wert"]["Flächenspezifische Kapazität Elektrode"] #[mAh/cm²]
     
     d_KK = Materialinfos.loc[Materialinfos["Material"] == Kollektorfolie_Kathode]["Wert"]["Dicke"] #[µm]
     roh_KK = Materialinfos.loc[Materialinfos["Material"] == Kollektorfolie_Kathode]["Wert"]["Dichte"] #[g/cm³]
-    C_flsp_K = Zellchemie["Wert"]["Flächenspezifische Kapazität Kathode"] #[mAh/cm²]
+    #C_flsp_K = Zellchemie["Wert"]["Flächenspezifische Kapazität Kathode"] #[mAh/cm²]
     C_sp_K = Materialinfos.loc[Materialinfos["Material"] == Aktivmaterial_Kathode]["Wert"]["spezifische Kapazität"] #[mAh/g]
     roh_KB = Zellchemie["Wert"]["Zieldichte Beschichtung Kathode"] #[g/cm³]
     phi_KB = Zellchemie["Wert"]["Beschichtungsporosität Kathode"] #[%]
@@ -105,13 +106,13 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     d_AK = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Dicke"] #[µm]   
     roh_AK = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Dichte"] #[g/cm³]
-    C_flsp_A = Zellchemie["Wert"]["Flächenspezifische Kapazität Anode"] #[mAh/cm²]
+    #C_flsp_A = Zellchemie["Wert"]["Flächenspezifische Kapazität Anode"] #[mAh/cm²]
     C_sp_A = read_zellinfo(Aktivmaterial_Anode)["Wert"]["spezifische Kapazität"] #[mAh/g]
     roh_AB = Zellchemie["Wert"]["Zieldichte Beschichtung Anode"] #[g/cm³]
     phi_AB = Zellchemie["Wert"]["Beschichtungsporosität Anode"] #[%]
     x_PM_A = 100-Zellchemie["Wert"][Aktivmaterial_Anode] #Masseanteil passiver Komponenten Anode in Prozent [%]
-    #delta_A = Zellchemie["Wert"]["kalkulierter Anodenüberschuss"] #[%]
-    delta_A = 10 #[%] kalkulierter Anodenüberschuss
+    delta_A = Zellchemie["Wert"]["Kalkulierter Anodenüberschuss"] #[%]
+    #delta_A = 10 #[%] kalkulierter Anodenüberschuss
      
     d_Sep = read_zellinfo(Separator)["Wert"]["Dicke"] #[µm]
     roh_sep = read_zellinfo(Separator)["Wert"]["Dichte"] #[g/cm³]
@@ -126,14 +127,20 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     Bestandteile_Anodenbeschichtung = Additive_Anode #ohne Lösemittel
     Bestandteile_Anodenbeschichtung.append(Aktivmaterial_Anode) #ohne Lösemittel
-    Gesamtdichte_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
-    Kosten_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*read_zellinfo(x)["Wert"]["Dichte"]/Gesamtdichte_Anodenbeschichtung for x in Bestandteile_Anodenbeschichtung) #€/kg
+    Gesamtdichte_Anodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
+    Gesamtdichte_Anodenlösemittel = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Lösemittel_Anode)
+    Gesamtdichte_Anodenbeschichtung = 1/(Zellchemie["Wert"]["Feststoffgehalt Anode"]/100/Gesamtdichte_Anodenfeststoffe + (1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100)/Gesamtdichte_Anodenlösemittel)
+    
+    Kosten_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*read_zellinfo(x)["Wert"]["Dichte"]/Gesamtdichte_Anodenfeststoffe for x in Bestandteile_Anodenbeschichtung) #€/kg
     Kosten_Anodenkollektor = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Preis"] #[€/m]
         
     Bestandteile_Kathodenbeschichtung=Additive_Kathode #ohne Lösemittel
     Bestandteile_Kathodenbeschichtung.append(Aktivmaterial_Kathode) 
-    Gesamtdichte_Kathodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
-    Kosten_Kathodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*read_zellinfo(x)["Wert"]["Dichte"]/Gesamtdichte_Kathodenbeschichtung for x in Bestandteile_Kathodenbeschichtung) #€/kg
+    Gesamtdichte_Kathodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
+    Gesamtdichte_Kathodenlösemittel = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Lösemittel_Kathode)
+    Gesamtdichte_Kathodenbeschichtung = 1/(Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100/Gesamtdichte_Kathodenfeststoffe + (1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100)/Gesamtdichte_Kathodenlösemittel)
+    
+    Kosten_Kathodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*read_zellinfo(x)["Wert"]["Dichte"]/Gesamtdichte_Kathodenfeststoffe for x in Bestandteile_Kathodenbeschichtung) #€/kg
     Kosten_Kathodenkollektor = read_zellinfo(Kollektorfolie_Kathode)["Wert"]["Preis"] #[€/m]
                 
     Kosten_Separator = read_zellinfo(Separator)["Wert"]["Preis"] #[€/m]
@@ -146,8 +153,16 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #____________________________________
     # Elektrochemische Charakterisierung, gleich für alle Zelltypen
     
-    MB_K = C_flsp_K*(1+delta_irr/100)/(C_sp_K*(1-x_PM_K/100)) #Massenbelegung Kathode [g/cm²]
-    MB_A = C_flsp_A*(1+delta_irr/100+delta_A/100)/(C_sp_A*(1-x_PM_A/100)) #Massenbelegung Anode [g/cm²]
+    MB_K = C_flsp*(1+delta_irr/100)/(C_sp_K*(1-x_PM_K/100)) #Massenbelegung Kathode [g/cm²]
+    print("Massenbaldung Kathode")
+    print(MB_K)
+    MB_A = C_flsp*(1+delta_irr/100+delta_A/100)/(C_sp_A*(1-x_PM_A/100)) #Massenbelegung Anode [g/cm²]
+    print("Massenbeladung Anode")
+    print(MB_A)
+    print(C_flsp)
+    print(1+delta_irr/100+delta_A/100)
+    print(C_sp_A)
+    print(1-x_PM_A/100)
     
     d_KB = (MB_K/roh_KB)*10000 #Dicke Kathodenbeschichtung [µm]
     d_AB = (MB_A/roh_AB)*10000 #Dicke Anodenbeschichtung [µm]
@@ -204,7 +219,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_Sep = flaeche_mit_zellf(breite_anode+2*ueberstand_separator_anode,laenge_anode+2*ueberstand_separator_anode,0,0, eckenradius_elektrode) #Fläche Separator [mm²]
     
         
-        l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
+        l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
     
         #Anzahl der Wiederholeinheiten um auf die gesetzte Ah zu kommen, nach oben aufgerundet
         anzahl_WHE = math.ceil(Ah_pro_zelle*1000/l_WHE)
@@ -272,7 +287,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AB = flaeche_ohne_zellf(breite_anode,laenge_anode,eckenradius_elektrode) #Fläche Anode [mm²]
         A_Sep = flaeche_mit_zellf(breite_festhuelle-2*abstand_separator_huelle, laenge_festhuelle-2*abstand_separator_huelle, 0, 0, eckenradius_elektrode)
 
-        l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
+        l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
         #Anzahl der Wiederholeinheiten in der Zelle
         anzahl_WHE = math.floor((hoehe_festhuelle-d_MWHE/1000)/(d_WHE/1000)) #[-], floor is abrunden
@@ -339,7 +354,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
             
         A_Sep = l_bahn*(hoehe_rundzelle-abs_zellwickel_deckel)+A_sep_innen+A_sep_aussen #Fläche Separator [mm²]
 
-        l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
+        l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
         anzahl_WHE = 1
         
@@ -412,7 +427,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
 
         A_Sep = l_bahn*hoehe_festhuelle
 
-        l_WHE = C_flsp_K*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
+        l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
         anzahl_WHE = 1
         
@@ -548,7 +563,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Q_ges = l_WHE*anzahl_WHE/1000 #gesamte Ladung einer Zelle in Ah
     Zellen_pro_Jahr = GWh_pro_jahr*1000000000/(Q_ges*U) #*1 Mrd wegen Giga
     spez_energie = U*Q_ges*1000/gew_ges #[Wh/kg] *1000 -> Gewicht Zelle g zu kg
-    Balancing = (1-(A_KB*C_flsp_K)/(A_AB*C_flsp_A))*100
+    Balancing = (1-(A_KB*C_flsp)/(A_AB*C_flsp))*100
     
     #Auflistung aller Kosten einer Zelle
     Gesamtkosten_Anodenbeschichtung = Kosten_Anodenbeschichtung * gew_AB_ges/1000 #[€]

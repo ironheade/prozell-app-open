@@ -1,8 +1,7 @@
-import { Button, DatePicker, DatePickerInput, FormGroup, NumberInput, TextInput } from "carbon-components-react";
-import React, { useState, useEffect } from "react";
+import { Button, DatePicker, DatePickerInput,  NumberInput } from "carbon-components-react";
+import React, { useState } from "react";
 import { CSVLink } from 'react-csv';
 import { Download32 } from '@carbon/icons-react';
-import { timeDays } from "d3";
 
 export default function NutzerGenerator() {
 
@@ -10,10 +9,6 @@ export default function NutzerGenerator() {
     const [anzahlNutzer, setAnzahlNutzer] = useState(0)
     const [newUsers, setNewUsers] = useState("Nutzer generieren")
 
-    const [nutzername, setNutzername] = useState(null)
-    const [passwort, setPasswort] = useState(null)
-
-    const [nutzerdaten, setNutzerdaten] = useState(null)
 
     async function nutzer_generieren(Anzahl, Startzeit, Endzeit, StartzeitMS, EndzeitMS) {
         const res = await fetch('/nutzer_generieren', {
@@ -29,7 +24,6 @@ export default function NutzerGenerator() {
         });
         const data = await res.json();
         setNewUsers(data);
-
     }
 
     function handleDate(date) {
@@ -42,28 +36,9 @@ export default function NutzerGenerator() {
             })
     }
 
-    async function CheckLog() {
-        const res = await fetch('/user_check', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                Nutzer: nutzername,
-                Passwort: passwort
-            }),
-        });
-        const data = await res.json();
-        return data;
-    }
-
-    function Login() {
-        CheckLog().then(result => setNutzerdaten(result))
-    }
-
-
     return (
-        <>
+        <div style={{border:"2px solid black", maxWidth:"400px", padding:"30px", marginTop:"20px"}}>
             <h3>Neue Nutzer hinzufügen</h3>
-            {nutzerdaten !== null && <p>{JSON.stringify(nutzerdaten)}</p>}
             <DatePicker dateFormat="d.m.Y"
                 onChange={(event) => handleDate(event)}
                 datePickerType="range">
@@ -91,9 +66,11 @@ export default function NutzerGenerator() {
                         setAnzahlNutzer(e.imaginaryTarget.valueAsNumber) :
                         setAnzahlNutzer(0)
                 }
+                
             />
 
             <Button
+                style={{marginTop:"20px"}}
                 disabled={date !== null && anzahlNutzer !== 0 ? false : true}
                 onClick={() => nutzer_generieren(anzahlNutzer, date.startzeit, date.endzeit, date.startzeitMS, date.endzeitMS)}
 
@@ -114,52 +91,13 @@ export default function NutzerGenerator() {
                     hasIconOnly
                     renderIcon={Download32}
                     size="sm"
-                    style={{ margin: "4px" }}
+                    style={{ margin: "4px",marginTop:"20px" }}
                     tooltipAlignment="start"
                 />
 
             </CSVLink>
 
             {date !== null && Date.now() > date.startzeitMS && Date.now() < date.endzeitMS && <p>Login Erfolgreich!</p>}
-
-
-            <FormGroup
-                legendText="Login"
-                style={{
-                    maxWidth: '400px'
-                }}
-            >
-
-                <TextInput
-                    id="one"
-                    labelText="Nutzername"
-                    value={nutzername !== null ? nutzername : ""}
-                    onChange={(event) => setNutzername(event.target.value)}
-                />
-                <TextInput
-                    id="two"
-                    labelText="Passwort"
-                    value={passwort !== null ? passwort : ""}
-                    onChange={(event) => setPasswort(event.target.value)}
-
-                />
-
-                <Button onClick={() => Login()}>
-                    Login
-                </Button>
-
-                {nutzerdaten !== null &&
-                    <ul>
-                        <li>{nutzerdaten.Startzeit}</li>
-                        <li>{nutzerdaten.Endzeit}</li>
-                        
-                        {nutzerdaten.StartzeitMS-Date.now() <0 && nutzerdaten.EndzeitMS+86400000-Date.now() >0 &&<li>User logged in</li>}
-
-
-                    </ul>}
-
-            </FormGroup>
-
-        </>
+        </div>
     )
 }

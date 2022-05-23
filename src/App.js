@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './app.scss';
 import { Content } from 'carbon-components-react';
 import TutorialHeader from './components/TutorialHeader';
@@ -8,7 +8,9 @@ import Zellauslegung from './content/Zellauslegung';
 import Prozessauslegung from './content/Prozessauslegung';
 import AllgemeineParameter from './content/AllgemeineParameter';
 import Ergebnisse from './content/Ergebnisse';
-import { useDispatch } from 'react-redux';
+import AdminPage from './content/AdminPage';
+import { useDispatch, useSelector } from 'react-redux';
+import tabelle_abrufen from './functions/tabelle_abrufen'
 
 import {
   gebaeude_state,
@@ -20,18 +22,8 @@ import {
   rueckgewinnung_state
 } from './actions';
 
+
 const App = () => {
-  async function tabelle_abrufen(tabelle_dateiname) {
-    const res = await fetch('/tabelle_abrufen', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tabelle: tabelle_dateiname,
-      }),
-    });
-    const data = await res.json();
-    return data.tabelle;
-  }
 
   const dispatch = useDispatch();
 
@@ -57,16 +49,20 @@ const App = () => {
     dispatch(quellen(data))
   );
 
+  const logged = useSelector(state => state.loggedIn)
+
   return (
     <>
       <TutorialHeader />
       <Content>
         <Switch>
           <Route exact path="/" component={LandingPage} />
-          <Route path="/Zellauslegung" component={Zellauslegung} />
-          <Route path="/Prozessauslegung" component={Prozessauslegung} />
-          <Route path="/AllgemeineParameter" component={AllgemeineParameter} />
-          <Route path="/Ergebnisse" component={Ergebnisse} />
+          <Route path="/Zellauslegung" component={logged ? Zellauslegung : LandingPage} />
+          <Route path="/Prozessauslegung" component={logged ? Prozessauslegung : LandingPage} />
+          <Route path="/AllgemeineParameter" component={logged ? AllgemeineParameter : LandingPage} />
+          <Route path="/Ergebnisse" component={logged ? Ergebnisse : LandingPage} /> 
+          {/*<Route path="/Adminpage" component={logged ? AdminPage : LandingPage} />*/}
+          <Route path="/Adminpage" component={AdminPage} />
         </Switch>
       </Content>
     </>

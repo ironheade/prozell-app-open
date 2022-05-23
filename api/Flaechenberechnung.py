@@ -65,9 +65,6 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
     
     
     
-    investition_kosten_bau_alt = {"Grundstückskosten":round(grundstuecksflaeche*quadratmeter_preis_grundstueck),
-                           "Fabrikkosten":round(gebaeudeflaeche*quadratmeter_preis_gebaeude),
-                           "Trockenraumkosten":round(flaeche_trockenraum*quadratmeter_preis_trockenraum)}
     
     investition_kosten_bau = [
         {
@@ -83,24 +80,7 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
             "value": round(flaeche_trockenraum*quadratmeter_preis_trockenraum)
         }
                               ]
-    
-    
-    {"Grundstückskosten":round(grundstuecksflaeche*quadratmeter_preis_grundstueck),
-                           "Fabrikkosten":round(gebaeudeflaeche*quadratmeter_preis_gebaeude),
-                           "Trockenraumkosten":round(flaeche_trockenraum*quadratmeter_preis_trockenraum)}
-    
-    
-    flaechen_verteilung_alt = {"Anlagengrundfläche Normalraum":round(flaeche_normalraum),
-                           "Anlagengrundfläche Trockenraum":round(flaeche_trockenraum),
-                           "Maschinenplatzfläche":round(maschinenplatz_flaeche),
-                           "Zwischenlagerfläche":round(zwischenlager_flaeche),
-                           "Zusatzfläche":round(zusatz_flaeche),
-                           "Verwaltungsfläche":round(verwaltungs_flaeche),
-                           "Lager- und Versandfläche":round(lager_versand_flaeche),
-                           "Neben-, Funktions- und Sozialfläche":round(neben_funktions_sozial_flaeche),
-                           "Unbebaute Fläche":round(unbebaute_flaeche),
-                           }
-    
+
     
     flaechen_verteilung = [
     
@@ -108,7 +88,7 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
             "name": "Außenflächen",
             "children": [
                 {
-                    "name": "Unbebaute Fläche",
+                    "name": "Außenflächen",
                     "value": round(unbebaute_flaeche)
                 }
             ]
@@ -129,7 +109,7 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
                 }
             ]
         }, {
-            "name": "Produktionsfflächen",
+            "name": "Produktionsflächen",
             "children": [
                 {
                     "name": "Zusatzfläche",

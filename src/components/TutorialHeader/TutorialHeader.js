@@ -11,52 +11,34 @@ import {
   SkipToContent,
   SideNav,
   SideNavItems,
-  HeaderSideNavItems,
-  Button,
+  HeaderSideNavItems
 } from 'carbon-components-react';
-import {UserAvatar24 } from '@carbon/icons-react';
+import { UserAvatar24 } from '@carbon/icons-react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import LoginModal from './loginModal';
 
 
-const TutorialHeader = () => (
-  <HeaderContainer
-    render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-      <Header aria-label="Carbon Tutorial">
-        <SkipToContent />
-        <HeaderMenuButton
-          aria-label="Open menu"
-          isCollapsible
-          onClick={onClickSideNavExpand}
-          isActive={isSideNavExpanded}
-        />
-        <HeaderName element={Link} to="/" prefix="IPAT">
-          ProZell Kostenrechner
-        </HeaderName>
-        <HeaderNavigation aria-label="Carbon Tutorial">
-          <HeaderMenuItem element={Link} to="/Zellauslegung">
-            Zellauslegung
-          </HeaderMenuItem>
-          <HeaderMenuItem element={Link} to="/Prozessauslegung">
-            Prozessauslegung
-          </HeaderMenuItem>
-          <HeaderMenuItem element={Link} to="/AllgemeineParameter">
-            Allgemeine Parameter
-          </HeaderMenuItem>
-          <HeaderMenuItem element={Link} to="/Ergebnisse">
-            Ergebnisse
-          </HeaderMenuItem>
-        </HeaderNavigation>
-        <SideNav
-          aria-label="Side navigation"
-          expanded={isSideNavExpanded}
+const TutorialHeader = () => {
+  const logged = useSelector(state => state.loggedIn)
+  const [ loginModalOpen, setLoginModalOpen ] = useState(false)
 
-          isPersistent={false}
-          >
-          <SideNavItems>
-            <HeaderSideNavItems>
-              <HeaderMenuItem element={Link} to="/">
-                Startseite
-              </HeaderMenuItem>
+  return (
+    <HeaderContainer
+      render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+        <Header aria-label="Carbon Tutorial">
+          <SkipToContent />
+          <HeaderMenuButton
+            aria-label="Open menu"
+            isCollapsible
+            onClick={onClickSideNavExpand}
+            isActive={isSideNavExpanded}
+          />
+          <HeaderName element={Link} to="/" prefix="IPAT">
+            ProZell Kostenrechner
+          </HeaderName>
+          {logged &&
+            <HeaderNavigation aria-label="Carbon Tutorial">
               <HeaderMenuItem element={Link} to="/Zellauslegung">
                 Zellauslegung
               </HeaderMenuItem>
@@ -69,19 +51,59 @@ const TutorialHeader = () => (
               <HeaderMenuItem element={Link} to="/Ergebnisse">
                 Ergebnisse
               </HeaderMenuItem>
-            </HeaderSideNavItems>
-          </SideNavItems>
-        </SideNav>
-        <HeaderGlobalBar>
+              <HeaderMenuItem element={Link} to="/AdminPage">
+                Admin Seite
+              </HeaderMenuItem>
+            </HeaderNavigation>
+          }
+          {logged &&
+            <SideNav
+              aria-label="Side navigation"
+              expanded={isSideNavExpanded}
 
-          <HeaderGlobalAction aria-label="User Avatar" onClick={()=> console.log("bla")}>
-            <UserAvatar24 />
-          </HeaderGlobalAction>
+              isPersistent={false}
+            >
+              <SideNavItems>
 
-        </HeaderGlobalBar>
-      </Header>
-    )}
-  />
-);
+                <HeaderSideNavItems>
+                  <HeaderMenuItem element={Link} to="/">
+                    Startseite
+                  </HeaderMenuItem>
+                  <HeaderMenuItem element={Link} to="/Zellauslegung">
+                    Zellauslegung
+                  </HeaderMenuItem>
+                  <HeaderMenuItem element={Link} to="/Prozessauslegung">
+                    Prozessauslegung
+                  </HeaderMenuItem>
+                  <HeaderMenuItem element={Link} to="/AllgemeineParameter">
+                    Allgemeine Parameter
+                  </HeaderMenuItem>
+                  <HeaderMenuItem element={Link} to="/Ergebnisse">
+                    Ergebnisse
+                  </HeaderMenuItem>
+                  <HeaderMenuItem element={Link} to="/AdminPage">
+                    Admin Seite
+                  </HeaderMenuItem>
+                </HeaderSideNavItems>
+
+              </SideNavItems>
+            </SideNav>
+          }
+          <HeaderGlobalBar>
+
+            <HeaderGlobalAction aria-label="User Avatar" onClick={() => setLoginModalOpen(true)}>
+              <UserAvatar24 />
+            </HeaderGlobalAction>
+          </HeaderGlobalBar>
+          <LoginModal open={loginModalOpen} close={()=>setLoginModalOpen(false)}/>
+
+        </Header>
+
+      )}
+    />
+  )
+}
+
+
 
 export default TutorialHeader;

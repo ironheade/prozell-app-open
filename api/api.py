@@ -8,7 +8,7 @@ import Zellberechnung
 import Kostenberechnung
 from password_creator import generate_users , user_check
 from flask_cors import CORS
-import locale
+#import locale
 
 
 app = Flask(__name__)
@@ -21,10 +21,11 @@ def greetings():
 
 @app.route('/time')
 def get_current_time():
-    t0 = time.time()
-    t1 = t0 + 60
-    locale.setlocale(locale.LC_TIME, "de_DE") # swedish
-    return {'time': time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(t1))}
+    #t0 = time.time()
+    #t1 = t0 + 60
+    #locale.setlocale(locale.LC_TIME, "de_DE") # swedish
+    #return {'time': time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(t1))}
+    return {'time': time.strftime("%a, %d %b %Y %H:%M:%S")}
 
 @app.route('/Zellformate')
 def get_Zellformate():

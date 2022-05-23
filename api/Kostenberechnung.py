@@ -208,7 +208,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     #____________________________________
     #Retrograde Materialflusskalkulation
     
-    
+    print("Test?")
     print(schritt_dictionary)
     
     for schritt in reversed(Prozessroute_array_raw):        #Prozessschritte in umgekehrter Reihenfolge durchgehen

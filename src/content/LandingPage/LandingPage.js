@@ -11,7 +11,6 @@ import Anleitung from './Anleitung';
 import { useSelector } from "react-redux";
 import DownloadButton from '../Ergebnisse/components/DownloadButton';
 import { BatteryCharging32, ChartNetwork32, Education32 } from '@carbon/icons-react';
-import NutzerGenerator from './Nutzer_generator';
 
 const props = {
   tabs: {
@@ -127,7 +126,6 @@ const LandingPage = () => {
 
 
                     <Button onClick={() => setChosenTab(1)}>Anleitung</Button>
-                    <NutzerGenerator/>
 
                   </div>
                   <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
