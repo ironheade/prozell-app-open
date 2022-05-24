@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button } from 'carbon-components-react';
+import { Accordion, AccordionItem, Breadcrumb, BreadcrumbItem, Button, Tile } from 'carbon-components-react';
 import { useSelector, useDispatch } from 'react-redux'
 import DfTable from './components/table_from_df'
 import MyStackedBarChart from './components/bar_graph'
@@ -31,6 +31,7 @@ export default function Ergebnisse() {
   const mitarbeiterLogistik = useSelector(state => state.mitarbeiterLogistik);
   const gebaeude = useSelector(state => state.gebaeude);
   const rueckgewinnung = useSelector(state => state.rueckgewinnung);
+  const GWH_Jahr_AH_Zelle = useSelector(state => state.GWH_Jahr_AH_Zelle);
 
   //const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
   const ergebnisTabelle = useSelector(state => state.ergebnisTabelle)
@@ -38,6 +39,7 @@ export default function Ergebnisse() {
   const [materialverlust, setMaterialverlust] = useState(null)
   const [baukosten, setBaukosten] = useState(null)
   const [flaechenverteilung, setFlaechenverteilung] = useState(null)
+  const [levelizedCost, setLevelizedCost] = useState(null)
 
 
 
@@ -58,6 +60,7 @@ export default function Ergebnisse() {
         Oekonomische_parameter: oekonomischeParameter,
         Mitarbeiter_Logistik: mitarbeiterLogistik,
         Gebaeude: gebaeude,
+        GWh_Jahr_Ah_Zelle: GWH_Jahr_AH_Zelle,
       }),
     })
       .then(res => res.json())
@@ -67,6 +70,7 @@ export default function Ergebnisse() {
         setMaterialverlust(JSON.parse(data.Rückgewinnung));
         setBaukosten(JSON.parse(data.Baukosten));
         setFlaechenverteilung(JSON.parse(data.Flächenverteilung))
+        setLevelizedCost(JSON.parse(data.levelized_cost_total))
       });
     setHintergrundDatenHidden(false)
   }
@@ -113,7 +117,7 @@ export default function Ergebnisse() {
         <Button onClick={Ergebnis}>Ergebnisse</Button>
       }
       
-
+      
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
@@ -137,6 +141,19 @@ export default function Ergebnisse() {
           <Alluvial data={materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung} />
           <div style={{ "height": "100px" }}></div>
           <h1>Gesamtkosten Jahresproduktion</h1>
+
+          {levelizedCost !== null && 
+            <Tile style={{margin:"20px", width:"500px"}}>
+              <h5>Levelized cost: </h5><p>{levelizedCost["levelized_cost"]} €/kWh</p>
+              <p style={{fontStyle:"italic"}}>Beschreibt die Produktionskosten unter Berücksichtigung der Abschreibung und Steuer.</p><br/>
+              <h5>Marginal cost: </h5><p>{levelizedCost["marginal_cost"]} €/kWh</p>
+              <p style={{fontStyle:"italic"}}>Beschreibt die laufenden Produktionskosten.</p><br/>
+              <h5>Jährliche Produktionskosten: </h5>
+              <p>Siehe Donutdiagramme unten</p>
+              <p style={{fontStyle:"italic"}}>Berücksichtigt die gesamten Produktionskosten ohne Abschreibung oder Steuer.</p>
+            </Tile>
+          }
+
           <GesamtkostenDonut 
             data_kosten={materialkosten}
             data={ergebnisTabelle}
@@ -147,6 +164,7 @@ export default function Ergebnisse() {
         </>
         
       }
+      
       <Accordion hidden={hintergrundDatenHidden}>
         <AccordionItem title="Hintergrunddaten">
           <div id="ErgebnisAccordion">

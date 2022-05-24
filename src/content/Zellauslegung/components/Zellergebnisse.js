@@ -60,7 +60,8 @@ export default function Zellergebnisse() {
     donut: {
       center: {
         label: 'Gesamtkosten Zelle [€]',
-        "numberFormatter": (number) => Math.round(number*100)/100    
+        "numberFormatter": (number) => (Math.round(number*100)/100).toLocaleString('de-DE')    
+
       },
       alignment: 'center',
     },
@@ -81,7 +82,7 @@ export default function Zellergebnisse() {
     donut: {
       center: {
         label: 'Gewicht Zelle [g]',
-        "numberFormatter": (number) => Math.round(number*100)/100  
+        "numberFormatter": (number) => (Math.round(number*100)/100).toLocaleString('de-DE')  
       },
       alignment: 'center',
     },
@@ -133,18 +134,6 @@ export default function Zellergebnisse() {
               </TableBody>
             ))}
           </Table>
-          {/* 
-          <CSVLink
-            {...csvReport}
-            data={JSON.parse(Zellergebnisse)}
-            separator=";">
-            Excel-CSV Export
-          </CSVLink>
-          <br />
-          <CSVLink {...csvReport} data={JSON.parse(Zellergebnisse)}>
-            CSV Export
-          </CSVLink>
-          */}
         </div>
       )}
       <div className="bx--col-lg-2"></div>

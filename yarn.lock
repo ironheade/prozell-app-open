@@ -1634,6 +1634,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@carbon/upgrade@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@carbon/upgrade@npm:11.0.0"
+  bin:
+    carbon-upgrade: bin/carbon-upgrade.js
+  checksum: 2f6d41ca88d4b74d6ca8476dc9ee7180914249071870189253cc7fccb9599ede21993aecb807f94a9f302fa2a8daa5116eb2ad90e0cbfdc3effcc8c532cc0110
+  languageName: node
+  linkType: hard
+
 "@carbon/utils-position@npm:1.1.1":
   version: 1.1.1
   resolution: "@carbon/utils-position@npm:1.1.1"
@@ -2578,6 +2587,16 @@ __metadata:
     "@types/node": "*"
     "@types/responselike": "*"
   checksum: ea7ed6ef4447ed8d1c359e806c076573420ca46d401ae0cc8ae6366e4e9434d2eaf16200ee5f2a2c9c2b54ec5a9514185c9d7ee4e8f3a01adb3b7a1450dacc78
+  languageName: node
+  linkType: hard
+
+"@types/carbon-components-react@npm:^7.55.1":
+  version: 7.55.1
+  resolution: "@types/carbon-components-react@npm:7.55.1"
+  dependencies:
+    "@types/react": "*"
+    flatpickr: 4.6.9
+  checksum: 96a44f24fdd1fadad27cae9cca44dbd6d9eef5f35891d8dbc41f8c764716d162348f687efae6297696c4019189a262bea724e82106f1678d0d0e1b49f577f950
   languageName: node
   linkType: hard
 
@@ -4786,9 +4805,11 @@ __metadata:
     "@carbon/charts": ^0.55.0
     "@carbon/charts-react": ^0.55.0
     "@carbon/icons-react": 10.22.0
+    "@carbon/upgrade": ^11.0.0
     "@commitlint/cli": 7.5.2
     "@commitlint/config-conventional": 7.5.0
     "@reduxjs/toolkit": ^1.7.2
+    "@types/carbon-components-react": ^7.55.1
     carbon-components: 10.25.0
     carbon-components-react: 7.25.0
     carbon-icons: 7.0.7
@@ -8088,6 +8109,13 @@ __metadata:
   version: 4.6.1
   resolution: "flatpickr@npm:4.6.1"
   checksum: 98486bd9e32c939cc3c62a514de132287abe711c0351f7e37bd9566be88395397e3267b307a4749c0597b7afff770223b7521762b7f365c58f4870431e0455db
+  languageName: node
+  linkType: hard
+
+"flatpickr@npm:4.6.9":
+  version: 4.6.9
+  resolution: "flatpickr@npm:4.6.9"
+  checksum: ffcbe9ab04509f3e725139ad9835f0e7ec1ff025f1ccfafe26139fb37e67f661a048e6a3349ecc7620744fbfa8988e64bec95480024261b01de32c999d62ce38
   languageName: node
   linkType: hard
 

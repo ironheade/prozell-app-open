@@ -1,5 +1,6 @@
 import { Breadcrumb, BreadcrumbItem, Tab, Tabs } from 'carbon-components-react';
 import React from 'react';
+import Datenbank from './components/Datenbank';
 import NutzerGenerator from './components/Nutzer_generator';
 
 export default function AdminPage() {
@@ -25,7 +26,7 @@ export default function AdminPage() {
                         <NutzerGenerator/>
                     </Tab>
                     <Tab label="Datenbank">
-
+                        <Datenbank/>
                     </Tab>
                 </Tabs>
                 </div>

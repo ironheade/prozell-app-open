@@ -79,7 +79,7 @@ export default function GesamtkostenDonut(props) {
         "donut": {
             "center": {
                 "label": "€/KWh",
-                "numberFormatter": (number) => Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100
+                "numberFormatter": (number) => (Math.round(number / GWH_Jahr_AH_Zelle.GWh_pro_jahr / 10000) / 100).toLocaleString('de-DE')
             }
         }
     }
@@ -94,7 +94,8 @@ export default function GesamtkostenDonut(props) {
         "height": "400px",
         "donut": {
             "center": {
-                "label": "€"
+                "label": "€",
+                "numberFormatter": (number) => Math.floor(number).toLocaleString('de-DE')
             }
         }
     } 

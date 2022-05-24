@@ -8,6 +8,7 @@ import Zellberechnung
 import Kostenberechnung
 from password_creator import generate_users , user_check
 from flask_cors import CORS
+from update_db import update_table
 #import locale
 
 
@@ -17,15 +18,33 @@ CORS(app)
 @app.route('/')
 def greetings():
     return """<h1><a  href="https://i.gifer.com/1Ms.gif">Buenas noches, amigo!</a></h1>"""
-    #return ("Hello World")
 
 @app.route('/time')
 def get_current_time():
-    #t0 = time.time()
-    #t1 = t0 + 60
-    #locale.setlocale(locale.LC_TIME, "de_DE") # swedish
-    #return {'time': time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(t1))}
     return {'time': time.strftime("%a, %d %b %Y %H:%M:%S")}
+
+@app.route('/all_tables')
+def get_all_tables():
+    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+    cursor = db.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+    tables = [table[0] for table in tables]
+    db.commit()
+    db.close()
+    
+    return {'tables': tables}
+
+@app.route('/update_db',methods=['POST'])
+def update_db():
+    new_table = request.get_json()["new_table"]
+    new_table_name = request.get_json()["new_table_name"]
+    
+    print(new_table)
+    print(new_table_name)
+    update_table(new_table,new_table_name)
+    #update_table
+    return "None"
 
 @app.route('/Zellformate')
 def get_Zellformate():
@@ -104,6 +123,7 @@ def get_ergebnisse():
     Oekonomische_parameter = request.get_json()["Oekonomische_parameter"]
     Mitarbeiter_Logistik = request.get_json()["Mitarbeiter_Logistik"] 
     Gebaeude = request.get_json()["Gebaeude"] 
+    GWh_Jahr_Ah_Zelle = request.get_json()["GWh_Jahr_Ah_Zelle"]
     
     #Zellergebnisse = pd.DataFrame.from_records(json.loads(Zellergebnisse))
     
@@ -135,20 +155,22 @@ def get_ergebnisse():
         Materialinfos,
         Oekonomische_parameter,
         Mitarbeiter_Logistik,
-        Gebaeude
+        Gebaeude,
+        GWh_Jahr_Ah_Zelle
     )
     Ergebnisse = Rechenrgebnisse[0].to_json(orient="records") #df to json
     Materialkosten = json.dumps(Rechenrgebnisse[1]) #dict to json
     Rückgewinnung = json.dumps(Rechenrgebnisse[2]) #dict to json 
     Baukosten = json.dumps(Rechenrgebnisse[3]) #dict to json 
-    Flächenverteilung = json.dumps(Rechenrgebnisse[4]) #dict to json 
+    Flächenverteilung = json.dumps(Rechenrgebnisse[4]) #dict to json
+    levelized_cost_total = json.dumps(Rechenrgebnisse[5]) #dict to json
 
-    print(Rückgewinnung)
     return {'Ergebnisse': Ergebnisse,
             'Materialkosten':Materialkosten,
             'Rückgewinnung':Rückgewinnung,
             'Baukosten':Baukosten,
-            'Flächenverteilung':Flächenverteilung
+            'Flächenverteilung':Flächenverteilung,
+            'levelized_cost_total':levelized_cost_total
             }
 
 @app.route('/Zellergebnisse', methods=['POST'])

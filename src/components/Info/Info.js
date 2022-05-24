@@ -1,4 +1,5 @@
 import React from 'react';
+import bmbf from '../../resources/bmbf.png';
 
 // Take in a phrase and separate the third word in an array
 function createArrayFromPhrase(phrase) {
@@ -11,6 +12,7 @@ const InfoSection = props => (
   <section className={`bx--row ${props.className} info-section`}>
     <div className="bx--col-md-8 bx--col-lg-4 bx--col-xlg-3">
       <h3 className="info-section__heading">{props.heading}</h3>
+      <img src={bmbf} alt="Gefördert durch BMBF" width="200" style={{marginTop:"175px"}}/> 
     </div>
     {props.children}
   </section>

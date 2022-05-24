@@ -210,7 +210,15 @@ const LandingPage = () => {
       </div>
       <InfoSection heading="Institute" className="landing-page__r3">
         <InfoCard
-          heading="Instiut für Partikeltechnik IPAT"
+          heading="Kompetenzcluster ProZell"
+          body={
+            <><span style={{ fontSize: "10pt" }}>Das Ziel des Kompetenzclusters zur Batteriezellproduktion ist es, den Produktionsprozess von Batteriezellen und dessen Einfluss auf die Zelleigenschaften und die Produktentstehungskosten zu erforschen und zu verbessern.</span><br />
+              <a rel="noreferrer" href="https://prozell-cluster.de/" target="_blank" style={{ color: "black" }}>ProZell Cluster</a></>
+          }
+          icon={<ChartNetwork32 />}
+        />
+        <InfoCard
+          heading="Institut für Partikeltechnik IPAT"
           body={
             <><span style={{ fontSize: "10pt" }}>Wir sind an Themen der Grundlagenforschung und -lehre genauso wie an unterschiedlichsten Anwendungsfeldern partikulärer Systeme interessiert – wobei die Gebiete Mobilität, Lebenswissenschaften und Materialien im Fokus stehen.</span><br />
               <a rel="noreferrer" href="https://www.tu-braunschweig.de/ipat" target="_blank" style={{ color: "black" }}>IPAT</a></>
@@ -224,14 +232,6 @@ const LandingPage = () => {
               <a rel="noreferrer" href="https://www.tu-braunschweig.de/blb" target="_blank" style={{ color: "black" }}>BLB</a></>
           }
           icon={<BatteryCharging32 />}
-        />
-        <InfoCard
-          heading="Kompetenzcluster ProZell"
-          body={
-            <><span style={{ fontSize: "10pt" }}>Das Ziel des Kompetenzclusters zur Batteriezellproduktion ist es, den Produktionsprozess von Batteriezellen und dessen Einfluss auf die Zelleigenschaften und die Produktentstehungskosten zu erforschen und zu verbessern.</span><br />
-              <a rel="noreferrer" href="https://prozell-cluster.de/" target="_blank" style={{ color: "black" }}>ProZell Cluster</a></>
-          }
-          icon={<ChartNetwork32 />}
         />
       </InfoSection>
     </div>
