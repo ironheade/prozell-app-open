@@ -1,4 +1,4 @@
-import { Button, DataTable, Dropdown, NumberInput, Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow } from "carbon-components-react";
+import { Button, DataTable, Dropdown, NumberInput, Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow, TextInput } from "carbon-components-react";
 import React, { useState, useEffect } from "react";
 import tabelle_abrufen from '../../../functions/tabelle_abrufen'
 
@@ -14,13 +14,12 @@ export default function DatenbankTable() {
     const headerData = Object.keys(data[0]).map(item => ({ header: item, key: item }))
     const rowData = data.map(item => ({ ...item, id: item["id"].toString() }))
 
-    function handleChange(value, id) {
+    function handleChange(value, id, column) {
         var newData = [...data]
         var newObject = newData.filter(item => item.id === id)[0]
         const index = newData.indexOf(newData.filter(item => item.id === id)[0])
-        newObject["Wert"] = value
+        newObject[column] = value
         newData[index] = newObject
-
         setData(newData)
     }
 
@@ -36,22 +35,36 @@ export default function DatenbankTable() {
         setCurrentTable(tabellenname)
         tabelle_abrufen(tabellenname).then(res => setData(JSON.parse(res)))
     }
-/*
-    function Datenbank_aktualisieren() {
-        console.log(currentTable)
-        console.log(JSON.stringify(data))
-    }
-*/
+    /*
+        function Datenbank_aktualisieren() {
+            console.log(currentTable)
+            console.log(JSON.stringify(data))
+        }
+    */
     function Datenbank_aktualisieren() {
         fetch('/update_db', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            new_table: data,
-            new_table_name: currentTable,
-          }),
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                new_table: data,
+                new_table_name: currentTable,
+            }),
         })
-      }
+    }
+
+    function InputText (props){
+        return (
+            <TableCell>
+                <TextInput
+                    id="text"
+                    labelText=""
+                    defaultValue={props.cell.value}
+                    onChange={(e) => handleChange(e.target.value, Number(props.cell.id.split(":")[0]), props.column)}
+                >
+                </TextInput>
+            </TableCell>
+        )
+    }
 
     return (
         <>
@@ -87,11 +100,37 @@ export default function DatenbankTable() {
                                                 <NumberInput
                                                     id="carbon-number"
                                                     value={cell.value}
-                                                    onChange={(e) => handleChange(e.imaginaryTarget.valueAsNumber, Number(cell.id.split(":")[0]))}
+                                                    onChange={(e) => handleChange(e.imaginaryTarget.valueAsNumber, Number(cell.id.split(":")[0]), "Wert")}
                                                 />
                                             </TableCell>
                                             :
-                                            <TableCell key={cell.id}>{cell.value}</TableCell>
+                                            cell.id.includes('Besonderheit') ?
+                                                <TableCell key={cell.id}>
+                                                    <TextInput
+                                                        id="text"
+                                                        labelText=""
+                                                        defaultValue={cell.value}
+                                                        onChange={(e) => handleChange(e.target.value, Number(cell.id.split(":")[0]), "Besonderheit")}
+                                                    >
+                                                    </TextInput>
+                                                </TableCell>
+
+                                                :
+                                                cell.id.includes('Quelle') ?
+                                                    //<InputText key={cell.id} cell={cell} column="Quelle"/>
+                                                  
+                                                    <TableCell key={cell.id}>
+                                                        <TextInput
+                                                            id="text"
+                                                            labelText=""
+                                                            defaultValue={cell.value}
+                                                            onChange={(e) => handleChange(e.target.value, Number(cell.id.split(":")[0]), "Quelle")}
+                                                        >
+                                                        </TextInput>
+                                                    </TableCell>
+                                                   
+                                                    :
+                                                    <TableCell key={cell.id}>{cell.value}</TableCell>
 
                                         ))}
                                     </TableRow>
@@ -101,7 +140,7 @@ export default function DatenbankTable() {
                     </TableContainer>
                 )}
             </DataTable>
-            <Button style={{marginTop:"10px"}} onClick={()=>Datenbank_aktualisieren()}>Datenbank aktualisieren</Button>
+            <Button style={{ marginTop: "10px" }} onClick={() => Datenbank_aktualisieren()}>Datenbank aktualisieren</Button>
         </>
     )
 }
