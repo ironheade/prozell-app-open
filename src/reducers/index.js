@@ -21,6 +21,7 @@ import { combineReducers } from 'redux';
 import ergebnisTabellenReducer from './ergebnisTabellenReducer';
 import rueckgewinnungReducer from './rueckgewinnungReducer'
 import loggedInReducer from './loggedInReducer';
+import loggedInAdminReducer from './loggedInAdminReducer';
 
 
 
@@ -45,7 +46,8 @@ const rootreducer = combineReducers({
   ergebnisTabelle: ergebnisTabellenReducer,
   rueckgewinnung: rueckgewinnungReducer,
   quellen: quellenReducer,
-  loggedIn: loggedInReducer 
+  loggedIn: loggedInReducer,
+  loggedInAdmin: loggedInAdminReducer 
 });
 
 export default rootreducer;

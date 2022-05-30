@@ -85,10 +85,12 @@ def user_check(user,password):
         Endzeit = list((df.loc[df["Nutzername"]==user]["Endzeit"]))[0]
         StartzeitMS = list((df.loc[df["Nutzername"]==user]["StartzeitMS"]))[0]
         EndzeitMS = list((df.loc[df["Nutzername"]==user]["EndzeitMS"]))[0]
+        Berechtigung = list((df.loc[df["Nutzername"]==user]["Berechtigung"]))[0]
         return json.dumps({"Startzeit":Startzeit,
                            "Endzeit":Endzeit,
                            "StartzeitMS":StartzeitMS,
-                           "EndzeitMS":EndzeitMS
+                           "EndzeitMS":EndzeitMS,
+                           "Berechtigung":Berechtigung
                            })
 
     

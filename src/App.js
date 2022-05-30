@@ -50,6 +50,7 @@ const App = () => {
   );
 
   const logged = useSelector(state => state.loggedIn)
+  const loggedAdmin = useSelector(state => state.loggedInAdmin)
 
   return (
     <>
@@ -62,7 +63,7 @@ const App = () => {
           <Route path="/AllgemeineParameter" component={logged ? AllgemeineParameter : LandingPage} />
           <Route path="/Ergebnisse" component={logged ? Ergebnisse : LandingPage} /> 
           {/*<Route path="/Adminpage" component={logged ? AdminPage : LandingPage} />*/}
-          <Route path="/Adminpage" component={AdminPage} />
+          <Route path="/Adminpage" component={loggedAdmin ? AdminPage : LandingPage} />
         </Switch>
       </Content>
     </>

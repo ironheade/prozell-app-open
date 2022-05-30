@@ -21,6 +21,7 @@ import LoginModal from './loginModal';
 
 const TutorialHeader = () => {
   const logged = useSelector(state => state.loggedIn)
+  const loggedAdmin = useSelector(state => state.loggedInAdmin)
   const [ loginModalOpen, setLoginModalOpen ] = useState(false)
 
   return (
@@ -51,9 +52,11 @@ const TutorialHeader = () => {
               <HeaderMenuItem element={Link} to="/Ergebnisse">
                 Ergebnisse
               </HeaderMenuItem>
+              {loggedAdmin &&
               <HeaderMenuItem element={Link} to="/AdminPage">
                 Admin Seite
               </HeaderMenuItem>
+            }
             </HeaderNavigation>
           }
           {logged &&
@@ -81,9 +84,11 @@ const TutorialHeader = () => {
                   <HeaderMenuItem element={Link} to="/Ergebnisse">
                     Ergebnisse
                   </HeaderMenuItem>
+                  {loggedAdmin &&
                   <HeaderMenuItem element={Link} to="/AdminPage">
                     Admin Seite
                   </HeaderMenuItem>
+                  }
                 </HeaderSideNavItems>
 
               </SideNavItems>

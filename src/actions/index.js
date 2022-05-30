@@ -145,4 +145,11 @@ export const login = newState => {
   };
 };
 
+export const login_admin = newState => {
+  return {
+    type: 'LOGIN_ADMIN',
+    payload: newState,
+  };
+};
+
 

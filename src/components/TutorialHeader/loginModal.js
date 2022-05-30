@@ -1,7 +1,7 @@
 import { Button, ComposedModal, FormGroup, ModalBody, ModalHeader, TextInput } from "carbon-components-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from './../../actions'
+import { login, login_admin } from './../../actions'
 
 export default function LoginModal(props) {
 
@@ -11,6 +11,7 @@ export default function LoginModal(props) {
     const [nutzerdaten, setNutzerdaten] = useState(null)
     const dispatch = useDispatch();
     const logged = useSelector(state => state.loggedIn)
+    const loggedAdmin = useSelector(state => state.loggedInAdmin)
 
     async function CheckLog() {
         const res = await fetch('/user_check', {
@@ -33,7 +34,10 @@ export default function LoginModal(props) {
         nutzerdaten !== null &&
             nutzerdaten.StartzeitMS - Date.now() < 0 &&
             nutzerdaten.EndzeitMS + 86400000 - Date.now() > 0 &&
-            dispatch(login(true))
+            dispatch(login(true)) &&
+            nutzerdaten.Berechtigung === "Admin" &&
+            dispatch(login_admin(true))
+
     }, [nutzerdaten])
 
 
