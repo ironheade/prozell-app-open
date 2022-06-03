@@ -40,6 +40,7 @@ export default function Ergebnisse() {
   const [baukosten, setBaukosten] = useState(null)
   const [flaechenverteilung, setFlaechenverteilung] = useState(null)
   const [levelizedCost, setLevelizedCost] = useState(null)
+  const [overheadKosten, setOverheadKosten] = useState(null)
 
 
 
@@ -69,11 +70,14 @@ export default function Ergebnisse() {
         setMaterialkosten(JSON.parse(data.Materialkosten));
         setMaterialverlust(JSON.parse(data.Rückgewinnung));
         setBaukosten(JSON.parse(data.Baukosten));
-        setFlaechenverteilung(JSON.parse(data.Flächenverteilung))
-        setLevelizedCost(JSON.parse(data.levelized_cost_total))
+        setFlaechenverteilung(JSON.parse(data.Flächenverteilung));
+        setLevelizedCost(JSON.parse(data.levelized_cost_total));
+        setOverheadKosten(JSON.parse(data.overhead_kosten))
       });
     setHintergrundDatenHidden(false)
   }
+
+  overheadKosten !== null && console.log(overheadKosten)
 
   //Erstellt einen Array mit den Prozessschritten in der richtigen Reihenfolge
   function create_ProzessschrittArray() {
@@ -121,7 +125,7 @@ export default function Ergebnisse() {
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
-      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null &&
+      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null && overheadKosten !== null &&
         <>
 
           <h1>Produktionskosten</h1>
@@ -158,9 +162,11 @@ export default function Ergebnisse() {
             data_kosten={materialkosten}
             data={ergebnisTabelle}
             Kostenfaktoren={Kostenfaktoren}
-            baukosten={baukosten} />
+            baukosten={baukosten}
+            overheadKosten = {overheadKosten}
+            />
 
-          {flaechenverteilung !== null && <Treemap data={flaechenverteilung}/>}
+          {flaechenverteilung !== null && <Treemap data={flaechenverteilung} ergebnisTabelle={ergebnisTabelle}/>}
         </>
         
       }

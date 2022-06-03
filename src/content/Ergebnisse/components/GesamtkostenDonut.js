@@ -55,7 +55,7 @@ export default function GesamtkostenDonut(props) {
         }
     ]
 
-    OverheadKosten.map(item => Overheadkosten_gesamt = Overheadkosten_gesamt + item.value) //Aufsummieren der Produktionskosten für die gesamten Produktionskosten
+    props.overheadKosten !== null && props.overheadKosten.map(item => Overheadkosten_gesamt = Overheadkosten_gesamt + item.value) //Aufsummieren der Produktionskosten für die gesamten Produktionskosten
 
     const Gesamtkosten = [
         {
@@ -111,7 +111,7 @@ export default function GesamtkostenDonut(props) {
                         <DonutChart data={Produktionskosten} options={{...Options, title: "Produktionskosten"}} />
                     </div>
                     <div className="bx--col-lg-5">
-                        <DonutChart data={OverheadKosten} options={{...Options, title: "Overheadkosten (Platzhalter)"}} />
+                        <DonutChart data={props.overheadKosten} options={{...Options, title: "Overheadkosten"}} />
                     </div>
                     <div className="bx--col-lg-5">
                         <DonutChart data={Materialkosten} options={{...Options, title: "Materialkosten"}} />

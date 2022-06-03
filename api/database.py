@@ -26,7 +26,7 @@ def csv_to_table_new(table_name, path, exceptions):
     
     # table_name = "Formieren"
     database = "Datenbank.db"
-    # path = r"C:/Users/bendzuck/Desktop/test/Prozessschritte/formieren.csv"
+
     # exceptions = ["Wert","Werte","Kosten"] #Werte die kein TEXT sondern REAL sind
     
     #read the csv, replace the "Unnamed" with "Beschreibung", get a list of the headers, encoding vormals 'latin-1'

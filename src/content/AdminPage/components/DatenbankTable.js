@@ -1,13 +1,12 @@
 import { Button, DataTable, Dropdown, NumberInput, Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow, TextInput } from "carbon-components-react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import tabelle_abrufen from '../../../functions/tabelle_abrufen'
+import InputText from "./TextInput";
 
-export default function DatenbankTable() {
+export default function DatenbankTable(props) {
 
     //Daten der altuell ausgewählten Tabelle
     const [data, setData] = useState([{ "id": 1, "Beschreibung": "keine" }])
-    //Alle Tabellen
-    const [allTables, setAllTables] = useState(null)
     //Name der aktuell ausgewählten Tabelle
     const [currentTable, setCurrentTable] = useState("Tabelle auswählen")
 
@@ -23,24 +22,11 @@ export default function DatenbankTable() {
         setData(newData)
     }
 
-    useEffect(() => {
-        fetch('/all_tables')
-            .then(res => res.json())
-            .then(data => {
-                setAllTables(data.tables);
-            });
-    }, []);
-
     function neue_tabelle_laden(tabellenname) {
         setCurrentTable(tabellenname)
         tabelle_abrufen(tabellenname).then(res => setData(JSON.parse(res)))
     }
-    /*
-        function Datenbank_aktualisieren() {
-            console.log(currentTable)
-            console.log(JSON.stringify(data))
-        }
-    */
+
     function Datenbank_aktualisieren() {
         fetch('/update_db', {
             method: 'POST',
@@ -52,32 +38,32 @@ export default function DatenbankTable() {
         })
     }
 
-    function InputText (props){
-        return (
-            <TableCell>
-                <TextInput
-                    id="text"
-                    labelText=""
-                    defaultValue={props.cell.value}
-                    onChange={(e) => handleChange(e.target.value, Number(props.cell.id.split(":")[0]), props.column)}
-                >
-                </TextInput>
-            </TableCell>
-        )
-    }
+    const editable_columns = ["Besonderheit",
+                            "Quelle",
+                            "Nachname",
+                            "Vorname",
+                            "Jahr",
+                            "Titel",
+                            "Verlag",
+                            "doi",
+                            "ISBN",
+                            "text",
+                            "quelle"
+]
 
     return (
         <>
-            {allTables !== null &&
                 <Dropdown
                     className="all_tables_dropdown"
                     id="default"
-                    label="Alle Tabellen"
-                    items={allTables}
+                    label={props.title}
+                    items={props.dropDownData}
+                    //items={zellformate}
+                    //items={allTables}
                     onChange={
                         ({ selectedItem }) => neue_tabelle_laden(selectedItem)
                     }
-                />}
+                />
 
             <DataTable rows={rowData} headers={headerData} isSortable>
                 {({ rows, headers, getHeaderProps, getTableProps }) => (
@@ -95,7 +81,8 @@ export default function DatenbankTable() {
                             <TableBody>
                                 {rows.map((row) => (
                                     <TableRow key={row.id}>
-                                        {row.cells.map((cell) => (cell.id.includes('Wert') ?
+                                        {row.cells.map((cell) => (cell.id.includes('Wert')
+                                            ?
                                             <TableCell key={cell.id}>
                                                 <NumberInput
                                                     id="carbon-number"
@@ -104,34 +91,10 @@ export default function DatenbankTable() {
                                                 />
                                             </TableCell>
                                             :
-                                            cell.id.includes('Besonderheit') ?
-                                                <TableCell key={cell.id}>
-                                                    <TextInput
-                                                        id="text"
-                                                        labelText=""
-                                                        defaultValue={cell.value}
-                                                        onChange={(e) => handleChange(e.target.value, Number(cell.id.split(":")[0]), "Besonderheit")}
-                                                    >
-                                                    </TextInput>
-                                                </TableCell>
-
-                                                :
-                                                cell.id.includes('Quelle') ?
-                                                    //<InputText key={cell.id} cell={cell} column="Quelle"/>
-                                                  
-                                                    <TableCell key={cell.id}>
-                                                        <TextInput
-                                                            id="text"
-                                                            labelText=""
-                                                            defaultValue={cell.value}
-                                                            onChange={(e) => handleChange(e.target.value, Number(cell.id.split(":")[0]), "Quelle")}
-                                                        >
-                                                        </TextInput>
-                                                    </TableCell>
-                                                   
-                                                    :
-                                                    <TableCell key={cell.id}>{cell.value}</TableCell>
-
+                                            editable_columns.includes(cell.id.split(":")[1]) ? 
+                                            <InputText key={cell.id} cell={cell} change={(e) => handleChange(e.target.value, Number(cell.id.split(":")[0]), cell.id.split(":")[1])} />
+                                            :
+                                            <TableCell key={cell.id}>{cell.value}</TableCell>
                                         ))}
                                     </TableRow>
                                 ))}

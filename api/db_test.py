@@ -16,7 +16,7 @@ db = sqlite3.connect(os.path.abspath("Datenbank.db"))
 cursor = db.cursor()
 
 query = 'Select COLUMNS FROM assemblieren'
-print(cursor.execute(query))
+#print(cursor.execute(query))
 
 def update_row(table_name,Wert,id_nr):
     db = sqlite3.connect(os.path.abspath("Datenbank.db"))
@@ -38,3 +38,25 @@ def update_table(JSONdata,table_name):
         update_row(table_name,row["Wert"],row["id"])
         
 #update_table(tabelle)
+        
+def do_query(query):
+    db = sqlite3.connect(os.path.abspath("Datenbank.db"))
+    cursor = db.cursor()
+    c = cursor.execute(query)
+    for row in c:
+        Chemien.append(row[0])
+    db.commit()
+    db.close()
+
+Chemien = []
+query_1 = "SELECT Dateiname FROM Zellchemien"
+do_query(query_1)
+print(Chemien)
+
+
+# for Chemie in Chemien:
+#     query = "ALTER TABLE {} rename to {}".format(Chemie,"zellchemie_"+Chemie)
+#     do_query(query)
+#INTEGER PRIMARY KEY AUTO_INCREMENT=1
+new_query = 'ALTER TABLE "material_NCM_111" ALTER COLUMN id INTEGER NOT NULL'
+do_query(new_query)

@@ -165,13 +165,15 @@ def get_ergebnisse():
     Baukosten = json.dumps(Rechenrgebnisse[3]) #dict to json 
     Flächenverteilung = json.dumps(Rechenrgebnisse[4]) #dict to json
     levelized_cost_total = json.dumps(Rechenrgebnisse[5]) #dict to json
+    overhead_kosten = json.dumps(Rechenrgebnisse[6]) #dict to json
 
     return {'Ergebnisse': Ergebnisse,
             'Materialkosten':Materialkosten,
             'Rückgewinnung':Rückgewinnung,
             'Baukosten':Baukosten,
             'Flächenverteilung':Flächenverteilung,
-            'levelized_cost_total':levelized_cost_total
+            'levelized_cost_total':levelized_cost_total,
+            'overhead_kosten':overhead_kosten
             }
 
 @app.route('/Zellergebnisse', methods=['POST'])

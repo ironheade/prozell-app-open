@@ -97,7 +97,7 @@ export default function NutzerGenerator() {
 
             </CSVLink>
 
-            {date !== null && Date.now() > date.startzeitMS && Date.now() < date.endzeitMS && <p>Login Erfolgreich!</p>}
+            {/*date !== null && Date.now() > date.startzeitMS && Date.now() < date.endzeitMS && <p>Login Erfolgreich!</p>*/}
         </div>
     )
 }

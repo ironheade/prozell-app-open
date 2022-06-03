@@ -211,8 +211,9 @@ def Kostenberechnung(Zellergebnisse_raw,
     flaechenergebnisse = flaechenberechnung(flaeche_normalraum, flaeche_trockenraum, Gebaeude, Oekonomische_Parameter)
     grundstueckskosten = flaechenergebnisse[0]
     flaechenverteilung = flaechenergebnisse[1]
-
     flaechenkosten_jaehrlich = flaechenergebnisse[2]
+    fabrikflaeche = flaechenergebnisse[3]
+    Fabrikflaeche_ohne_Produktion = flaechenergebnisse[4]
     
     
     
@@ -290,6 +291,38 @@ def Kostenberechnung(Zellergebnisse_raw,
     #Flächenkalkulation    
 
     #Abschluss Flächenkalkulation
+
+    
+    Personalkosten_overhead = sum([sum(list(df.loc[x])) for x in ["Personlabedarf Facharbeiter","Personalbedarf Hilfskraft"]])*24*Betriebstage*(
+        Mitarbeiter_und_Logistik["Wert"]["Stundensatz Indirekte"]*1/Mitarbeiter_und_Logistik["Wert"]["Führunggspanne"]+
+        Mitarbeiter_und_Logistik["Wert"]["Stundensatz Putzkräfte"]*1/Mitarbeiter_und_Logistik["Wert"]["Spanne Reinigungskräfte"])
+
+    Klimatisierung_overhead = fabrikflaeche*Gebaeude["Wert"]["Mediengrundversorgung"]*24*Betriebstage*Oekonomische_Parameter["Wert"]["Energiekosten"]/1000
+
+    Flaechenkosten_overhead = Fabrikflaeche_ohne_Produktion*flaechenkosten_jaehrlich
+    
+    Steuer_overhead = 1200000
+    
+    fix_cost = Personalkosten_overhead + Klimatisierung_overhead + Flaechenkosten_overhead + Steuer_overhead #Overhead Kosten
+
+    overhead_kosten = [
+        {
+            "group": "Personal",
+            "value": Personalkosten_overhead
+        },
+        {
+            "group": "Fläche",
+            "value": Flaechenkosten_overhead
+        },
+        {
+            "group": "Klimatisierung",
+            "value": Klimatisierung_overhead
+        },
+        {
+            "group": "Steuer",
+            "value": Steuer_overhead
+        }
+    ]
     
     
     
@@ -348,6 +381,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     print(Oekonomische_Parameter["Wert"]["Umsatzsteuer"]/100)
     print("variable_cost")
     print("fix_cost")
+    print(fix_cost)
     print("output_kWh")
     print(float(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])*1000000)
     print("machine_invest")
@@ -362,14 +396,20 @@ def Kostenberechnung(Zellergebnisse_raw,
         lifetime_factory = Gebaeude["Wert"]["Nutzungsdauer"],
         interest_rate = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"]/100,
         tax_rate = Oekonomische_Parameter["Wert"]["Umsatzsteuer"]/100,
-        variable_cost = 970000000,
-        fix_cost = 10000000,
+        variable_cost = sum([sum(list(df.loc[x])) for x in ["Materialkosten",
+                                                        "Personalkosten",
+                                                        "Energiekosten",
+                                                        "Instandhaltungskosten",
+                                                        "Flächenkosten",
+                                                        "Kalkulatorische Zinsen",
+                                                        "Ökonomische Abschreibung"]]),
+        fix_cost = fix_cost,
         output_kWh = float(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])*1000000,
         machine_invest = sum(list(df.loc["Investition"])),
         factory_depreciation = Oekonomische_Parameter["Wert"]["Abschreibungsdauer Gebäude"],
         machine_depreciation = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"]
     )
-
+    
     
     #____________________________________
     #Umformen des df
@@ -385,5 +425,5 @@ def Kostenberechnung(Zellergebnisse_raw,
     #Reihenfolge im df drehen
     df = df.iloc[:, ::-1] 
     
-    return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result)
+    return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result, overhead_kosten)
 #Kostenberechnung()

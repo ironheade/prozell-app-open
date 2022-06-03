@@ -6,8 +6,8 @@ Created on Wed May 18 12:47:24 2022
 """
 
 
-flaeche_normalraum = 6619
-flaeche_trockenraum = 790
+#flaeche_normalraum = 6619
+#flaeche_trockenraum = 790
 
 def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomische_Parameter):
 
@@ -136,10 +136,26 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
     
     ]
     
+    Fabrikflaeche = round(
+        neben_funktions_sozial_flaeche+
+        lager_versand_flaeche+
+        verwaltungs_flaeche+
+        zusatz_flaeche+
+        zwischenlager_flaeche+
+        maschinenplatz_flaeche+
+        flaeche_trockenraum+
+        flaeche_normalraum
+    )
+    
+    Fabrikflaeche_ohne_Produktion = round(
+        Fabrikflaeche-
+        flaeche_trockenraum-
+        flaeche_normalraum
+    )
     
     jaehrliche_flaechenkosten = quadratmeter_preis_gebaeude*Zinssatz_kapitalmarkt/200+quadratmeter_preis_gebaeude/nutzungsdauer_gebaeude+quadratmeter_preis_gebaeude/100
     
-    return investition_kosten_bau, flaechen_verteilung, jaehrliche_flaechenkosten
+    return investition_kosten_bau, flaechen_verteilung, jaehrliche_flaechenkosten, Fabrikflaeche, Fabrikflaeche_ohne_Produktion
     
 
 #flaechenberechnung(flaeche_normalraum,flaeche_trockenraum)

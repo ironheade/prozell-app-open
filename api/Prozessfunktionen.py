@@ -45,6 +45,7 @@ def read_zellinfo(Material, df):
     df = df.loc[df["Material"] == Material]
     return df
 
+
 #____________________________________
 #Prozessfunktionen
             
@@ -60,6 +61,8 @@ def Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     Kathodenbeschichtung=schritt_dictionary["Kathodenbeschichtung"]*Verlust
     Separator=schritt_dictionary["Separator"]
     Elektrolyt=schritt_dictionary["Elektrolyt"]
+    
+    faktor_ueberkapazitaet = (1+float(df["Wert"]["Überkapazität"])/100) #[%], 1+Überkapazität/100
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
 
@@ -81,7 +84,6 @@ def Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     Energiebedarf = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
    
     Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
-  
    
     Facharbeiter = Anzahl_Anlagen*float(df["Wert"]["Personal Facharbeiter"])
     Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
@@ -210,8 +212,8 @@ def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     Kathodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
     Anodenbeschichtung=schritt_dictionary["Anodenbeschichtung"]*Verlust
     Kathodenbeschichtung=schritt_dictionary["Kathodenbeschichtung"]*Verlust
-    Separator=schritt_dictionary["Separator"]
-    Elektrolyt=schritt_dictionary["Elektrolyt"]
+    Separator=schritt_dictionary["Separator"]*Verlust
+    Elektrolyt=schritt_dictionary["Elektrolyt"]*Verlust
     
     Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
 
@@ -229,8 +231,8 @@ def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     Energiebedarf = Anzahl_Anlagen*df["Wert"]["Leistungsaufnahme"]*24*arbeitstage_pro_jahr   
     Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
     Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
-
-    liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
+    
+    liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])
     schritt_dictionary={
         "Zelläquivalent":Zelläquivalent,
         "Investition":Investition,
