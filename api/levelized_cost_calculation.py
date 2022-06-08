@@ -24,18 +24,7 @@ def levelized_cost(construction_cost_factory,
                    factory_depreciation,
                    machine_depreciation
                    ):
-    
-    print(construction_cost_factory,
-                   type(lifetime_factory),
-                   interest_rate,
-                   tax_rate,
-                   variable_cost,
-                   fix_cost,
-                   output_kWh,
-                   machine_invest,
-                   factory_depreciation,
-                   machine_depreciation)
-    
+        
     output_kWh = int(output_kWh)
     machine_invest = int(machine_invest)
     factory_depreciation = int(factory_depreciation)

@@ -43,7 +43,7 @@ def generate_random_user(length):
 
 	return("".join(username))
 
-def generate_users(amount,Startzeit,Endzeit,StartzeitMS,EndzeitMS):
+def generate_users(amount,Startzeit,Endzeit,StartzeitMS,EndzeitMS,Kommentar):
     Zugangsdaten = []
     i=0
     while i < amount:
@@ -56,16 +56,16 @@ def generate_users(amount,Startzeit,Endzeit,StartzeitMS,EndzeitMS):
         Nutzer = generate_random_user(10)
         Passwort = generate_random_password(20)
         
-        query_data = [Nutzer,Passwort,Startzeit,Endzeit,StartzeitMS,EndzeitMS]
+        query_data = [Nutzer,Passwort,Startzeit,Endzeit,StartzeitMS,EndzeitMS,Kommentar]
         sqlite_insert_query = """INSERT INTO Zugangsdaten
-                          (Nutzername,Passwort,Startzeit,Endzeit,StartzeitMS,EndzeitMS) 
+                          (Nutzername,Passwort,Startzeit,Endzeit,StartzeitMS,EndzeitMS,Kommentar) 
                            VALUES 
-                          (?,?,?,?,?,?)"""
+                          (?,?,?,?,?,?,?)"""
         cursor.execute(sqlite_insert_query,query_data)
         db.commit()
         db.close()
         
-        Zugangsdaten.append({"Nutzer": Nutzer, "Passwort": Passwort, "Startzeit": Startzeit, "Endzeit":Endzeit,"StartzeitMS":StartzeitMS,"EndzeitMS":EndzeitMS})
+        Zugangsdaten.append({"Nutzer": Nutzer, "Passwort": Passwort, "Startzeit": Startzeit, "Endzeit":Endzeit,"StartzeitMS":StartzeitMS,"EndzeitMS":EndzeitMS,"Kommentar":Kommentar})
         
         i+=1
     return(json.dumps(Zugangsdaten))

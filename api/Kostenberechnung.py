@@ -300,27 +300,21 @@ def Kostenberechnung(Zellergebnisse_raw,
     Klimatisierung_overhead = fabrikflaeche*Gebaeude["Wert"]["Mediengrundversorgung"]*24*Betriebstage*Oekonomische_Parameter["Wert"]["Energiekosten"]/1000
 
     Flaechenkosten_overhead = Fabrikflaeche_ohne_Produktion*flaechenkosten_jaehrlich
-    
-    Steuer_overhead = 1200000
-    
-    fix_cost = Personalkosten_overhead + Klimatisierung_overhead + Flaechenkosten_overhead + Steuer_overhead #Overhead Kosten
+        
+    fix_cost = Personalkosten_overhead + Klimatisierung_overhead + Flaechenkosten_overhead #Overhead Kosten
 
     overhead_kosten = [
         {
-            "group": "Personal",
+            "group": "Personalkosten",
             "value": Personalkosten_overhead
         },
         {
-            "group": "Fläche",
+            "group": "Flächenkosten",
             "value": Flaechenkosten_overhead
         },
         {
             "group": "Klimatisierung",
             "value": Klimatisierung_overhead
-        },
-        {
-            "group": "Steuer",
-            "value": Steuer_overhead
         }
     ]
     
@@ -369,27 +363,6 @@ def Kostenberechnung(Zellergebnisse_raw,
 
     #____________________________________
     #Levelized costs
-    
-    print("Levelized Cost Inputs:")
-    print("Baukosten:")
-    print(sum(anteil["value"] for anteil in grundstueckskosten))
-    print("lifetime_factory")
-    print(Gebaeude["Wert"]["Nutzungsdauer"])
-    print("interest_rate")
-    print(Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"]/100)
-    print("tax_rate")
-    print(Oekonomische_Parameter["Wert"]["Umsatzsteuer"]/100)
-    print("variable_cost")
-    print("fix_cost")
-    print(fix_cost)
-    print("output_kWh")
-    print(float(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])*1000000)
-    print("machine_invest")
-    print(sum(list(df.loc["Investition"])))
-    print("factory_depreciation")
-    print(Oekonomische_Parameter["Wert"]["Abschreibungsdauer Gebäude"])
-    print("machine_depreciation")
-    print(Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"])
 
     levelized_cost_result = levelized_cost(
         construction_cost_factory = sum(anteil["value"] for anteil in grundstueckskosten),

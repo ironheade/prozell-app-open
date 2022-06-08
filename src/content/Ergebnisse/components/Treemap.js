@@ -54,7 +54,7 @@ export default function Treemap(props) {
         },
         "baseTooltop":{
             "truncation": {
-                "numCharacter": 45,
+                "numCharacter": 450,
             }
         }
     }

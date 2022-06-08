@@ -73,6 +73,22 @@ def get_tabelle():
         
     return {'tabelle':tabelle}
 
+@app.route('/Nutzer_abrufen',methods=['POST'])
+def get_Nutzer():
+    Dateiname = request.get_json()["Zugangsdaten"]
+
+    db = sqlite3.connect(os.path.abspath("passwort.db"))
+    read_order = ('''SELECT * FROM {Dateiname}''')
+    read_order = read_order.format(Dateiname=Dateiname)
+    df = pd.read_sql_query(read_order, db)
+        
+    tabelle = df.to_json(orient='records')
+    db.commit()
+    db.close()
+        
+    return tabelle
+
+
 @app.route('/user_check',methods=['POST'])
 def check_user():
     Nutzer = request.get_json()["Nutzer"]
@@ -92,9 +108,9 @@ def nutzer_generieren():
     Endzeit = request.get_json()["Endzeit"]
     StartzeitMS = request.get_json()["StartzeitMS"]
     EndzeitMS = request.get_json()["EndzeitMS"]
+    Kommentar = request.get_json()["Kommentar"]
 
-    Nutzer = generate_users(Anzahl,Startzeit,Endzeit,StartzeitMS,EndzeitMS)
-    #return {'Nutzer': Nutzer}
+    Nutzer = generate_users(Anzahl,Startzeit,Endzeit,StartzeitMS,EndzeitMS,Kommentar)
     return Nutzer
 
 @app.route('/Zellwahl',methods=['POST'])
