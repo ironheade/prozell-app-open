@@ -51,134 +51,80 @@ export default function Anleitung() {
     { id: 23, Beschreibung: 'Höhe Rundzelle', Einheit: 'mm' },
     { id: 24, Beschreibung: 'Radius Rundzelle', Einheit: 'mm' },
     { id: 25, Beschreibung: 'Wandstärke', Einheit: 'mm' }
-
   ]
 
   return (
     <>
-      <div className="bx--col-lg-16" />
-      <div className="bx--col-lg-9">
-        <h3>Einleitung</h3>
-        <p className="anleitungstext">
-          Das vorliegende Programm vereinfacht die Kostenbetrachtung in der
-          Batteriezellproduktion im großen Maßstab. Es ermöglicht die Gestaltung
-          einer Lithium-Ionen Batterie aus einer der vorgegeben Zellbautypen,
-          die anschließende Auslegung der Produktionsroute und nach einem
-          letzten Blick auf allgemeine Parameter die Betrachtung der Ergebnisse.
-          Dabei ist es nicht notwendig, die entsprechenden Punkte in der
-          Kopfzeile von links nach Rechts zu bearbeiten. Im Folgenden werden die
-          wichtigsten Auswahlmöglichkeiten des Programms erläutert.
-        </p>
-      </div>
-      <div className="bx--col-lg-5 centerbox">
-        <Img alt="Oberfläche" source={Oberfläche} />
-      </div>
-      <Spacer />
+    <div className="bx--col-lg-14">
 
-      <div className="bx--col-lg-5 centerbox">
-        <Img alt="searching" source={searching} />
-      </div>
+      <h3>Einleitung</h3>
+      <p className="anleitungstext">Das vorliegende Programm ermöglicht die ökonomische Betrachtung einer Lithium-Ionen Batterie Produktion in großem Maßstab. Es führt den Nutzer über die Modellierung der Batterie, die Gestaltung der Produktionslinie, die Festlegung wichtiger Rahmenparameter hin zu den Ergebnissen. Im folgenden wird die Handhabung des Programms Schritt für Schritt erläutert.<br/><strong>Hinweis:</strong> Das Programm ist im Rahmen des eKoZell Projektes entstanden, gefördert durch das Bundesministerium für Bildung und Forschung. Eine Druckversion der Anleitung kann <a target="_blank" href='https://www.google.com/'>hier</a> heruntergeladen werden. Der Login um die Möglichkeiten des Programms nutzen zu können erfolgt über das Symbol oben rechts in der Ecke. Für Zugangsdaten wenden Sie sich an das Institut für Partikeltechnik (siehe Impressum).</p><br/>
 
-      <div className="bx--col-lg-9">
-        <h3>Zellauslegung</h3>
-        <p className="anleitungstext">
-          Die Zellauslegung beginnt mit der Auswahl des Zelltyps mittels eines
-          Dropdown Fensters auf der linken Seite. Zur Auswahl stehen dabei{' '}
-          <span style={{ fontWeight: 'bold' }}>
-            Pouchzellen, Hardcase Zellen Rundzellen
-          </span>{' '}
-          und <span style={{ fontWeight: 'bold' }}>Prismatische Zellen</span>.
-          Anschließend kann eine der vorgefertigten Zellen ausgewählt und
-          angepasst werden. Als nächstes wird die Größe der Jahresproduktion in
-          GWH/Jahr und, für Pouchzellen, die Ladung in Ah/Zelle angegeben.{' '}
-          <br /> Auf der rechten Seite werden die Zusammensetzung und Chemie der
-          Zelle festgelegt. Zunächst wird aus dem entsprechenden Dropdown
-          Fenster eine der vorgefertigten Zellchemien ausgewählt. Im ersten
-          Abschnitt
-        </p>
-      </div>
+      <h3>Zellauslegung</h3>
+      <p className="anleitungstext">Die zu produzierende Zelle wird unter dem Reiter <strong>Zellauslegung</strong> modelliert. Die Modellierung ist grob unterteilt in äußere Parameter (Zelltyp, Abmaße der Zelle, Größe der Produktion) auf der linken Seite und die Wahl der Materialkomposition auf der rechten Seite.<br/><br/> Auf der linken Seite wird zunächst der Zellformat gewählt. Es stehen vier Zellformate zur Auswahl, zwei Arten gewickelte Zellen (Rundwickel und prismatischer Wickel) und zwei Arten gestapelter Zellen (mit fester Hülle und mit Pouchhülle), siehe <strong>Zellformate</strong>. Zunächst wird die Jahresproduktion in GWh angeben, bei gestapelten Pouchzellen wird noch die Ladung einer einzelnen Zelle in Ah festgelegt. Bei den anderen Zellformaten errechnet sich die Ladung mittels der festen Zellgröße und der Zellchemie. Nach der Wahl des Zellformats kann aus einer der vorgefertigten Varianten gewählt werden, z.B. der 18650 Zelle bei Rundzellen. Die zugehörigen Maßer können alle eingestellt werden, eine Erläuterung der verschiedenen Parameter befindet sich unter <strong>Zellformate</strong>.<br/><br/>
+      Auf der rechten Seite wird zunächst eine vorgefertigte Zellchemie ausgewählt. Diese beschreibt, welche Materialien zu welchem Umfang in der zelle verwendet werden. Über das rote Minus Symbol können Materialien aus der Zelle entfernt werden, über die Dropdown Fenster können neue Materialien aus der Datenbank hinzugefügt werden. Die Mengen müssen sich zu 100% aufsummieren. Die Parameter zu den gewählten Materialien (z.B. Dicke des Separators oder spezifische Kapazität des Aktivmaterials) können weiter unten unter <strong>Materialdetails</strong> ausgewählt werden. Alle weiteren Parameter, die weder zu den Zellmaßen noch zu den Materialien zugeordnet werden können (z.B. Zellspannung) werden auf der rechten Seite unter <strong>weitere Parameter</strong> eingestellt. <br/><br/> Nachdem die Zelle ausgelegt ist, wird oben rechts ein Knopf mit der Aufschrift "Ergebnisse" freigeschaltet. Mit diesem Knopf wird die Zelle berechnet und das Programm springt direkt zu den Ergebnissen. Dort werden alle Ergebnisse auf der linken Seite in Tabellenform festgehalten. Auf der rechten Seite wird mit Hilfe von Donut-Diagrammen die Mengen- und Kostenverteilung innerhalb einer Zelle dargestellt. Die Kostenverteilung weicht dabei leicht ab von der Verteilung der für die Jahresproduktion verwendeten Materialien, da für unterschiedliche Materialien unterschiedliche Verluste auftreten (z.B. unterliegt die Suspension allen Verlusten, da sie früh in der Produktion hinzugefügt wird, das Elektrolyt weniger Verlusten, da es später hinzugefügt wird). 
+      </p><br/>
 
-      <Spacer />
+      <h3>Zellformate</h3>
+      <div className="bx--row">
 
-      <div className="bx--col-lg-9">
-        <h3>Prozessauslegung</h3>
-        <p className="anleitungstext">
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-          nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-          sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-          rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-          ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-          sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-          dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-          et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-          takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
-      </div>
-      <div className="bx--col-lg-5 centerbox">
-        <Img alt="services" source={services} />
-      </div>
-      <Spacer />
-
-      <div className="bx--col-lg-5 centerbox">
-        <Img alt="sharing" source={sharing} />
-      </div>
-
-      <div className="bx--col-lg-9">
-        <h3>Allgemeine Parameter</h3>
-        <p className="anleitungstext">
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-          nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-          sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-          rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-          ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-          sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-          dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-          et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-          takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
-
-      </div>
-      <div className="bx--col-lg-16">
-        <br />
-        <h3>Zelltypen</h3>
-
-        <div className="bx--row">
-
-          <div className="bx--col-lg-8">
-            <img alt="wickel_hardcase" src={wickel_hardcase} style={{ height: 500, marginTop: 35 }} />
-            <figcaption>Hardcase gewickelt</figcaption>
-          </div>
-
-          <div className="bx--col-lg-8">
-            <img alt="rundzelle" src={rundzelle} style={{ height: 500, marginTop: 35 }} />
-            <figcaption>Rundzelle</figcaption>
-          </div>
-
-          <div className="bx--col-lg-8">
-            <img alt="stapel_hardcase" src={stapel_hardcase} style={{ height: 400, marginTop: 35 }} />
-            <figcaption>Hardcase gestapelt</figcaption>
-          </div>
-
-          <div className="bx--col-lg-8">
-            <img alt="stapel_pouch" src={stapel_pouch} style={{ height: 300, marginTop: 35 }} />
-            <figcaption>Pouchzelle gestapelt</figcaption>
-          </div>
-
+        <div className="bx--col-lg-8">
+          <img alt="wickel_hardcase" src={wickel_hardcase} style={{ height: 500, marginTop: 35 }} />
+          <figcaption><h4>Hardcase gewickelt</h4></figcaption>
         </div>
 
-        <br />
+        <div className="bx--col-lg-8">
+          <img alt="rundzelle" src={rundzelle} style={{ height: 500, marginTop: 35 }} />
+          <figcaption><h4>Rundzelle</h4></figcaption>
+        </div>
+
+        <div className="bx--col-lg-8">
+          <img alt="stapel_hardcase" src={stapel_hardcase} style={{ height: 400, marginTop: 35 }} />
+          <figcaption><h4>Hardcase gestapelt</h4></figcaption>
+        </div>
+
+        <div className="bx--col-lg-8">
+          <img alt="stapel_pouch" src={stapel_pouch} style={{ height: 300, marginTop: 35 }} />
+          <figcaption><h4>Pouchzelle gestapelt</h4></figcaption>
+        </div>
+
+      </div><br/>
+
+      <h3>Prozessauslegung</h3>
+      <p className="anleitungstext">
+      Die Prozesskette wird unter dem Reiter <strong>Prozessauslegung</strong> festgelegt. Auf der linken Seite befindet sich die aktuelle Prozesskette, aufgeteilt in verschiedene Abschnitte der Produktion. Eingefügte Prozessschritte können über das rote Minus entfernt werden. In der Mitte befinden sich alle zur Verfügung stehenden Prozessschritte, welche mit dem blauen Plus zur aktuellen Prozesskette hinzugefügt werden können. Dopplungen sind nicht möglich. Alternativ kann auch eine vorgefertigte Prozessroute über das Dropdown Menü oben rechts im Fenster ausgewählt werden. Nachdem ein Prozessschritt hinzugefügt wurde, erscheint er auf der rechten Seite und kann ausgeklappt werden, um alle Parameter des Prozessschrittes einstellen zu können. Diese umfassen Produktionsparameter, wie den Durchsatz, den Stromverbrauch oder die Flächennutzung.
+      </p><br/>
+
+      <h3>Allgemeine Paramter</h3>
+      <p className="anleitungstext">
+      Weitere Parameter zur Produktion, die weder zur Zelle noch zu den Prozessschritten zugeordnet werden können, werden unter dem Reiter <strong>Allgemeine Paramter</strong> eingestellt. Diese sind unterteilt in vier Abschnitte:
+      <ul style={{listStyleType:"square",marginLeft:"20px"}}>
+        <li><strong>Ökonomische Parameter: </strong>Allgemeine ökonomische Parameter</li>
+        <li><strong>Mitarbeiter & Logistik: </strong>Parameter zu Mitarbeiter und Logistik, wie z.B. die Arbeitszeiten oder die Mitarbeiterkosten</li>
+        <li><strong>Gebäude: </strong>Flächenkosten und Aufschläge für Zusatzflächen</li>
+        <li><strong>Rückgewinnung: </strong>Prozentsatz des Materials, das vom Verlustmaterial über die Produktion wieder zurückgewonnen werden kann</li>
+      </ul>
+      </p><br/>
+
+      <h3>Ergebnisse</h3>
+      <p className="anleitungstext">Nachdem alle die Zellmodellierung und Prozessauslegung abgeschlossen sind, erscheint unter dem Reiter <strong>Ergebnisse</strong> ein Knopf mit der Aufschrift "Ergebnisse". Mit diesem werden die Ergebnisse errechnet und dargestellt. Es erscheinen zunächst zwei Balkendiagramme. </p><br/>
+      </div> 
+    <Spacer />
+
+      <div className="bx--col-lg-16">
+
         <h3>Maße auf Coil</h3>
 
         <div className="bx--row">
 
           <div className="bx--col-lg-8">
             <img alt="coil_stapel" src={coil_stapel} style={{ height: 300, marginTop: 35 }} />
-            <figcaption>Coil Wickelzelle</figcaption>
+            <figcaption><h4>Coil Wickelzelle</h4></figcaption>
           </div>
 
           <div className="bx--col-lg-8">
             <img alt="coil_wickel" src={coil_wickel} style={{ height: 260, marginTop: 35 }} />
-            <figcaption>Coil Stapelzelle</figcaption>
+            <figcaption><h4>Coil Stapelzelle</h4></figcaption>
           </div>
 
         </div>
@@ -190,12 +136,12 @@ export default function Anleitung() {
 
           <div className="bx--col-lg-8">
             <img alt="whe" src={whe} style={{ height: 260, marginTop: 35 }} />
-            <figcaption>Wiederholeinheit</figcaption>
+            <figcaption><h4>Wiederholeinheit</h4></figcaption>
           </div>
 
           <div className="bx--col-lg-8">
             <img alt="abstand" src={abstand} style={{ height: 300, marginTop: 35 }} />
-            <figcaption>Abstände Wiederholeinheit</figcaption>
+            <figcaption><h4>Abstände Wiederholeinheit</h4></figcaption>
           </div>
 
         </div>
@@ -207,12 +153,12 @@ export default function Anleitung() {
 
           <div className="bx--col-lg-6">
             <img alt="sheet_stapel" src={sheet_stapel} style={{ height: 300, marginTop: 35 }} />
-            <figcaption>Blatt Stapelzelle</figcaption>
+            <figcaption><h4>Blatt Stapelzelle</h4></figcaption>
           </div>
 
           <div className="bx--col-lg-8">
             <img alt="sheet_wickel" src={sheet_wickel} style={{ height: 190, marginTop: 35 }} />
-            <figcaption>Blatt Wickelzelle</figcaption>
+            <figcaption><h4>Blatt Wickelzelle</h4></figcaption>
           </div>
 
         </div>

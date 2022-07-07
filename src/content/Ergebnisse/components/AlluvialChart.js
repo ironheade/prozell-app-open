@@ -129,7 +129,7 @@ export default function Alluvial(props) {
                     <AlluvialChart
                         data={DataMaterial}
                         options={{ ...Options, title: "Kostenfluss in €" }}
-                    />
+            />
 
                 </div>
                 {/* 

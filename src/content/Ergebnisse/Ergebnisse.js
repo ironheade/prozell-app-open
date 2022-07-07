@@ -41,6 +41,7 @@ export default function Ergebnisse() {
   const [flaechenverteilung, setFlaechenverteilung] = useState(null)
   const [levelizedCost, setLevelizedCost] = useState(null)
   const [overheadKosten, setOverheadKosten] = useState(null)
+  const [isLoading, setIsLoading] = useState(true) 
 
 
 
@@ -75,6 +76,7 @@ export default function Ergebnisse() {
         setOverheadKosten(JSON.parse(data.overhead_kosten))
       });
     setHintergrundDatenHidden(false)
+    setIsLoading(false)
   }
 
   overheadKosten !== null && console.log(overheadKosten)
@@ -119,8 +121,7 @@ export default function Ergebnisse() {
         prozessschrittDaten !== null && Zellergebnisse !== null
         &&
         <Button onClick={Ergebnis}>Ergebnisse</Button>
-      }
-      
+      }    
       
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}

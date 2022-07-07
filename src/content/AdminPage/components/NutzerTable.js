@@ -34,7 +34,9 @@ export default function NutzerTable(props){
 
       ]
 
-      const rows = props.data.map(item => ({ ...item, id: item["id"].toString() }))
+      const rows = props.data.map(item => ({ ...item, id: item["id"].toString(),
+      Startzeit:item.Startzeit.split(",")[0],
+      Endzeit:item.Endzeit.split(",")[0] }))
       .filter(isChecked ? item => item.EndzeitMS > Date.now() : item => item)
 
     return(

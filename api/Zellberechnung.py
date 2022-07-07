@@ -457,66 +457,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
         
-        print("vol_nutz_zelle")
-        print(vol_nutz_zelle)  
-        
-                        
-        print("breite_festhuelle")
-        print(breite_festhuelle)
-        print("laenge_festhuelle")
-        print(laenge_festhuelle)
-        print("hoehe_festhuelle")
-        print(hoehe_festhuelle)
-
-        print("ueberstand_separator_anode")
-        print(ueberstand_separator_anode)
-        print("ueberstand_anode_kathode")
-        print(ueberstand_anode_kathode)
-                
-        print("sep_wick")
-        print(sep_wick)
-        print("r_w")
-        print(r_w)
-        
-        print("Anz_wick")
-        print(Anz_wick)
-        
-        print("Breite_Kern")
-        print(Breite_Kern)
-        print("U_a")
-        print(U_a)
-        print("U_plus")
-        print(U_plus)
-        print("l_bahn")
-        print(l_bahn)
-                
-        print("A_KK: \n"+str(A_KK))
-        print("A_KB: \n"+str(A_KB))
-        print("A_AK: \n"+str(A_AK))
-        print("A_AB: \n"+str(A_AB))   
-        
-        print("A_Sep")
-        print(A_Sep)
-        print("l_WHE")
-        print(l_WHE)
-        
-        print("bahnen_bes_A_ausn")
-        print(bahnen_bes_A_ausn)
-        print("bahnen_bes_A")
-        print(bahnen_bes_A)
-        print("bahnen_bes_A_ausn")
-        print(bahnen_bes_A_ausn)
-        print("S_MA")
-        print(S_MA)  
-        
-        print("bahnen_bes_K_ausn")
-        print(bahnen_bes_K_ausn)
-        print("bahnen_bes_K")
-        print(bahnen_bes_K)
-        print("bahnen_bes_K_ausn")
-        print(bahnen_bes_K_ausn)
-        print("S_MK")
-        print(S_MK)  
+ 
     #____________________________________
     # Ab hier wieder gesammelte Berechnung für alle Zelltypen
     
