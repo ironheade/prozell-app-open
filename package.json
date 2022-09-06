@@ -14,6 +14,7 @@
     "format:diff": "prettier --list-different \"**/*.{js,md,scss}\"",
     "format:staged": "prettier --write",
     "start-api": "cd api && venv/Scripts/flask run --no-debugger",
+    "build-api": "cd api && python -m venv venv && venv/Scripts/activate && pip install -r requirements.txt && cd..",
     "start": "react-scripts start",
     "test": "react-scripts test"
   },
@@ -88,5 +89,5 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "proxy": "http://backend:5000"
+  "proxy": "http://localhost:5000"
 }

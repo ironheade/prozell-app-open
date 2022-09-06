@@ -2,31 +2,26 @@ version: "3"
 services:
   frontend:
     image: ironheade/prozell-frontend
-    volumes:
-      - ./src:/app/src
-    #stdin_open: true
+    container_name: ironheade-prozell-frontend
     ports: 
       - "8080:3000"
     networks:
-      - prozell-app
+      - nginxproxymanager_default
     depends_on:
       - backend
 
   backend:
     image: ironheade/prozell-backend
+    container_name: backend
     ports: 
       - "5000:5000"
     networks:
-      - prozell-app
-
-  app: 
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy-manager
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
+      - nginxproxymanager_default
+    volumes:
+      - ./api/Datenbank.db:/api/Datenbank.db
+      - ./api/passwort.db:/api/passwort.db
 
 networks:
-  prozell-app:
+  nginxproxymanager_default:
+    name: nginxproxymanager_default
     driver: bridge
