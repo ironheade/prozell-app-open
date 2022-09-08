@@ -142,8 +142,8 @@ export default function Ergebnisse() {
           <DfTable data={ergebnisTabelle} />
 
           <div style={{ "height": "100px" }}></div>
-          <h1>Kostenfluss</h1>
-          <Alluvial data={materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung} />
+          {/*<h1>Kostenfluss</h1>
+          <Alluvial data={materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung} />*/}
           <div style={{ "height": "100px" }}></div>
           <h1>Gesamtkosten Jahresproduktion</h1>
 

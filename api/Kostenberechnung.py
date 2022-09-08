@@ -193,6 +193,8 @@ def Kostenberechnung(Zellergebnisse_raw,
                                                                       Materialinfos, #Infos zu den Materialien
                                                                       schritt_dictionary #schritt_dictionary: die Parameter die zwischen den Schritten übergeben werden
                                                                       )  
+        print(schritt)
+        print(schritt_dictionary)
         #die Informationen jedes Prozessschrittes in das df einfügen
         df[schritt] = df.index.to_series().map(schritt_dictionary)
     

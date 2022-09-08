@@ -181,7 +181,7 @@ class sheet_prozessschritt(basis_prozessschritt):
     def flaechen(self,dictionary):
         dictionary["Flächenbedarf"]             =   (self.Anlagen)*self.df["Wert"]["Anlagengrundfläche"]
         dictionary["Flächenbedarf Trockenraum"] =   (self.Anlagen)*self.df["Wert"]["Anlagengrundfläche Trockenraum"]
-        
+ 
         return dictionary
 
 #____________________________________
@@ -193,7 +193,6 @@ class zelle_prozessschritt(basis_prozessschritt):
         Anz_Maschinen = math.ceil(Zellen_pro_Minute/float(self.df["Wert"]["Geschwindigkeit"]))
         dictionary["Anzahl Maschinen"] = Anz_Maschinen
         self.Anlagen = Anz_Maschinen
-
         return dictionary
     
     def mitarbeiter_anlagen(self,dictionary):
@@ -204,7 +203,7 @@ class zelle_prozessschritt(basis_prozessschritt):
     
     def energie(self,dictionary):
         dictionary["Energiebedarf"] =   (self.Anlagen)*self.df["Wert"]["Leistungsaufnahme"]*24*365
-        
+                
         return dictionary
     
     def investition(self,dictionary):
@@ -215,7 +214,7 @@ class zelle_prozessschritt(basis_prozessschritt):
     def flaechen(self,dictionary):
         dictionary["Flächenbedarf"]             =   (self.Anlagen)*self.df["Wert"]["Anlagengrundfläche"]
         dictionary["Flächenbedarf Trockenraum"] =   (self.Anlagen)*self.df["Wert"]["Anlagengrundfläche Trockenraum"]
-        
+
         return dictionary
     
     def fixausschuss(self,dictionary):
@@ -403,7 +402,7 @@ def Wickeln_Z_Falten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictiona
 
 def Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
-    Verlust = (1+float(df["Wert"]["variabler Ausschuss"])/100)
+    Verlust = (1+float(df["Wert"]["Variabler Ausschuss"])/100)
     
     Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
     
@@ -591,6 +590,110 @@ def Prüfen_und_Klassifizieren(df,Zellergebnisse,Zellchemie,Materialinfos,schrit
     
     return schritt_dictionary
 
+#_____________________________________________________________________________
+#neue Paper Schritte
+
+def Zellwickel_Einbau(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Cap_verschließen_und_kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = sheet_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Separator")
+    
+    return schritt_dictionary
+
+def Precharge_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Flachwickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    
+    Verlust = (1+float(df["Wert"]["Variabler Ausschuss"])/100)
+    
+    Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
+    
+    Anodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
+    Kathodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
+    Anodenbeschichtung=schritt_dictionary["Anodenbeschichtung"]*Verlust
+    Kathodenbeschichtung=schritt_dictionary["Kathodenbeschichtung"]*Verlust
+    Separator=schritt_dictionary["Separator"]*Verlust
+    Elektrolyt=schritt_dictionary["Elektrolyt"]   
+    
+    Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
+    
+    Länge_Wickel = 3000 #[mm]
+    
+    Zeit_einer_Zelle = Länge_Wickel/1000/df["Wert"]["Geschwindigkeit"]*60 + df["Wert"]["Zeitverlust Wickelwechsel"] #[s]
+    Kapazität_pro_Tag = 24*60*60/Zeit_einer_Zelle
+    
+    Anzahl_Anlagen = math.ceil(Zellen_pro_Tag/Kapazität_pro_Tag)
+    
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
+    Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
+    Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
+
+    liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
+    schritt_dictionary={
+        "Zelläquivalent":Zelläquivalent,
+        "Investition":Investition,
+        "Anzahl Maschinen": Anzahl_Anlagen,
+        "Flächenbedarf":Flächenbedarf,
+        "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
+        "Energiebedarf":Energiebedarf,
+        "Anodenkollektor":Anodenkollektor,
+        "Kathodenkollektor":Kathodenkollektor,
+        "Anodenbeschichtung":Anodenbeschichtung,
+        "Kathodenbeschichtung":Kathodenbeschichtung,
+        "Separator":Separator,
+        "Elektrolyt":Elektrolyt,
+        "Neue Materialien":""
+                }                    
+    materialien_null_setzen(liste,schritt_dictionary)    
+
+    return schritt_dictionary
 
 
 #_____________________________________________________________________________
@@ -648,21 +751,17 @@ def MultiEx_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionar
     materialien_null_setzen(liste,schritt_dictionary)
     return schritt_dictionary
 
+
 def Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.anlagen(schritt_dictionary)
-    print(df)
     schritt_dictionary = process.energie(schritt_dictionary)
-    print("energie")
     schritt_dictionary = process.flaechen(schritt_dictionary)
-    print("flaechen")
     schritt_dictionary = process.investition(schritt_dictionary)
-    print("investition")
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
-    print("mitarbeiter_anlagen")
     schritt_dictionary = process.neue_materialien(schritt_dictionary)
-    print("neue_materialien")
+    
     return schritt_dictionary
 
 def MiKal_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
