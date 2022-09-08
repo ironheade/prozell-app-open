@@ -20,8 +20,8 @@ Installation mit Docker:
 Installation (in CMD Fenster)
 
 1. in package.json, change   "proxy": "http://localhost:5000" to   "proxy": "http://backend:5000"
-2. ~/prozell-app docker build -t ironheade/prozell-frontend
-3. ~/prozell-app/api docker build -t ironheade/prozell-backend
+2. ~/prozell-app docker build -t ironheade/prozell-frontend .
+3. ~/prozell-app/api docker build -t ironheade/prozell-backend .
 
 Start (in CMD Fenster)
 
