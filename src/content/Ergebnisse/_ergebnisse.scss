@@ -1,0 +1,35 @@
+@import '.././content.scss';
+@import '@carbon/charts/styles.css';
+
+#simpleTable {
+    border-collapse: collapse;
+}
+#simpleTable td, #simpleTable th {
+    border: 1px solid black;
+}
+#simpleTable tr:first-child th {
+    border-top: 0;
+}
+#simpleTable tr:last-child td {
+    border-bottom: 0;
+}
+#simpleTable tr td:first-child,
+#simpleTable tr th:first-child {
+    border-left: 0;
+}
+#simpleTable tr td:last-child,
+#simpleTable tr th:last-child {
+    border-right: 0;
+}
+
+
+
+#ErgebnisAccordion .subdiv {
+    background-color: #f4f4f4;
+    padding: 20px 50px 20px 50px;
+}
+
+#ErgebnisAccordion .subdiv:nth-child(even) {
+    background-color: white;
+    padding: 20px 50px 20px 50px;
+}

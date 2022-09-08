@@ -1,0 +1,25 @@
+@import '.././content.scss';
+@import '@carbon/charts/styles.css';
+
+.zellformate__dropdown {
+  margin-top: 20px;
+}
+
+.zellformate__radiobuttons {
+  margin-bottom: 20px;
+}
+
+.zellchemie_table {
+  margin-top: 20px;
+}
+
+.zellformate__radiobuttons div {
+  padding: 10px 0px 10px 0px;
+  background-color: rgb(244, 244, 244);
+  &:nth-child(odd) {
+    background-color: white;
+  }
+  &:hover {
+    background-color: rgb(224, 224, 224);
+  }
+}
