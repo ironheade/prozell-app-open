@@ -12,8 +12,6 @@ import Prozessfunktionen
 from Flaechenberechnung import flaechenberechnung
 from levelized_cost_calculation import levelized_cost
 
-
-
 def Kostenberechnung(Zellergebnisse_raw,
                      Zellchemie_raw,
                      Prozessroute_array_raw,

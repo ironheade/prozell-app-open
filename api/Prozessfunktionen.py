@@ -649,6 +649,20 @@ def MultiEx_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionar
     return schritt_dictionary
 
 def Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    print(df)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    print("energie")
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    print("flaechen")
+    schritt_dictionary = process.investition(schritt_dictionary)
+    print("investition")
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    print("mitarbeiter_anlagen")
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    print("neue_materialien")
     return schritt_dictionary
 
 def MiKal_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):

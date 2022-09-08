@@ -390,8 +390,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
 
         Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
         Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
-        
-        
+             
         breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"]-2*Wandstärke #[mm]
         laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"]-2*Wandstärke #[mm]
         hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
@@ -413,6 +412,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
 
         #Breite des Wickelkerns
         Breite_Kern = hoehe_festhuelle-4*sep_wick*d_Sep/1000-2*Anz_wick*d_WHE/1000-abs_zellwickel_deckel #[mm]
+        print("Breite Kern")
+        print(Breite_Kern)
         
         U_a = 2*math.pi*r_w+2*Breite_Kern #Umfang des Wickelkerns [mm]
         

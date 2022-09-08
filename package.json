@@ -14,7 +14,7 @@
     "format:diff": "prettier --list-different \"**/*.{js,md,scss}\"",
     "format:staged": "prettier --write",
     "start-api": "cd api && venv/Scripts/flask run --no-debugger",
-    "build-api": "cd api && python -m venv venv && venv/Scripts/activate && pip install -r requirements.txt && cd..",
+    "build-api": "cd api && python -m venv venv && venv\\Scripts\\activate && pip install -r requirements.txt && cd..",
     "start": "react-scripts start",
     "test": "react-scripts test"
   },
