@@ -154,15 +154,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     # Elektrochemische Charakterisierung, gleich für alle Zelltypen
     
     MB_K = C_flsp*(1+delta_irr/100)/(C_sp_K*(1-x_PM_K/100)) #Massenbelegung Kathode [g/cm²]
-    print("Massenbaldung Kathode")
-    print(MB_K)
     MB_A = C_flsp*(1+delta_irr/100+delta_A/100)/(C_sp_A*(1-x_PM_A/100)) #Massenbelegung Anode [g/cm²]
-    print("Massenbeladung Anode")
-    print(MB_A)
-    print(C_flsp)
-    print(1+delta_irr/100+delta_A/100)
-    print(C_sp_A)
-    print(1-x_PM_A/100)
     
     d_KB = (MB_K/roh_KB)*10000 #Dicke Kathodenbeschichtung [µm]
     d_AB = (MB_A/roh_AB)*10000 #Dicke Anodenbeschichtung [µm]

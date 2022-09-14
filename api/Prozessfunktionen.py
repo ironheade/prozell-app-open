@@ -315,6 +315,14 @@ def Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
 def Prälithiierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
@@ -330,6 +338,14 @@ def Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
     
 def Strukturierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def Längsschneiden(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
@@ -347,6 +363,16 @@ def Längsschneiden(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionar
     return schritt_dictionary
 
 def Intensivtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def Vereinzeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
@@ -382,6 +408,15 @@ def Vereinzeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
 def Laminieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = sheet_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def Stapeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
@@ -765,55 +800,244 @@ def Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
 def MiKal_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = suspension_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    faktor_ueberkapazitaet = (1+float(df["Wert"]["Überkapazität"])/100) #[%], 1+Überkapazität/100
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
+
+    Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
+    Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
+    
+    process.Anlagen_Anode = Anlagen_Anode
+    process.Anlagen_Kathode = Anlagen_Kathode
+    
+    Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Mischer pro Dosierer"]))
+    Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Mischer pro Dosierer"]))
+
+    schritt_dictionary["Anzahl Maschinen"] = "{} Mischer Anode, {} Kathode, {} Dosierer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode,Anlagen_Dosierer_Anode,Anlagen_Dosierer_Kathode)
+
+    Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
+    
+    schritt_dictionary["Investition"] =   Anlagen_Anode *float(df["Wert"]["Investition Anode"]) +\
+                    Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+\
+                    float(df["Wert"]["Investition einmalig"])+\
+                    (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Investition Dosierer"])
+                    
+    schritt_dictionary["Flächenbedarf"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"]) + (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Anlagengrundfläche Dosierer"])
+    schritt_dictionary["Energiebedarf"] = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
+        
+    schritt_dictionary["Flächenbedarf Trockenraum"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenbeschichtung;Kathodenbeschichtung")
     return schritt_dictionary
 
 def OptiEx(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = suspension_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    faktor_ueberkapazitaet = (1+float(df["Wert"]["Überkapazität"])/100) #[%], 1+Überkapazität/100
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
+
+    Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
+    Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
+    
+    process.Anlagen_Anode = Anlagen_Anode
+    process.Anlagen_Kathode = Anlagen_Kathode
+    
+    Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Mischer pro Dosierer"]))
+    Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Mischer pro Dosierer"]))
+
+    schritt_dictionary["Anzahl Maschinen"] = "{} Mischer Anode, {} Kathode, {} Dosierer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode,Anlagen_Dosierer_Anode,Anlagen_Dosierer_Kathode)
+
+    Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
+    
+    schritt_dictionary["Investition"] =   Anlagen_Anode *float(df["Wert"]["Investition Anode"]) +\
+                    Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+\
+                    float(df["Wert"]["Investition einmalig"])+\
+                    (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Investition Dosierer"])
+                    
+    schritt_dictionary["Flächenbedarf"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"]) + (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Anlagengrundfläche Dosierer"])
+    schritt_dictionary["Energiebedarf"] = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
+        
+    schritt_dictionary["Flächenbedarf Trockenraum"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenbeschichtung;Kathodenbeschichtung")
     return schritt_dictionary
 
 def ÖkoTroP_Bürstenauftrag(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def ÖkoTroP_Elektrostatisch(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
 def HighStructures_Extrusion(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def HighStructures_Laser(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def Epic(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def RollBatt(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def PräLi_Li_Salz(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def PräLi_PVD(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def PräLi_Opferanode(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def HoLiB_Vereinzeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = sheet_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def E_Qual(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     return schritt_dictionary
 
 def ProfiStruk_Strukturierung(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def HoLiB_Stapeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = sheet_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Separator")
     return schritt_dictionary
 
-def Cell_Fill_eparatormodifikation(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+def Cell_Fill_Separatormodifikation(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
 
 def Cell_Fill_Befüllen_und_Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/365
+    Zellen_pro_Minute = Zellen_pro_Tag/(24*60) 
+    Durchsatz_pro_Minute = 60*float(df["Wert"]["Parallelbefüllungen"])/float(df["Wert"]["Befülldauer je Zelle"])
+    process.Anlagen = math.ceil(Zellen_pro_Minute/Durchsatz_pro_Minute)
+    
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Elektrolyt")
     return schritt_dictionary
 
 def FormEl(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     return schritt_dictionary
