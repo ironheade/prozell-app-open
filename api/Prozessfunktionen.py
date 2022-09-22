@@ -287,6 +287,14 @@ def Trockenbeschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
     return schritt_dictionary
 
 def Beschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
     return schritt_dictionary
 
 def Beschichten_und_Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
@@ -480,7 +488,7 @@ def Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
         "Kathodenbeschichtung":Kathodenbeschichtung,
         "Separator":Separator,
         "Elektrolyt":Elektrolyt,
-        "Neue Materialien":""
+        "Neue Materialien":"Separator"
                 }                    
     materialien_null_setzen(liste,schritt_dictionary)    
 
@@ -663,7 +671,7 @@ def Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     
     schritt_dictionary = process.investition(schritt_dictionary)
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
-    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Separator")
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
     
     return schritt_dictionary
 
@@ -1040,4 +1048,583 @@ def FormEl(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     schritt_dictionary = process.investition(schritt_dictionary)
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
     schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    return schritt_dictionary
+
+
+
+#Prozesse fürs Paper
+
+#PHEV 2 Produktion
+
+def PHEV2_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = suspension_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    faktor_ueberkapazitaet = (1+float(df["Wert"]["Überkapazität"])/100) #[%], 1+Überkapazität/100
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
+
+    Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
+    Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
+    
+    process.Anlagen_Anode = Anlagen_Anode
+    process.Anlagen_Kathode = Anlagen_Kathode
+    
+    Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Mischer pro Dosierer"]))
+    Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Mischer pro Dosierer"]))
+
+    schritt_dictionary["Anzahl Maschinen"] = "{} Mischer Anode, {} Kathode, {} Dosierer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode,Anlagen_Dosierer_Anode,Anlagen_Dosierer_Kathode)
+
+    Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
+    
+    schritt_dictionary["Investition"] =   Anlagen_Anode *float(df["Wert"]["Investition Anode"]) +\
+                    Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+\
+                    float(df["Wert"]["Investition einmalig"])+\
+                    (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Investition Dosierer"])
+                    
+    schritt_dictionary["Flächenbedarf"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"]) + (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Anlagengrundfläche Dosierer"])
+    schritt_dictionary["Energiebedarf"] = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
+        
+    schritt_dictionary["Flächenbedarf Trockenraum"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenbeschichtung;Kathodenbeschichtung")
+    
+    return schritt_dictionary
+
+def PHEV2_Beschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
+    return schritt_dictionary
+
+def PHEV2_Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Längsschneiden(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = sheet_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Flachwickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    
+    Verlust = (1+float(df["Wert"]["Variabler Ausschuss"])/100)
+    
+    Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
+    
+    Anodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
+    Kathodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
+    Anodenbeschichtung=schritt_dictionary["Anodenbeschichtung"]*Verlust
+    Kathodenbeschichtung=schritt_dictionary["Kathodenbeschichtung"]*Verlust
+    Separator=schritt_dictionary["Separator"]*Verlust
+    Elektrolyt=schritt_dictionary["Elektrolyt"]   
+    
+    Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
+    
+    Länge_Wickel = 3000 #[mm]
+    
+    Zeit_einer_Zelle = Länge_Wickel/1000/df["Wert"]["Geschwindigkeit"]*60 + df["Wert"]["Zeitverlust Wickelwechsel"] #[s]
+    Kapazität_pro_Tag = 24*60*60/Zeit_einer_Zelle
+    
+    Anzahl_Anlagen = math.ceil(Zellen_pro_Tag/Kapazität_pro_Tag)
+    
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
+    Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
+    Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
+
+    liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
+    schritt_dictionary={
+        "Zelläquivalent":Zelläquivalent,
+        "Investition":Investition,
+        "Anzahl Maschinen": Anzahl_Anlagen,
+        "Flächenbedarf":Flächenbedarf,
+        "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
+        "Energiebedarf":Energiebedarf,
+        "Anodenkollektor":Anodenkollektor,
+        "Kathodenkollektor":Kathodenkollektor,
+        "Anodenbeschichtung":Anodenbeschichtung,
+        "Kathodenbeschichtung":Kathodenbeschichtung,
+        "Separator":Separator,
+        "Elektrolyt":Elektrolyt,
+        "Neue Materialien":""
+                }                    
+    materialien_null_setzen(liste,schritt_dictionary)    
+
+    return schritt_dictionary
+
+def PHEV2_Cap_verschließen_und_kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Elektrolyt_dosieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/365
+    Zellen_pro_Minute = Zellen_pro_Tag/(24*60) 
+    Durchsatz_pro_Minute = 60*float(df["Wert"]["Parallelbefüllungen"])/float(df["Wert"]["Befülldauer je Zelle"])
+    process.Anlagen = math.ceil(Zellen_pro_Minute/Durchsatz_pro_Minute)
+    
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Elektrolyt")
+    
+    return schritt_dictionary
+
+def PHEV2_Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Formieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+  
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+    Module = math.ceil(Zellen_pro_Tag/float(df["Wert"]["Tagesdurchsatz"]))
+    Bediengeräte = math.ceil(float(Zellen_pro_Tag/float(df["Wert"]["Tagesdurchsatz Bediengerät"])))
+    
+    schritt_dictionary["Investition"]=Module*float(df["Wert"]["Investition Modul"])+Bediengeräte*float(df["Wert"]["Investition Bediengerät"])
+    
+    schritt_dictionary["Flächenbedarf"]=Module*float(df["Wert"]["Anlagengrundfläche"])/10
+    schritt_dictionary["Flächenbedarf Trockenraum"]=Module*float(df["Wert"]["Anlagengrundfläche Trockenraum"])/10
+    
+    schritt_dictionary["Anzahl Maschinen"]= "{} Module, {} Bediengeräte".format(Module,Bediengeräte)
+    
+    Q_Z=float(Zellergebnisse["Wert"]["Ladung"]) #Speicherkapazität der Batteriezelle [Ah]
+    U_OCV=float(Zellergebnisse["Wert"]["Nennspannung"]) #Klemmspannung [Volt]
+    Eta_C1=float(df["Wert"]["Eta C1"]) #Coulombscher Wirkungsgrad des ersten Ladezyklus [-]
+    Eta_Z=float(df["Wert"]["Eta Z"]) #Wirkungsgrad der Zelle [-]
+    
+    E_L1=Q_Z*U_OCV/(Eta_C1*Eta_Z) #Energiebedarf des 1. Ladevorgangs [Wh]
+    E_E1=Q_Z*U_OCV*Eta_Z #Energiebedarf des 1. Entladevorgangs [Wh]
+    E_L2=Q_Z*U_OCV/Eta_Z #Energiebedarf des 2. Ladevorgangs [Wh]
+    E_E2=Q_Z*U_OCV*Eta_Z #Energiebedarf des 2. Entladevorgangs [Wh]
+    E_L50=0.5*Q_Z*U_OCV/Eta_Z #Energiebedarf des letzten Ladevorgangs auf 50% SOC [Wh]
+    E_FormZ=E_L1-E_E1+E_L2-E_E2+E_L50 #Energiebedarf Formierung einer Zelle [Wh]
+    
+    schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 #[kWh]
+    
+    schritt_dictionary = process.mitarbeiter_schicht(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Befüllöffnung_verschließen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+    
+def PHEV2_Reifelagern(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+    
+    Bediengeräte = math.ceil(Zellen_pro_Tag*float(df["Wert"]["Reifelagerdauer"])/float(df["Wert"]["Tagesdurchsatz Bediengerät"]))
+    Module = math.ceil(Zellen_pro_Tag*float(df["Wert"]["Reifelagerdauer"])/float(df["Wert"]["Zellen/Modul"]))
+    Tuerme = math.ceil(Module/float(df["Wert"]["Module/Turm"]))
+    process.Anlagen = Tuerme
+    
+    schritt_dictionary["Anzahl Maschinen"] = "{} Module, {} Türme, {} Bediengeräte".format(Module,Tuerme,Bediengeräte)
+    schritt_dictionary["Investition"] = Bediengeräte*float(df["Wert"]["Investition Bediengerät"])+Module*float(df["Wert"]["Investition Modul"])
+    
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_schicht(schritt_dictionary)  
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)   
+    
+    return schritt_dictionary
+
+def PHEV2_Prüfen_und_Klassifizieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def PHEV2_Verpackung_und_Versand(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+
+#Tesla 4680 Produktion
+
+def Tesla_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = suspension_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    faktor_ueberkapazitaet = (1+float(df["Wert"]["Überkapazität"])/100) #[%], 1+Überkapazität/100
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
+
+    Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
+    Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
+    
+    process.Anlagen_Anode = Anlagen_Anode
+    process.Anlagen_Kathode = Anlagen_Kathode
+    
+    Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Mischer pro Dosierer"]))
+    Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Mischer pro Dosierer"]))
+
+    schritt_dictionary["Anzahl Maschinen"] = "{} Mischer Anode, {} Kathode, {} Dosierer Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode,Anlagen_Dosierer_Anode,Anlagen_Dosierer_Kathode)
+
+    Anzahl_Anlagen = Anlagen_Anode+Anlagen_Kathode
+    
+    schritt_dictionary["Investition"] =   Anlagen_Anode *float(df["Wert"]["Investition Anode"]) +\
+                    Anlagen_Kathode *float(df["Wert"]["Investition Kathode"])+\
+                    float(df["Wert"]["Investition einmalig"])+\
+                    (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Investition Dosierer"])
+                    
+    schritt_dictionary["Flächenbedarf"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"]) + (Anlagen_Dosierer_Anode+Anlagen_Dosierer_Kathode)*float(df["Wert"]["Anlagengrundfläche Dosierer"])
+    schritt_dictionary["Energiebedarf"] = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
+        
+    schritt_dictionary["Flächenbedarf Trockenraum"] = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenbeschichtung;Kathodenbeschichtung")
+    
+    return schritt_dictionary
+
+def Tesla_Beschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
+    return schritt_dictionary
+
+def Tesla_Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Längsschneiden(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = sheet_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    
+    Verlust = (1+float(df["Wert"]["Variabler Ausschuss"])/100)
+    
+    Zelläquivalent=float(schritt_dictionary["Zelläquivalent"])*Verlust
+    
+    Anodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
+    Kathodenkollektor=schritt_dictionary["Anodenkollektor"]*Verlust
+    Anodenbeschichtung=schritt_dictionary["Anodenbeschichtung"]*Verlust
+    Kathodenbeschichtung=schritt_dictionary["Kathodenbeschichtung"]*Verlust
+    Separator=schritt_dictionary["Separator"]*Verlust
+    Elektrolyt=schritt_dictionary["Elektrolyt"]   
+    
+    Zellen_pro_Tag = Zelläquivalent/arbeitstage_pro_jahr
+    
+    Länge_Wickel = 3000 #[mm]
+    
+    Zeit_einer_Zelle = Länge_Wickel/1000/df["Wert"]["Geschwindigkeit"]*60 + df["Wert"]["Zeitverlust Wickelwechsel"] #[s]
+    Kapazität_pro_Tag = 24*60*60/Zeit_einer_Zelle
+    
+    Anzahl_Anlagen = math.ceil(Zellen_pro_Tag/Kapazität_pro_Tag)
+    
+    Investition = Anzahl_Anlagen*float(df["Wert"]["Investition"])
+    Flächenbedarf = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche"])
+    Flächenbedarf_Trockenraum = Anzahl_Anlagen*float(df["Wert"]["Anlagengrundfläche Trockenraum"])
+    Energiebedarf = Anzahl_Anlagen*float(df["Wert"]["Leistungsaufnahme"])*24*arbeitstage_pro_jahr
+    Facharbeiter = Anzahl_Anlagen*df["Wert"]["Personal Facharbeiter"]
+    Hilfskraft = Anzahl_Anlagen*float(df["Wert"]["Personal Hilfskräfte"])
+
+    liste = neue_materialien_zu_liste(schritt_dictionary["Neue Materialien"])    
+    schritt_dictionary={
+        "Zelläquivalent":Zelläquivalent,
+        "Investition":Investition,
+        "Anzahl Maschinen": Anzahl_Anlagen,
+        "Flächenbedarf":Flächenbedarf,
+        "Flächenbedarf Trockenraum":Flächenbedarf_Trockenraum,
+        "Personlabedarf Facharbeiter":Facharbeiter,
+        "Personalbedarf Hilfskraft":Hilfskraft,
+        "Energiebedarf":Energiebedarf,
+        "Anodenkollektor":Anodenkollektor,
+        "Kathodenkollektor":Kathodenkollektor,
+        "Anodenbeschichtung":Anodenbeschichtung,
+        "Kathodenbeschichtung":Kathodenbeschichtung,
+        "Separator":Separator,
+        "Elektrolyt":Elektrolyt,
+        "Neue Materialien":"Separator"
+                }                    
+    materialien_null_setzen(liste,schritt_dictionary)    
+
+    return schritt_dictionary
+
+def Tesla_Cap_verschließen_und_kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Elektrolyt_dosieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/365
+    Zellen_pro_Minute = Zellen_pro_Tag/(24*60) 
+    Durchsatz_pro_Minute = 60*float(df["Wert"]["Parallelbefüllungen"])/float(df["Wert"]["Befülldauer je Zelle"])
+    process.Anlagen = math.ceil(Zellen_pro_Minute/Durchsatz_pro_Minute)
+    
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Elektrolyt")
+    
+    return schritt_dictionary
+
+def Tesla_Benetzen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Formieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+  
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+    Module = math.ceil(Zellen_pro_Tag/float(df["Wert"]["Tagesdurchsatz"]))
+    Bediengeräte = math.ceil(float(Zellen_pro_Tag/float(df["Wert"]["Tagesdurchsatz Bediengerät"])))
+    
+    schritt_dictionary["Investition"]=Module*float(df["Wert"]["Investition Modul"])+Bediengeräte*float(df["Wert"]["Investition Bediengerät"])
+    
+    schritt_dictionary["Flächenbedarf"]=Module*float(df["Wert"]["Anlagengrundfläche"])/10
+    schritt_dictionary["Flächenbedarf Trockenraum"]=Module*float(df["Wert"]["Anlagengrundfläche Trockenraum"])/10
+    
+    schritt_dictionary["Anzahl Maschinen"]= "{} Module, {} Bediengeräte".format(Module,Bediengeräte)
+    
+    Q_Z=float(Zellergebnisse["Wert"]["Ladung"]) #Speicherkapazität der Batteriezelle [Ah]
+    U_OCV=float(Zellergebnisse["Wert"]["Nennspannung"]) #Klemmspannung [Volt]
+    Eta_C1=float(df["Wert"]["Eta C1"]) #Coulombscher Wirkungsgrad des ersten Ladezyklus [-]
+    Eta_Z=float(df["Wert"]["Eta Z"]) #Wirkungsgrad der Zelle [-]
+    
+    E_L1=Q_Z*U_OCV/(Eta_C1*Eta_Z) #Energiebedarf des 1. Ladevorgangs [Wh]
+    E_E1=Q_Z*U_OCV*Eta_Z #Energiebedarf des 1. Entladevorgangs [Wh]
+    E_L2=Q_Z*U_OCV/Eta_Z #Energiebedarf des 2. Ladevorgangs [Wh]
+    E_E2=Q_Z*U_OCV*Eta_Z #Energiebedarf des 2. Entladevorgangs [Wh]
+    E_L50=0.5*Q_Z*U_OCV/Eta_Z #Energiebedarf des letzten Ladevorgangs auf 50% SOC [Wh]
+    E_FormZ=E_L1-E_E1+E_L2-E_E2+E_L50 #Energiebedarf Formierung einer Zelle [Wh]
+    
+    schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 #[kWh]
+    
+    schritt_dictionary = process.mitarbeiter_schicht(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Befüllöffnung_verschließen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+    
+def Tesla_Reifelagern(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+    
+    Bediengeräte = math.ceil(Zellen_pro_Tag*float(df["Wert"]["Reifelagerdauer"])/float(df["Wert"]["Tagesdurchsatz Bediengerät"]))
+    Module = math.ceil(Zellen_pro_Tag*float(df["Wert"]["Reifelagerdauer"])/float(df["Wert"]["Zellen/Modul"]))
+    Tuerme = math.ceil(Module/float(df["Wert"]["Module/Turm"]))
+    process.Anlagen = Tuerme
+    
+    schritt_dictionary["Anzahl Maschinen"] = "{} Module, {} Türme, {} Bediengeräte".format(Module,Tuerme,Bediengeräte)
+    schritt_dictionary["Investition"] = Bediengeräte*float(df["Wert"]["Investition Bediengerät"])+Module*float(df["Wert"]["Investition Modul"])
+    
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_schicht(schritt_dictionary)  
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)   
+    
+    return schritt_dictionary
+
+def Tesla_Prüfen_und_Klassifizieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
+    return schritt_dictionary
+
+def Tesla_Verpackung_und_Versand(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    schritt_dictionary = process.flaechen(schritt_dictionary)
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    
     return schritt_dictionary

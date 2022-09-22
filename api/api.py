@@ -39,12 +39,8 @@ def get_all_tables():
 def update_db():
     new_table = request.get_json()["new_table"]
     new_table_name = request.get_json()["new_table_name"]
-    #spalte = request.get_json()["spalte"]
-    
-    print(new_table)
-    print(new_table_name)
     update_table(new_table,new_table_name)
-    #update_table
+
     return "None"
 
 @app.route('/Zellformate')

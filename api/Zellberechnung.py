@@ -497,6 +497,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Q_ges = l_WHE*anzahl_WHE/1000 #gesamte Ladung einer Zelle in Ah
     Zellen_pro_Jahr = GWh_pro_jahr*1000000000/(Q_ges*U) #*1 Mrd wegen Giga
     spez_energie = U*Q_ges*1000/gew_ges #[Wh/kg] *1000 -> Gewicht Zelle g zu kg
+    #Balancing = (1-(A_KB*C_flsp)/(A_AB*C_flsp))*100
     Balancing = (1-(A_KB*C_flsp)/(A_AB*C_flsp))*100
     
     #Auflistung aller Kosten einer Zelle
