@@ -409,8 +409,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
         U_plus = 2*math.pi*d_WHE/1000 #Zunahme jeder Wicklung [mm]
         
-        l_bahn = (U_a-U_plus)*Anz_wick + U_a #[mm]
-        #l_bahn = 
+        #l_bahn = (U_a-U_plus)*Anz_wick + U_a #[mm]
+        A_wickel_querschnitt = Breite_Kern*2*Anz_wick*d_WHE/1000+( (r_w+2*sep_wick+Anz_wick*d_WHE/1000)**2 - (r_w+2*sep_wick)**2)*math.pi #[mm]
+        l_bahn = A_wickel_querschnitt/d_WHE*1000 #[mm]
 
         A_KK = (l_bahn-2*ueberstand_anode_kathode-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
         A_KB = (l_bahn-2*ueberstand_anode_kathode-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
