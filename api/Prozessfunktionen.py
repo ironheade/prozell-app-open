@@ -1105,6 +1105,28 @@ def PHEV2_Beschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_diction
     schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
     return schritt_dictionary
 
+def PHEV2_Beschichten_und_Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    
+    Trocknerlänge_Anode = float(df["Wert"]["Geschwindigkeit Anode"])*float(df["Wert"]["Trocknungsdauer Anode"]) #[m]
+    Trocknerlänge_Kathode = float(df["Wert"]["Geschwindigkeit Kathode"])*float(df["Wert"]["Trocknungsdauer Kathode"]) #[m]
+    
+    Anlagengrundfläche_Anode = 3*(2+Trocknerlänge_Anode) #[m²]
+    Anlagengrundfläche_Kathode = 3*(2+Trocknerlänge_Kathode) #[m2]
+    
+    schritt_dictionary["Flächenbedarf"] = (Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode)*(1-float(df["Wert"]["Faktor Trockenraum"])) #[m²]
+    schritt_dictionary["Flächenbedarf Trockenraum"]  = Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode*float(df["Wert"]["Faktor Trockenraum"]) #[m²]
+
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
+
+    return schritt_dictionary
+
 def PHEV2_Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
@@ -1391,6 +1413,28 @@ def Tesla_Beschichten(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_diction
     schritt_dictionary = process.investition(schritt_dictionary)
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
     schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
+    return schritt_dictionary
+
+def Tesla_Beschichten_und_Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+    process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
+    schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
+    schritt_dictionary = process.fixausschuss(schritt_dictionary)
+    schritt_dictionary = process.anlagen(schritt_dictionary)
+    schritt_dictionary = process.energie(schritt_dictionary)
+    
+    Trocknerlänge_Anode = float(df["Wert"]["Geschwindigkeit Anode"])*float(df["Wert"]["Trocknungsdauer Anode"]) #[m]
+    Trocknerlänge_Kathode = float(df["Wert"]["Geschwindigkeit Kathode"])*float(df["Wert"]["Trocknungsdauer Kathode"]) #[m]
+    
+    Anlagengrundfläche_Anode = 3*(2+Trocknerlänge_Anode) #[m²]
+    Anlagengrundfläche_Kathode = 3*(2+Trocknerlänge_Kathode) #[m2]
+    
+    schritt_dictionary["Flächenbedarf"] = (Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode)*(1-float(df["Wert"]["Faktor Trockenraum"])) #[m²]
+    schritt_dictionary["Flächenbedarf Trockenraum"]  = Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode*float(df["Wert"]["Faktor Trockenraum"]) #[m²]
+
+    schritt_dictionary = process.investition(schritt_dictionary)
+    schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Anodenkollektor;Kathodenkollektor")
+
     return schritt_dictionary
 
 def Tesla_Kalandrieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
