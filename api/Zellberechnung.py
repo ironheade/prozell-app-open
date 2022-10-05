@@ -127,8 +127,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     Bestandteile_Anodenbeschichtung = Additive_Anode #ohne Lösemittel
     Bestandteile_Anodenbeschichtung.append(Aktivmaterial_Anode) #ohne Lösemittel
-    Gesamtdichte_Anodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
-    Gesamtdichte_Anodenlösemittel = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Lösemittel_Anode)
+    #Gesamtdichte_Anodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
+    Gesamtdichte_Anodenfeststoffe = 1/sum(Zellchemie["Wert"][x]/100/read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
+    Gesamtdichte_Anodenlösemittel = 1/sum(Zellchemie["Wert"][x]/100/read_zellinfo(x)["Wert"]["Dichte"] for x in Lösemittel_Anode)
     Gesamtdichte_Anodenbeschichtung = 1/(Zellchemie["Wert"]["Feststoffgehalt Anode"]/100/Gesamtdichte_Anodenfeststoffe + (1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100)/Gesamtdichte_Anodenlösemittel)
     
     Kosten_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"] for x in Bestandteile_Anodenbeschichtung) #€/kg
@@ -136,8 +137,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
     Bestandteile_Kathodenbeschichtung=Additive_Kathode #ohne Lösemittel
     Bestandteile_Kathodenbeschichtung.append(Aktivmaterial_Kathode) 
-    Gesamtdichte_Kathodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
-    Gesamtdichte_Kathodenlösemittel = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Lösemittel_Kathode)
+    #Gesamtdichte_Kathodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
+    Gesamtdichte_Kathodenfeststoffe = 1/sum(Zellchemie["Wert"][x]/100/read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
+    Gesamtdichte_Kathodenlösemittel = 1/sum(Zellchemie["Wert"][x]/100/read_zellinfo(x)["Wert"]["Dichte"] for x in Lösemittel_Kathode)
     Gesamtdichte_Kathodenbeschichtung = 1/(Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100/Gesamtdichte_Kathodenfeststoffe + (1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100)/Gesamtdichte_Kathodenlösemittel)
     
     Kosten_Kathodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"] for x in Bestandteile_Kathodenbeschichtung) #€/kg
@@ -418,7 +420,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AK = (l_bahn-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
         A_AB = (l_bahn-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
 
-        A_Sep = l_bahn*hoehe_festhuelle
+        A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)
 
         l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
@@ -471,7 +473,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     vol_KK = A_KK * d_KK/1000 #[mm³]
     
     #Volumen und Gewicht des Elektrolyts
-    vol_elyt = vol_sep * phi_sep/100 + vol_AB * phi_AB/100 + vol_KB * phi_KB/100 + (vol_nutz_zelle - (vol_sep + vol_AB + vol_AK + vol_KB + vol_KK)*anzahl_WHE)*elektrolytbefuellung/100 #[mm³]
+    vol_elyt = vol_sep*2 * phi_sep/100 + vol_AB*2 * phi_AB/100 + vol_KB*2 * phi_KB/100 + (vol_nutz_zelle - (vol_sep*2 + vol_AB*2 + vol_AK + vol_KB*2 + vol_KK)*anzahl_WHE)*elektrolytbefuellung/100 #[mm³]
     gew_elyt = vol_elyt*roh_elyt/1000 #[g]
     
     #die Gesamtgewichte der Einzelbestandteile 

@@ -195,25 +195,9 @@ def get_zellergebnisse():
     zellformat = request.get_json()["zellformat"]
     zellformatName = request.get_json()["zellformatName"]
     GWh_Jahr_Ah_Zelle = request.get_json()["GWh_Jahr_Ah_Zelle"]
-    
-    print("Zellchemie")
-    print(Zellchemie)
-    print("Materialinfos")
-    print(Materialinfos)
-    print("zellformat")
-    print(zellformat)
-    print("zellformatName")
-    print(zellformatName)
-    print("GWh_Jahr_Ah_Zelle")
-    print(GWh_Jahr_Ah_Zelle)
-    
-    a_json = json.loads(GWh_Jahr_Ah_Zelle)
-    print(a_json["GWh_pro_jahr"])
-
  
     Zellergebnisse = Zellberechnung.zellberechnung(Zellchemie, Materialinfos, zellformat, zellformatName, GWh_Jahr_Ah_Zelle)
-    print(Zellergebnisse)
+
     Zellergebnisse = Zellergebnisse.to_json(orient='records')
     
     return {'Zellergebnisse': Zellergebnisse}
-

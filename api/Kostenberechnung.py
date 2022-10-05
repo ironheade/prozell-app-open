@@ -220,7 +220,8 @@ def Kostenberechnung(Zellergebnisse_raw,
     #____________________________________
     #Anterograde Wertstromkalkulation  
     #Bestimmen der Einzelkosten
-    Betriebstage = Mitarbeiter_und_Logistik["Wert"]["Betriebstage"]
+    #Betriebstage = Mitarbeiter_und_Logistik["Wert"]["Betriebstage"]
+    Betriebstage = 365
     
     Materialkosten = {
         "Anodenbeschichtung_kosten":Zellergebnisse["Wert"]["Kilopreis Anodenbeschichtung"], #[€/kg]
