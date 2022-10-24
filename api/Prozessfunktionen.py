@@ -309,11 +309,13 @@ def Beschichten_und_Trocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_
     Trocknerlänge_Anode = float(df["Wert"]["Geschwindigkeit Anode"])*float(df["Wert"]["Trocknungsdauer Anode"]) #[m]
     Trocknerlänge_Kathode = float(df["Wert"]["Geschwindigkeit Kathode"])*float(df["Wert"]["Trocknungsdauer Kathode"]) #[m]
     
-    Anlagengrundfläche_Anode = 3*(2+Trocknerlänge_Anode) #[m²]
-    Anlagengrundfläche_Kathode = 3*(2+Trocknerlänge_Kathode) #[m2]
+    Anlagengrundfläche_Anode = df["Wert"]["Breite Beschichtungsanlage"]*(df["Wert"]["Länge des Auftragswerks"]+Trocknerlänge_Anode) #[m²] 
+    Anlagengrundfläche_Kathode = df["Wert"]["Breite Beschichtungsanlage"]*(Trocknerlänge_Kathode) #[m2]
+
+    Anlagengrundfläche_Kathode_Trockenraum = df["Wert"]["Länge des Auftragswerks"]*df["Wert"]["Breite Beschichtungsanlage"]
     
     schritt_dictionary["Flächenbedarf"] = (Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode)*(1-float(df["Wert"]["Faktor Trockenraum"])) #[m²]
-    schritt_dictionary["Flächenbedarf Trockenraum"]  = Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode*float(df["Wert"]["Faktor Trockenraum"]) #[m²]
+    schritt_dictionary["Flächenbedarf Trockenraum"]  = (Anlagengrundfläche_Anode+Anlagengrundfläche_Kathode)*float(df["Wert"]["Faktor Trockenraum"])+Anlagengrundfläche_Kathode_Trockenraum #[m²]
 
     schritt_dictionary = process.investition(schritt_dictionary)
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
@@ -1221,7 +1223,7 @@ def PHEV2_Flachwickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
 
     return schritt_dictionary
 
-def PHEV2_Cap_verschließen_und_kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+def PHEV2_In_Gehäuse_einführen_und_Deckelmontage(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.anlagen(schritt_dictionary)
@@ -1531,7 +1533,7 @@ def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary)
 
     return schritt_dictionary
 
-def Tesla_Cap_verschließen_und_kontaktieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
+def Tesla_In_Gehäuse_einführen_und_Deckelmontage(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary):
     process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.anlagen(schritt_dictionary)

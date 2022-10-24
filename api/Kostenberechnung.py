@@ -103,7 +103,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     # Separator NOCH ÜBERARBEITEN
     Separator = Zellchemie.loc[Zellchemie['Kategorie'] == "Separator"].index.tolist()[0] #Raussuchen, welcher Separator verwendet wurde
-    Separator_menge = Kathodenkollektor_menge
+    Separator_menge = Kathodenkollektor_menge*2
     
     #Elektrolyt
     Elektrolyt = Zellchemie.loc[Zellchemie['Kategorie'] == "Elektrolyt"].index.tolist()[0] #Raussuchen, welches Elektrolyt verwendet wurde
