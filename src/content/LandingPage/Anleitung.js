@@ -265,7 +265,7 @@ export default function Anleitung() {
               style={{ height: 300, marginTop: 35 }}
             />
             <figcaption>
-              <h4>Coil Wickelzelle</h4>
+              <h4>Coil Stapelzelle</h4>
             </figcaption>
           </div>
 
@@ -276,7 +276,7 @@ export default function Anleitung() {
               style={{ height: 260, marginTop: 35 }}
             />
             <figcaption>
-              <h4>Coil Stapelzelle</h4>
+              <h4>Coil Wickelzelle</h4>
             </figcaption>
           </div>
         </div>

@@ -9,7 +9,7 @@ import math
 
 #____________________________________
 #HARDCODED WERTE, BITTE ANPASSEN
-arbeitstage_pro_jahr=365
+arbeitstage_pro_jahr=360
 
 #____________________________________
 #Klassen
@@ -1236,7 +1236,7 @@ def PHEV2_Flachwickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
 
     schritt_dictionary["Investition"] = process.Anlagen*df["Wert"]["Investition"]
 
-    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Separator")
     schritt_dictionary["Flächenbedarf Labor"] = 0
 
     return schritt_dictionary
@@ -1542,7 +1542,7 @@ def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary)
 
     schritt_dictionary["Investition"] = process.Anlagen*df["Wert"]["Investition"]
 
-    schritt_dictionary = process.neue_materialien(schritt_dictionary)
+    schritt_dictionary = process.neue_materialien(schritt_dictionary,"Separator")
     schritt_dictionary["Flächenbedarf Labor"] = 0
 
     return schritt_dictionary

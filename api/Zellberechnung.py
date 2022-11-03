@@ -83,6 +83,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Lösemittel_Anode = Zellchemie.loc[Zellchemie['Kategorie'] == "Lösemittel Anode"].index.to_list() #Liste
     
     Separator = Zellchemie.loc[Zellchemie['Kategorie'] == "Separator"].index[0] #String
+    Huelle = Zellchemie.loc[Zellchemie['Kategorie'] == "Hülle"].index[0] #String
     
     Elektrolyt = Zellchemie.loc[Zellchemie['Kategorie'] == "Elektrolyt"].index[0] #String
     
@@ -99,7 +100,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     roh_KK = Materialinfos.loc[Materialinfos["Material"] == Kollektorfolie_Kathode]["Wert"]["Dichte"] #[g/cm³]
     #C_flsp_K = Zellchemie["Wert"]["Flächenspezifische Kapazität Kathode"] #[mAh/cm²]
     C_sp_K = Materialinfos.loc[Materialinfos["Material"] == Aktivmaterial_Kathode]["Wert"]["spezifische Kapazität"] #[mAh/g]
-    roh_KB = Zellchemie["Wert"]["Zieldichte Beschichtung Kathode"] #[g/cm³]
     phi_KB = Zellchemie["Wert"]["Beschichtungsporosität Kathode"] #[%]
     x_PM_K = 100-Zellchemie["Wert"][Aktivmaterial_Kathode] #Masseanteil passiver Komponenten Kathode in Prozent [%]
     
@@ -108,7 +108,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     roh_AK = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Dichte"] #[g/cm³]
     #C_flsp_A = Zellchemie["Wert"]["Flächenspezifische Kapazität Anode"] #[mAh/cm²]
     C_sp_A = read_zellinfo(Aktivmaterial_Anode)["Wert"]["spezifische Kapazität"] #[mAh/g]
-    roh_AB = Zellchemie["Wert"]["Zieldichte Beschichtung Anode"] #[g/cm³]
     phi_AB = Zellchemie["Wert"]["Beschichtungsporosität Anode"] #[%]
     x_PM_A = 100-Zellchemie["Wert"][Aktivmaterial_Anode] #Masseanteil passiver Komponenten Anode in Prozent [%]
     delta_A = Zellchemie["Wert"]["Kalkulierter Anodenüberschuss"] #[%]
@@ -119,6 +118,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     phi_sep = read_zellinfo(Separator)["Wert"]["Porosität"] #[%]
     
     roh_elyt = read_zellinfo(Elektrolyt)["Wert"]["Dichte"] #[g/cm³]
+
+    Wandstaerke = read_zellinfo(Huelle)["Wert"]["Dicke"] #[mm]
     
     
     #____________________________________
@@ -151,12 +152,15 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #GWh_pro_jahr = float(massemodell_eingaben["GWH_pro_jahr"]) #[-]
     GWh_pro_jahr = GWh_Jahr_Ah_Zelle["GWh_pro_jahr"] #[-]
     
+    roh_KB = Gesamtdichte_Kathodenbeschichtung*(1-phi_KB/100) #[g/cm³]
+    roh_AB = Gesamtdichte_Anodenbeschichtung*(1-phi_AB/100) #[g/cm³]
+
     
     #____________________________________
     # Elektrochemische Charakterisierung, gleich für alle Zelltypen
     
-    MB_K = C_flsp*(1+delta_irr/100)/(C_sp_K*(1-x_PM_K/100)) #Massenbelegung Kathode [g/cm²]
-    MB_A = C_flsp*(1+delta_irr/100+delta_A/100)/(C_sp_A*(1-x_PM_A/100)) #Massenbelegung Anode [g/cm²]
+    MB_K = C_flsp/(1-delta_irr/100)/(C_sp_K*(1-x_PM_K/100)) #Massenbelegung Kathode [g/cm²]
+    MB_A = C_flsp*(1+delta_A/100)/(C_sp_A*(1-x_PM_A/100)) #Massenbelegung Anode [g/cm²]
     
     d_KB = (MB_K/roh_KB)*10000 #Dicke Kathodenbeschichtung [µm]
     d_AB = (MB_A/roh_AB)*10000 #Dicke Anodenbeschichtung [µm]
@@ -212,7 +216,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AB = flaeche_ohne_zellf(breite_anode,laenge_anode,eckenradius_elektrode) #Fläche Anode [mm²]
         A_Sep = flaeche_mit_zellf(breite_anode+2*ueberstand_separator_anode,laenge_anode+2*ueberstand_separator_anode,0,0, 0) #Fläche Separator [mm²]
     
-        
+
+
         l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
     
         #Anzahl der Wiederholeinheiten um auf die gesetzte Ah zu kommen, nach oben aufgerundet
@@ -223,6 +228,13 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AK_ges = A_AK*(anzahl_WHE+1)*2
         A_KK_ges = A_KK*anzahl_WHE*2.
         A_Sep_ges = A_Sep*(anzahl_WHE+1)*2
+
+        #Außenmaße Zelle
+        breite = breite_anode+ueberstand_separator_anode*2
+        laenge = laenge_anode+ueberstand_separator_anode*2+laenge_anode_zellf
+        faktor_gastasche = 1.5 #zusätzliche Pouchfolienfläche für Gastasche
+
+        A_Huelle = 2*breite*laenge*faktor_gastasche
 
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
@@ -242,7 +254,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
      
     
     if Zelltyp == "Hardcase gestapelt":
-        Wandstärke = Zellformat["Wert"]["Wandstärke"] #[mm]
+        Wandstärke = Wandstaerke #[mm]
         eckenradius_elektrode = Zellformat["Wert"]["Eckenradius"] #[mm]
         #Maße der Zellfähnchen
         breite_anode_zellf = Zellformat["Wert"]["Breite Zellfähnchen Anode"] #[mm]
@@ -254,6 +266,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"]-2*Wandstärke #[mm]
         laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"]-2*Wandstärke #[mm]
         hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
+
+        A_Huelle = 2*breite_festhuelle*laenge_festhuelle+2*breite_festhuelle*hoehe_festhuelle+2*laenge_festhuelle*hoehe_festhuelle
         
         #Abstände beim Schneiden der Sheets
         Schneid_abs_aus_A = Zellformat["Wert"]["Sicherheitsabstand Schneiden Anode"] #[mm] Abstand nach außen und zwischen den beschichteten Bahnen
@@ -310,14 +324,16 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
     
     if Zelltyp == "Rundzelle":
-        Wandstärke = Zellformat["Wert"]["Wandstärke"] #[mm]
+        Wandstärke = Wandstaerke #[mm]
         #Außenmaße der Runzelle
         radius_rundzelle = Zellformat["Wert"]["Radius Rundzelle"]-Wandstärke #[mm]
         hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"]-2*Wandstärke #[mm]
 
-        Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
-        Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
-        
+        A_Huelle = 2*math.pi*radius_rundzelle*hoehe_rundzelle+math.pi*radius_rundzelle**2
+
+        #Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
+        #Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
+
         abs_zellwickel_deckel = Zellformat["Wert"]["Abstand Zellwickel - Deckel"] #[mm]
         
         Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
@@ -326,6 +342,10 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Innenabstände der Separatoren
         ueberstand_separator_anode = Zellformat["Wert"]["Überstand Separator - Anode"] #[mm]
         ueberstand_anode_kathode = Zellformat["Wert"]["Überstand Anode - Kathode"] #[mm]
+
+        #Zellableiter
+        Abl_in_Zelle_A = ueberstand_separator_anode+Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
+        Abl_in_Zelle_K = ueberstand_separator_anode+ueberstand_anode_kathode+Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
         
         #Weitere Angaben Rundzelle
         sep_wick = Zellformat["Wert"]["Zusatzwicklungen Separator"] #zusätzliche Separatorwicklungen
@@ -380,14 +400,16 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     
     if Zelltyp == "Hardcase gewickelt":
         #Außenmaße der Zelle
-        Wandstärke = Zellformat["Wert"]["Wandstärke"] #[mm]
+        Wandstärke = Wandstaerke #[mm]
 
-        Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
-        Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
-             
+        #Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
+        #Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
+
         breite_festhuelle = Zellformat["Wert"]["Breite Festhülle"]-2*Wandstärke #[mm]
         laenge_festhuelle = Zellformat["Wert"]["Länge Festhülle"]-2*Wandstärke #[mm]
         hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
+
+        A_Huelle = 2*breite_festhuelle*laenge_festhuelle+2*breite_festhuelle*hoehe_festhuelle+2*laenge_festhuelle*hoehe_festhuelle
 
         Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
         Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
@@ -396,6 +418,10 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         ueberstand_anode_kathode = Zellformat["Wert"]["Überstand Anode - Kathode"] #[mm]
         abs_zellwickel_deckel = Zellformat["Wert"]["Abstand Zellwickel - Deckel"] #[mm]
         abs_ableiter_huelle = Zellformat["Wert"]["Abstand Ableiter - Hülle"] #[mm]
+
+        #Zellableiter
+        Abl_in_Zelle_A = ueberstand_separator_anode+Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
+        Abl_in_Zelle_K = ueberstand_separator_anode+ueberstand_anode_kathode+Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
 
         #Weitere Angaben Prismatische Zelle
         sep_wick = Zellformat["Wert"]["Zusatzwicklungen Separator"] #zusätzliche Separatorwicklungen
@@ -415,10 +441,10 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_wickel_querschnitt = Breite_Kern*2*Anz_wick*d_WHE/1000+( (r_w+2*sep_wick+Anz_wick*d_WHE/1000)**2 - (r_w+2*sep_wick)**2)*math.pi #[mm]
         l_bahn = A_wickel_querschnitt/d_WHE*1000 #[mm]
 
-        A_KK = (l_bahn-2*ueberstand_anode_kathode-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
-        A_KB = (l_bahn-2*ueberstand_anode_kathode-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
-        A_AK = (l_bahn-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
-        A_AB = (l_bahn-2*ueberstand_separator_anode)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+        A_KK = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
+        A_KB = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        A_AK = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
+        A_AB = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
 
         A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)
 
@@ -475,6 +501,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #Volumen und Gewicht des Elektrolyts
     vol_elyt = vol_sep*2 * phi_sep/100 + vol_AB*2 * phi_AB/100 + vol_KB*2 * phi_KB/100 + (vol_nutz_zelle - (vol_sep*2 + vol_AB*2 + vol_AK + vol_KB*2 + vol_KK)*anzahl_WHE)*elektrolytbefuellung/100 #[mm³]
     gew_elyt = vol_elyt*roh_elyt/1000 #[g]
+
+    rho_huelle = read_zellinfo(Huelle)["Wert"]["Dichte"] #[g/cm³]
+    gew_huelle = A_Huelle*Wandstaerke*rho_huelle/1000
     
     #die Gesamtgewichte der Einzelbestandteile 
     #gewickelte Zellen haben keine modifizierte Wiederholeinheit, gestapelte Zellen schon
@@ -501,12 +530,15 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     spez_energie = U*Q_ges*1000/gew_ges #[Wh/kg] *1000 -> Gewicht Zelle g zu kg
     #Balancing = (1-(A_KB*C_flsp)/(A_AB*C_flsp))*100
     Balancing = (1-(A_KB*C_flsp)/(A_AB*C_flsp))*100
+
+    Kosten_Huelle = read_zellinfo(Huelle)["Wert"]["Preis"] #[€/m²]
     
     #Auflistung aller Kosten einer Zelle
     Gesamtkosten_Anodenbeschichtung = Kosten_Anodenbeschichtung * gew_AB_ges/1000 #[€]
     Gesamtkosten_Kathodenbeschichtung = Kosten_Kathodenbeschichtung * gew_KB_ges/1000 #[€]
     Gesamtkosten_Anodenkollektor = Kosten_Anodenkollektor * A_AK_ges / Breite_Anodenkollektor /1000 #[€]
     Gesamtkosten_Kathodenkollektor = Kosten_Kathodenkollektor * A_KK_ges / Breite_Kathodenkollektor / 1000 #[€]
+    Gesamtkosten_Huelle = Kosten_Huelle * A_Huelle /1e6
     Gesamtkosten_Separator = Kosten_Separator * A_Sep_ges / Breite_Separator / 1000
     Gesamtkosten_Elektrolyt = Kosten_Elektrolyt * gew_elyt/1000 #[€]
     Gesamtkosten_Zelle = (Gesamtkosten_Anodenbeschichtung 
@@ -548,7 +580,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Gewicht Kathodenbeschichtung","Wert":round(gew_KB_ges,2),"Einheit":"g","Kategorie":"Gewichte und Dichten"},
         {"Beschreibung":"Gewicht Separator","Wert":round(gew_Sep_ges,2),"Einheit":"g","Kategorie":"Gewichte und Dichten"},
         {"Beschreibung":"Gewicht Elektrolyt","Wert":round(gew_elyt,2),"Einheit":"g","Kategorie":"Gewichte und Dichten"},
-        {"Beschreibung":"Gewicht Hülle","Wert":0,"Einheit":"g","Kategorie":"Gewichte und Dichten"},
+        {"Beschreibung":"Gewicht Hülle","Wert":round(gew_huelle,2),"Einheit":"g","Kategorie":"Gewichte und Dichten"},
         {"Beschreibung":"Gesamtgewicht Zelle","Wert":round(gew_ges,2),"Einheit":"g","Kategorie":"Gewichte und Dichten"},
         
         {"Beschreibung":"Kilopreis Anodenbeschichtung","Wert":round(Kosten_Anodenbeschichtung,2),"Einheit":"€/kg","Kategorie":"Kosten"},
@@ -559,7 +591,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Preis Kathodenkollektor","Wert":round(Gesamtkosten_Kathodenkollektor,2),"Einheit":"€","Kategorie":"Kosten"},
         {"Beschreibung":"Preis Separator","Wert":round(Gesamtkosten_Separator,2),"Einheit":"€","Kategorie":"Kosten"},
         {"Beschreibung":"Preis Elektrolyt","Wert":round(Gesamtkosten_Elektrolyt,2),"Einheit":"€","Kategorie":"Kosten"},
-        {"Beschreibung":"Preis Hülle","Wert":0,"Einheit":"€","Kategorie":"Kosten"},
+        {"Beschreibung":"Preis Hülle","Wert":round(Gesamtkosten_Huelle,2),"Einheit":"€","Kategorie":"Kosten"},
         {"Beschreibung":"Materialkosten einer Zelle","Wert":round(Gesamtkosten_Zelle,2),"Einheit":"€","Kategorie":"Kosten"},
         
         {"Beschreibung":"Beschichtete Bahnen Anode Ausnutzung","Wert":bahnen_bes_A_ausn,"Einheit":"%","Kategorie":"Flächennutzung Elektrode"},
