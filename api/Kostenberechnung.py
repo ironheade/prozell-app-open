@@ -297,7 +297,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     Personalkosten_overhead = sum([sum(list(df.loc[x])) for x in ["Personlabedarf Facharbeiter","Personalbedarf Hilfskraft"]])*24*Betriebstage*(
         Mitarbeiter_und_Logistik["Wert"]["Stundensatz Indirekte"]*1/Mitarbeiter_und_Logistik["Wert"]["Führunggspanne"]+
-        Mitarbeiter_und_Logistik["Wert"]["Stundensatz Putzkräfte"]*1/Mitarbeiter_und_Logistik["Wert"]["Spanne Reinigungskräfte"])
+        Mitarbeiter_und_Logistik["Wert"]["Stundensatz Reinigungskräfte"]*1/Mitarbeiter_und_Logistik["Wert"]["Spanne Reinigungskräfte"])
 
     Klimatisierung_overhead = fabrikflaeche*Gebaeude["Wert"]["Mediengrundversorgung"]*24*Betriebstage*Oekonomische_Parameter["Wert"]["Energiekosten"]/1000
 
