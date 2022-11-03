@@ -446,7 +446,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AK = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
         A_AB = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
 
-        A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)
+        A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
 
         l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
@@ -466,7 +466,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         if (bahnen_bes_A % 2) != 0 and bahnen_bes_A != 1:
             bahnen_bes_A = bahnen_bes_A-1
         bahnen_bes_A_ausn = round(bahnen_bes_A/bahnen_bes_A_ausn,4)*100
-        S_MA = 1000/(l_bahn-2*ueberstand_separator_anode)*bahnen_bes_A
+        S_MA = 1000/(l_bahn)*bahnen_bes_A
 
         #Kathode
         bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode+Beschichtungsabstand_Kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
@@ -474,7 +474,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         if (bahnen_bes_K % 2) != 0 and bahnen_bes_K != 1:
             bahnen_bes_K = bahnen_bes_K-1
         bahnen_bes_K_ausn = round(bahnen_bes_K/bahnen_bes_K_ausn,4)*100
-        S_MK = 1000/(l_bahn-2*ueberstand_separator_anode-2*ueberstand_anode_kathode)*bahnen_bes_K
+        S_MK = 1000/(l_bahn-2*ueberstand_anode_kathode)*bahnen_bes_K
         
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
         
@@ -492,7 +492,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     gew_MWHE = gew_AK+2*gew_AB+2*gew_Sep
     
     #Volumina der Einzelsheets
-    vol_sep = A_Sep * d_Sep/1000 #[mm³]
+    vol_sep = A_Sep_ges * d_Sep/1000 #[mm³]
     vol_AB = A_AB * d_AB/1000 #[mm³]
     vol_AK = A_AK * d_AK/1000 #[mm³]
     vol_KB = A_KB * d_KB/1000 #[mm³]
@@ -565,7 +565,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Energiedichte","Wert":round(spez_energie,2),"Einheit":"WH/kg","Kategorie":"Übersicht"},
         {"Beschreibung":"Zellen pro Jahr","Wert":round(Zellen_pro_Jahr,2),"Einheit":"","Kategorie":"Übersicht"},
         {"Beschreibung":"Gesamtgewicht Zelle","Wert":round(gew_ges,2),"Einheit":"g","Kategorie":"Übersicht"},
-        {"Beschreibung":"Balancing","Wert":round(Balancing,2),"Einheit":"%","Kategorie":"Übersicht"},
+        #{"Beschreibung":"Balancing","Wert":round(Balancing,2),"Einheit":"%","Kategorie":"Übersicht"},
         
         {"Beschreibung":"Anzahl Wiederholeinheiten","Wert":anzahl_WHE,"Einheit":"","Kategorie":"Maße und Flächen"},
         {"Beschreibung":"Fläche Anodenbeschichtung gesamt","Wert":round(A_AB_ges,2),"Einheit":"mm²","Kategorie":"Maße und Flächen"},

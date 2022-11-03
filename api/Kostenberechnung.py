@@ -241,7 +241,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     Flächenkosten_Produktionshalle = flaechenkosten_jaehrlich #[€/m²] dauerhafte Kosten pro Jahr?
     Flächenkosten_Trockenraum = flaechenkosten_jaehrlich  #[€/m²] dauerhafte Kosten pro Jahr?
     Stromverbrauch_Trockenraum_Flächennormiert = Gebaeude["Wert"]["Energie Trockenraum flächennormiert"]  #[€/m²] dauerhafte Kosten pro Jahr?
-    Zinssatz_Kapitalmarkt = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"]/100 #[%]
+    Zinssatz_Kapitalmarkt = Oekonomische_Parameter["Wert"]["Kapitalkosten"]/100 #[%]
     Nutzungsdauer = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"] #[%]
     
     Materialkosten_dict = {}
@@ -303,7 +303,7 @@ def Kostenberechnung(Zellergebnisse_raw,
 
     Flaechenkosten_overhead = Fabrikflaeche_ohne_Produktion*flaechenkosten_jaehrlich
         
-    fix_cost = Personalkosten_overhead + Klimatisierung_overhead + Flaechenkosten_overhead #Overhead Kosten
+    fix_cost = Personalkosten_overhead + Klimatisierung_overhead + sum(list(df.loc["Instandhaltungskosten"])) #Overhead Kosten
 
     overhead_kosten = [
         {
@@ -369,15 +369,16 @@ def Kostenberechnung(Zellergebnisse_raw,
     levelized_cost_result = levelized_cost(
         construction_cost_factory = sum(anteil["value"] for anteil in grundstueckskosten),
         lifetime_factory = Gebaeude["Wert"]["Nutzungsdauer"],
-        interest_rate = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"]/100,
+        interest_rate = Oekonomische_Parameter["Wert"]["Kapitalkosten"]/100,
         tax_rate = Oekonomische_Parameter["Wert"]["Umsatzsteuer"]/100,
         variable_cost = sum([sum(list(df.loc[x])) for x in ["Materialkosten",
                                                         "Personalkosten",
                                                         "Energiekosten",
-                                                        "Instandhaltungskosten",
-                                                        "Flächenkosten",
-                                                        "Kalkulatorische Zinsen",
-                                                        "Ökonomische Abschreibung"]]),
+                                                        #"Instandhaltungskosten",
+                                                        #"Flächenkosten",
+                                                        #"Kalkulatorische Zinsen",
+                                                        #"Ökonomische Abschreibung"
+                                                        ]]),
         fix_cost = fix_cost,
         output_kWh = float(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])*1000000,
         machine_invest = sum(list(df.loc["Investition"])),

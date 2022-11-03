@@ -28,6 +28,7 @@ def levelized_cost(construction_cost_factory,
     output_kWh = int(output_kWh)
     machine_invest = int(machine_invest)
     factory_depreciation = int(factory_depreciation)
+    #factory_depreciation = int(lifetime_factory) #Assuming factory will be depreciated over its entire lifetime
     machine_depreciation = int(machine_depreciation)
     lifetime_factory = int(lifetime_factory)
     # Define variables - alle jährlich
@@ -46,47 +47,58 @@ def levelized_cost(construction_cost_factory,
 
     ## Create dataframe
 
+
     # Create depreciation schedule based on linear depriciation
-    d_i = np.full(shape=lifetime_factory, fill_value=0, dtype=np.float) #d_i: yearly deprecation
-    d_i[0:factory_depreciation] = 1/factory_depreciation * construction_cost_factory # factory depreciation
-    d_i = d_i + np.full(shape=lifetime_factory, fill_value=machine_invest/machine_depreciation, dtype=np.float)
+    d_i = np.full(shape=lifetime_factory+1, fill_value=0, dtype=np.float)
+    d_i[1:factory_depreciation+1] = 1/factory_depreciation * construction_cost_factory # factory depreciation
+    d_i[1:lifetime_factory+1] = d_i[1:lifetime_factory+1] + np.full(shape=lifetime_factory, fill_value=machine_invest/machine_depreciation, dtype=np.float)
+
 
     # Create investment array
-    I_i = np.full(shape=lifetime_factory, fill_value=0, dtype=np.float) 
+    I_i = np.full(shape=lifetime_factory+1, fill_value=0, dtype=np.float)
     I_i[0::machine_depreciation] = machine_invest
+    I_i[0] = I_i[0] + construction_cost_factory
+    I_i[lifetime_factory] = 0
 
+    # Create data frame with all parameters
     data = {
-            'year' : np.arange(1,lifetime_factory+1), #helper 
-            'variable_cost_yearly' : np.full(shape=lifetime_factory, fill_value=variable_cost, dtype=np.float), #variable_cost_yearly
-            'fixed_cost_yearly' : np.full(shape=lifetime_factory, fill_value=fix_cost, dtype=np.float), #fixed_cost_yearly
-            'output_yearly' : np.full(shape=lifetime_factory, fill_value=output_kWh, dtype=np.float), #output_yearly
-            'deprecation_yearly' : d_i, #deprecation_yearly
-            'investment_yearly' : I_i #investment_yearly
+            'year' : np.arange(0,lifetime_factory+1),
+            'w_i' : np.full(shape=lifetime_factory+1, fill_value=variable_cost, dtype=np.float),
+            'f_i' : np.full(shape=lifetime_factory+1, fill_value=fix_cost, dtype=np.float),
+            'o_i' : np.full(shape=lifetime_factory+1, fill_value=output_kWh, dtype=np.float),
+            'd_i' : d_i,
+            'I_i' : I_i
             }
+
     var_params = pd.DataFrame(data)
+    # Set variable and fixed cost and output to 0 for period 0 (production starts in period 1)
+
+    var_params['o_i'][0] = 0
+    var_params['f_i'][0] = 0
+    var_params['w_i'][0] = 0
 
     ## Calculation
 
     # Set gamma
     gamma = 1/(1+interest_rate)
 
-    # Calclevelized output, o
-    var_params['o_helper'] = var_params['output_yearly'] * np.power(gamma, var_params['year'])
+    # Calc levelized output, o
+    var_params['o_helper'] = var_params['o_i'] * np.power(gamma, var_params['year'])
     o = var_params['o_helper'].sum()
 
     # Calc levelized var cost, w
-    var_params['v_helper'] = var_params['variable_cost_yearly'] * np.power(gamma, var_params['year'])
+    var_params['v_helper'] = var_params['w_i'] * np.power(gamma, var_params['year'])
     w = var_params['v_helper'].sum() / o
 
     # Calc levelized fixed cost, f
-    var_params['v_helper'] = var_params['fixed_cost_yearly'] * np.power(gamma, var_params['year'])
+    var_params['v_helper'] = var_params['f_i'] * np.power(gamma, var_params['year'])
     f = var_params['v_helper'].sum() / o
 
     # Calc depreciation (absolute, discounted per year)
-    var_params['d_helper'] = var_params['deprecation_yearly'] * np.power(gamma, var_params['year'])
+    var_params['d_helper'] = var_params['d_i'] * np.power(gamma, var_params['year'])
 
     # Calc investment (absolute, discounted per year)
-    var_params['I_helper'] = var_params['investment_yearly'] * np.power(gamma, var_params['year'])
+    var_params['I_helper'] = var_params['I_i'] * np.power(gamma, var_params['year'])
 
     # Calc levelized cost of battery cells (LCOB), lc_b
     lc_b = w + f + (var_params['I_helper'].sum()- tax_rate * var_params['d_helper'].sum()) / ((1-tax_rate)*o)
@@ -94,11 +106,20 @@ def levelized_cost(construction_cost_factory,
     # Calculate marginal cost of batteries
     mc_b = variable_cost / output_kWh
 
+    # Calculate full cost of batteries
+    fc_b = (variable_cost + fix_cost + construction_cost_factory/factory_depreciation + machine_invest / machine_depreciation) / output_kWh
+
     ## Output results
-    print('LCOB = ', round(lc_b, 4), ' EUR / kWh') #Levelized Cost (Kosten alles mit eingebezogen)
-    print('MC = ', round(mc_b, 4), ' EUR / kWh') #marginale Kosten (nur Produktion (variable Kosten))
+
+    #print('LCOB = ', round(lc_b, 4), ' EUR / kWh')
+
+    #print('MC = ', round(mc_b, 4), ' EUR / kWh')
+
+    #print('FC = ', round(fc_b, 4), ' EUR / kWh')
+
     
-    return {"levelized_cost":round(lc_b,2),"marginal_cost":round(mc_b,2)}
+
+    return {"levelized_cost":round(lc_b,2),"marginal_cost":round(mc_b,2), "full_cost":round(fc_b, 2)}
 
     # ToDo: depending on factory lifetime add remaining value of machines at end of 
     # life of factory (i.e. if not fully depreciated)

@@ -12,7 +12,7 @@ Created on Wed May 18 12:47:24 2022
 def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomische_Parameter):
 
     #Paramter
-    Zinssatz_kapitalmarkt = Oekonomische_Parameter["Wert"]["Zinssatz Kapitalmarkt"] #[%]
+    Zinssatz_kapitalmarkt = Oekonomische_Parameter["Wert"]["Kapitalkosten"] #[%]
     
     nutzungsdauer_gebaeude = Gebaeude["Wert"]["Nutzungsdauer"] #[Jahre]
     
@@ -153,7 +153,7 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
         flaeche_normalraum
     )
     
-    jaehrliche_flaechenkosten = quadratmeter_preis_gebaeude*Zinssatz_kapitalmarkt/200+quadratmeter_preis_gebaeude/nutzungsdauer_gebaeude+quadratmeter_preis_gebaeude/100
+    jaehrliche_flaechenkosten = quadratmeter_preis_gebaeude*Zinssatz_kapitalmarkt/100+quadratmeter_preis_gebaeude/nutzungsdauer_gebaeude+quadratmeter_preis_gebaeude/100
     
     return investition_kosten_bau, flaechen_verteilung, jaehrliche_flaechenkosten, Fabrikflaeche, Fabrikflaeche_ohne_Produktion
     

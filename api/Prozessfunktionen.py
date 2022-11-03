@@ -22,13 +22,13 @@ class basis_prozessschritt:
         self.Materialinfos = Materialinfos
             
     def variabler_aussschuss(self,dictionary):
-        dictionary["Zelläquivalent"]        = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Zelläquivalent"] #[-]
-        dictionary["Anodenkollektor"]       = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Anodenkollektor"] #[m]
-        dictionary["Kathodenkollektor"]     = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Kathodenkollektor"] #[m]
-        dictionary["Anodenbeschichtung"]    = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Anodenbeschichtung"] #[kg]
-        dictionary["Kathodenbeschichtung"]  = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Kathodenbeschichtung"] #[kg]
-        dictionary["Separator"]             = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Separator"] #[m]
-        dictionary["Elektrolyt"]            = (1+self.df["Wert"]["Variabler Ausschuss"]/100)*dictionary["Elektrolyt"] #[l]
+        dictionary["Zelläquivalent"]        = dictionary["Zelläquivalent"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[-]
+        dictionary["Anodenkollektor"]       = dictionary["Anodenkollektor"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
+        dictionary["Kathodenkollektor"]     = dictionary["Kathodenkollektor"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
+        dictionary["Anodenbeschichtung"]    = dictionary["Anodenbeschichtung"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[kg]
+        dictionary["Kathodenbeschichtung"]  = dictionary["Kathodenbeschichtung"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[kg]
+        dictionary["Separator"]             = dictionary["Separator"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
+        dictionary["Elektrolyt"]            = dictionary["Elektrolyt"]/(1-self.df["Wert"]["Variabler Ausschuss"]/100) #[l]
         
         return dictionary
 
@@ -1093,8 +1093,8 @@ def PHEV2_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary)
         
     Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
 
-    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
-    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
 
     Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
     Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
@@ -1400,8 +1400,8 @@ def Tesla_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary)
         
     Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
 
-    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
-    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(1-Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
+    Liter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Anodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Anodenbeschichtung"]*(1/(Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))/1000 #[l]
+    Liter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Gewicht Kathodenbeschichtung"]/Zellergebnisse["Wert"]["Gesamtdichte Kathodenbeschichtung"]*(1/(Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))/1000 #[l]
 
     Anlagen_Anode = math.ceil((Liter_Anode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Anode"]))*float(df["Wert"]["Mischzeit Anode"])/(24*60))
     Anlagen_Kathode = math.ceil((Liter_Kathode_pro_Tag/float(df["Wert"]["Arbeitsvolumen Kathode"]))*float(df["Wert"]["Mischzeit Kathode"])/(24*60))
