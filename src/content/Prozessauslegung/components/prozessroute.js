@@ -291,9 +291,9 @@ export default function Prozessroute() {
                 <h3 style={{ marginLeft: "20px" }}>Details Prozessschritte</h3>
                 {prozessschrittDaten !== null &&
                     <Accordion style={{ marginLeft: "20px" }}>
-                        {prozessschrittDaten.map(item =>
+                        {prozessschrittDaten.map((item,index) =>
 
-                            <AccordionItem key={Object.keys(item)[0]} title={Object.keys(item)[0]}>
+                            <AccordionItem key={index} title={Object.keys(item)[0]}>
 
                                 <Table useZebraStyles size="compact" >
                                     <TableHead>
@@ -307,8 +307,8 @@ export default function Prozessroute() {
                                     </TableHead>
 
                                     <TableBody>
-                                        {item[Object.keys(item)[0]].map(item2 =>
-                                            <TableRow key={item2.Beschreibung}>
+                                        {item[Object.keys(item)[0]].map((item2,index) =>
+                                            <TableRow key={index}>
                                                 <TableCell>
                                                     {item2.Beschreibung}
                                                 </TableCell>

@@ -3,9 +3,9 @@ import React from "react"
 
 export default function Treemap(props) {
 
-
     const flaechen_normalraum = JSON.parse(props.ergebnisTabelle).filter(item => item.index === "Flächenbedarf")[0]
     const flaechen_trockenraum = JSON.parse(props.ergebnisTabelle).filter(item => item.index === "Flächenbedarf Trockenraum")[0]
+    const flaechen_labor = JSON.parse(props.ergebnisTabelle).filter(item => item.index === "Flächenbedarf Labor")[0]
     const anzahl_maschinen = JSON.parse(props.ergebnisTabelle).filter(item => item.index === "Anzahl Maschinen")[0]
 
     const children_normalraum = Object.keys(flaechen_normalraum).filter(item => item !== "index" && item !== "Einheit" && flaechen_normalraum[item] !== 0).map(item => 
@@ -20,6 +20,11 @@ export default function Treemap(props) {
         "showLabel": true
     }))
 
+    const children_labor = Object.keys(flaechen_labor).filter(item => item !== "index" && item !== "Einheit" && flaechen_labor[item] !== 0).map(item => 
+        ({"name":item+" (Anlagen: "+anzahl_maschinen[item]+")",
+        "value":flaechen_labor[item],
+        "showLabel": true
+    }))
 
     const flaechenverteilung_produktion = [
         {
@@ -29,6 +34,10 @@ export default function Treemap(props) {
         {
             "name":"Trockenraum",
             "children": children_trockenraum
+        },
+        {
+            "name":"Labor",
+            "children": children_labor
         }
     ]
 

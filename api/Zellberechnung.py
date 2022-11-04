@@ -502,6 +502,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     vol_elyt = vol_sep*2 * phi_sep/100 + vol_AB*2 * phi_AB/100 + vol_KB*2 * phi_KB/100 + (vol_nutz_zelle - (vol_sep*2 + vol_AB*2 + vol_AK + vol_KB*2 + vol_KK)*anzahl_WHE)*elektrolytbefuellung/100 #[mm³]
     gew_elyt = vol_elyt*roh_elyt/1000 #[g]
 
+    volumenfaktor = vol_elyt/(vol_sep*2 * phi_sep/100 + vol_AB*2 * phi_AB/100 + vol_KB*2 * phi_KB/100)
+
     rho_huelle = read_zellinfo(Huelle)["Wert"]["Dichte"] #[g/cm³]
     gew_huelle = A_Huelle*Wandstaerke*rho_huelle/1000
     
@@ -565,6 +567,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Energiedichte","Wert":round(spez_energie,2),"Einheit":"WH/kg","Kategorie":"Übersicht"},
         {"Beschreibung":"Zellen pro Jahr","Wert":round(Zellen_pro_Jahr,2),"Einheit":"","Kategorie":"Übersicht"},
         {"Beschreibung":"Gesamtgewicht Zelle","Wert":round(gew_ges,2),"Einheit":"g","Kategorie":"Übersicht"},
+        {"Beschreibung":"Volmenfaktor","Wert":round(volumenfaktor,2),"Einheit":"-","Kategorie":"Übersicht"},
+        
         #{"Beschreibung":"Balancing","Wert":round(Balancing,2),"Einheit":"%","Kategorie":"Übersicht"},
         
         {"Beschreibung":"Anzahl Wiederholeinheiten","Wert":anzahl_WHE,"Einheit":"","Kategorie":"Maße und Flächen"},

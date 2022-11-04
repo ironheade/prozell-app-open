@@ -11,15 +11,25 @@ export default function GesamtkostenDonut(props) {
     //const Overheadkosten = []
     var Overheadkosten_gesamt = 0
     const Materialkosten = []
+    const Rückgewinnung = []
 
-    console.log(props.baukosten)
-
+    console.table(props.data_kosten)
+    console.table(props.materialkosten_rueckgewinnung)
 
     Object.keys(props.data_kosten).map(item =>
         Materialkosten.push({
             "group": item,
             "value": props.data_kosten[item]
         }))
+
+
+    Object.keys(props.materialkosten_rueckgewinnung).map(item =>
+        Rückgewinnung.push({
+            "group": item,
+            "value": props.materialkosten_rueckgewinnung[item]
+        }))
+
+
 
     Kostenfaktoren.map(Kostenfaktor => //durch die Kostenfaktoren gehen
         data.map(item => item.index === Kostenfaktor && //die Zeile aus den Ergebnissen für den Kostenfaktor
@@ -115,6 +125,9 @@ export default function GesamtkostenDonut(props) {
                     </div>
                     <div className="bx--col-lg-5">
                         <DonutChart data={Materialkosten} options={{...Options, title: "Materialkosten"}} />
+                    </div>
+                    <div className="bx--col-lg-5">
+                        <DonutChart data={Rückgewinnung} options={{...Options, title: "Material mit Rückgewinnung"}} />
                     </div>
                     <div className="bx--col-lg-5">
                         <DonutChart data={props.baukosten} options={{...FlaechenOptions, title: "Baukosten"}} />

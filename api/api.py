@@ -137,6 +137,7 @@ def get_ergebnisse():
     Mitarbeiter_Logistik = request.get_json()["Mitarbeiter_Logistik"] 
     Gebaeude = request.get_json()["Gebaeude"] 
     GWh_Jahr_Ah_Zelle = request.get_json()["GWh_Jahr_Ah_Zelle"]
+    rueckgewinnung = request.get_json()["rueckgewinnung"]
     
     #Zellergebnisse = pd.DataFrame.from_records(json.loads(Zellergebnisse))
     
@@ -169,7 +170,8 @@ def get_ergebnisse():
         Oekonomische_parameter,
         Mitarbeiter_Logistik,
         Gebaeude,
-        GWh_Jahr_Ah_Zelle
+        GWh_Jahr_Ah_Zelle,
+        rueckgewinnung
     )
     Ergebnisse = Rechenrgebnisse[0].to_json(orient="records") #df to json
     Materialkosten = json.dumps(Rechenrgebnisse[1]) #dict to json
@@ -178,6 +180,7 @@ def get_ergebnisse():
     Flächenverteilung = json.dumps(Rechenrgebnisse[4]) #dict to json
     levelized_cost_total = json.dumps(Rechenrgebnisse[5]) #dict to json
     overhead_kosten = json.dumps(Rechenrgebnisse[6]) #dict to json
+    Materialkosten_mit_rueckgewinnung = json.dumps(Rechenrgebnisse[7]) #dict to json
 
     return {'Ergebnisse': Ergebnisse,
             'Materialkosten':Materialkosten,
@@ -185,7 +188,8 @@ def get_ergebnisse():
             'Baukosten':Baukosten,
             'Flächenverteilung':Flächenverteilung,
             'levelized_cost_total':levelized_cost_total,
-            'overhead_kosten':overhead_kosten
+            'overhead_kosten':overhead_kosten,
+            'Materialkosten_mit_rueckgewinnung':Materialkosten_mit_rueckgewinnung
             }
 
 @app.route('/Zellergebnisse', methods=['POST'])

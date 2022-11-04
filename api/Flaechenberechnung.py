@@ -9,7 +9,7 @@ Created on Wed May 18 12:47:24 2022
 #flaeche_normalraum = 6619
 #flaeche_trockenraum = 790
 
-def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomische_Parameter):
+def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomische_Parameter,flaeche_labor):
 
     #Paramter
     Zinssatz_kapitalmarkt = Oekonomische_Parameter["Wert"]["Kapitalkosten"] #[%]
@@ -17,13 +17,14 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
     nutzungsdauer_gebaeude = Gebaeude["Wert"]["Nutzungsdauer"] #[Jahre]
     
     
-    anlagengrundflaeche = flaeche_normalraum + flaeche_trockenraum
+    anlagengrundflaeche = flaeche_normalraum + flaeche_trockenraum + flaeche_labor
     
     #Produktionsfläche
     maschinenplatz_flaeche_prozent = Gebaeude["Wert"]["Maschinenplatzfläche"] #[%]
     zwischenlager_flaeche_prozent = Gebaeude["Wert"]["Zwischenlagerflächen"] #[%]
     zusatz_flaeche_prozent = Gebaeude["Wert"]["Zusatzfläche"] #[%]
     quadratmeter_preis_trockenraum = Gebaeude["Wert"]["Baukosten Trockenraum"] #[€/m²]
+    quadratmeter_preis_labor = Gebaeude["Wert"]["Baukosten Labor"] #[€/m²]
     
     #Nutzfläche
     verwaltungs_flaeche_prozent = Gebaeude["Wert"]["Verwaltungsflächen"] #[%]
@@ -78,7 +79,12 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
         {
             "group": "Trockenraumkosten",
             "value": round(flaeche_trockenraum*quadratmeter_preis_trockenraum)
+        },
+        {
+            "group": "Laborkosten",
+            "value": round(flaeche_labor*quadratmeter_preis_labor)
         }
+        
                               ]
 
     
@@ -130,6 +136,10 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
                 {
                     "name": "Anlagengrundfläche Normalraum",
                     "value": round(flaeche_normalraum)
+                },
+                {
+                    "name": "Anlagengrundfläche Labor",
+                    "value": round(flaeche_labor)
                 }
             ]
         }
@@ -144,13 +154,15 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
         zwischenlager_flaeche+
         maschinenplatz_flaeche+
         flaeche_trockenraum+
-        flaeche_normalraum
+        flaeche_normalraum+
+        flaeche_labor
     )
     
     Fabrikflaeche_ohne_Produktion = round(
         Fabrikflaeche-
         flaeche_trockenraum-
-        flaeche_normalraum
+        flaeche_normalraum-
+        flaeche_labor
     )
     
     jaehrliche_flaechenkosten = quadratmeter_preis_gebaeude*Zinssatz_kapitalmarkt/100+quadratmeter_preis_gebaeude/nutzungsdauer_gebaeude+quadratmeter_preis_gebaeude/100

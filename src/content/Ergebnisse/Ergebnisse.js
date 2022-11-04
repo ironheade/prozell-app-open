@@ -36,7 +36,7 @@ export default function Ergebnisse() {
   //const [ergebnissTabelle, setErgebnissTabelle] = useState(null)
   const ergebnisTabelle = useSelector(state => state.ergebnisTabelle)
   const [materialkosten, setMaterialkosten] = useState(null)
-  const [materialverlust, setMaterialverlust] = useState(null)
+  const [materialRückgewinnung, setMaterialRückgewinnung] = useState(null)
   const [baukosten, setBaukosten] = useState(null)
   const [flaechenverteilung, setFlaechenverteilung] = useState(null)
   const [levelizedCost, setLevelizedCost] = useState(null)
@@ -61,6 +61,7 @@ export default function Ergebnisse() {
         Materialinfos: JSON.stringify(materialInfos),
         Oekonomische_parameter: oekonomischeParameter,
         Mitarbeiter_Logistik: mitarbeiterLogistik,
+        rueckgewinnung: rueckgewinnung,
         Gebaeude: gebaeude,
         GWh_Jahr_Ah_Zelle: GWH_Jahr_AH_Zelle,
       }),
@@ -69,7 +70,7 @@ export default function Ergebnisse() {
       .then(data => {
         dispatch(ergebnisTabelle_change(data.Ergebnisse));
         setMaterialkosten(JSON.parse(data.Materialkosten));
-        setMaterialverlust(JSON.parse(data.Rückgewinnung));
+        setMaterialRückgewinnung(JSON.parse(data.Materialkosten_mit_rueckgewinnung));
         setBaukosten(JSON.parse(data.Baukosten));
         setFlaechenverteilung(JSON.parse(data.Flächenverteilung));
         setLevelizedCost(JSON.parse(data.levelized_cost_total));
@@ -79,6 +80,7 @@ export default function Ergebnisse() {
     setIsLoading(false)
   }
 
+  console.log(materialRückgewinnung)
   overheadKosten !== null && console.log(overheadKosten)
 
   //Erstellt einen Array mit den Prozessschritten in der richtigen Reihenfolge
@@ -126,7 +128,7 @@ export default function Ergebnisse() {
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
-      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null && overheadKosten !== null &&
+      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null && overheadKosten !== null &&  materialRückgewinnung !== null &&
         <>
 
           <h1>Produktionskosten</h1>
@@ -167,6 +169,7 @@ export default function Ergebnisse() {
             Kostenfaktoren={Kostenfaktoren}
             baukosten={baukosten}
             overheadKosten = {overheadKosten}
+            materialkosten_rueckgewinnung={materialRückgewinnung}
             />
 
           {flaechenverteilung !== null && <Treemap data={flaechenverteilung} ergebnisTabelle={ergebnisTabelle}/>}

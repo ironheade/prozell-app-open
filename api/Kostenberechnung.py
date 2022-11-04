@@ -20,7 +20,8 @@ def Kostenberechnung(Zellergebnisse_raw,
                      Oekonomische_Parameter_raw,
                      Mitarbeiter_und_Logistik_raw,
                      Gebaeude_raw,
-                     GWh_Jahr_Ah_Zelle_raw):
+                     GWh_Jahr_Ah_Zelle_raw,
+                     rueckgewinnung_raw):
    
     print(Prozessroute_array_raw)
     #____________________________________
@@ -73,9 +74,9 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     Gebaeude = pd.DataFrame.from_records(json.loads(Gebaeude_raw))
     Gebaeude = Gebaeude.set_index('Beschreibung')
-    
-    print("GWh_Jahr_Ah_Zelle_raw")
-    print(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])
+
+    rueckgewinnung = pd.DataFrame.from_records(json.loads(rueckgewinnung_raw))
+    rueckgewinnung = rueckgewinnung.set_index('Beschreibung')
     
     #____________________________________
     #Kostenrechnung
@@ -94,7 +95,6 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     #Anodenkollektor
     Anodenkollektor = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Anode"].index.tolist()[0] #Raussuchen, welcher Anodenkollektor verwendet wurde
-    print(Anodenkollektor)
     Anodenkollektor_menge = Zellergebnisse["Wert"]["Zellen pro Jahr"]*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
 
     #Kathodenkollektor
@@ -109,6 +109,11 @@ def Kostenberechnung(Zellergebnisse_raw,
     Elektrolyt = Zellchemie.loc[Zellchemie['Kategorie'] == "Elektrolyt"].index.tolist()[0] #Raussuchen, welches Elektrolyt verwendet wurde
     Elektrolyt_menge = Zellergebnisse["Wert"]["Zellen pro Jahr"]*Zellergebnisse["Wert"]["Gewicht Elektrolyt"]/read_materialinfo(Elektrolyt)["Wert"]["Dichte"]/1000 #[l]
     
+    #Hülle
+    Huelle = Zellchemie.loc[Zellchemie['Kategorie'] == "Hülle"].index.tolist()[0] #Raussuchen, welches Elektrolyt verwendet wurde
+    Huelle_menge = Zellergebnisse["Wert"]["Zellen pro Jahr"]*Zellergebnisse["Wert"]["Gewicht Hülle"]/read_materialinfo(Huelle)["Wert"]["Dichte"]/(read_materialinfo(Huelle)["Wert"]["Dicke"]/10)/10000 #[m²]
+
+
     schritt_dictionary={
          "Zelläquivalent":Zellergebnisse["Wert"]["Zellen pro Jahr"],
          "Anodenbeschichtung":Anodenbeschichtung_menge,
@@ -116,7 +121,15 @@ def Kostenberechnung(Zellergebnisse_raw,
          "Anodenkollektor": Anodenkollektor_menge,
          "Kathodenkollektor": Kathodenkollektor_menge,
          "Separator":Separator_menge,
+         "Hülle":Huelle_menge,
          "Elektrolyt":Elektrolyt_menge,
+         "Anodenbeschichtung Rückgewinnung":0,
+         "Kathodenbeschichtung Rückgewinnung":0,
+         "Anodenkollektor Rückgewinnung": 0,
+         "Kathodenkollektor Rückgewinnung": 0,
+         "Separator Rückgewinnung":0,
+         "Hülle Rückgewinnung":0,
+         "Elektrolyt Rückgewinnung":0,
          "Anzahl Maschinen":"",
          "Neue Materialien":"",
          "Flächenbedarf":"",
@@ -144,7 +157,15 @@ def Kostenberechnung(Zellergebnisse_raw,
          "Anodenkollektor":"m",
          "Kathodenkollektor":"m",
          "Separator":"m",
+         "Hülle":"m²",
          "Elektrolyt":"l",
+         "Anodenbeschichtung Rückgewinnung":"kg",
+         "Kathodenbeschichtung Rückgewinnung":"kg",
+         "Anodenkollektor Rückgewinnung":"m",
+         "Kathodenkollektor Rückgewinnung":"m",
+         "Separator Rückgewinnung":"m",
+         "Hülle Rückgewinnung":"m²",
+         "Elektrolyt Rückgewinnung":"l",
          "Anzahl Maschinen":"-",
          "Neue Materialien":"-",
          "Flächenbedarf":"m²",
@@ -179,6 +200,7 @@ def Kostenberechnung(Zellergebnisse_raw,
                            {"Material":"Kathodenkollektor","Zelle":Kathodenkollektor_menge,"Gesamt":""},
                            {"Material":"Separator","Zelle":Separator_menge,"Gesamt":""},
                            {"Material":"Elektrolyt","Zelle":Elektrolyt_menge,"Gesamt":""},
+                           {"Material":"Hülle","Zelle":Huelle_menge,"Gesamt":""},
                            ]
     rueckgewinnung_dict = []
     
@@ -193,7 +215,8 @@ def Kostenberechnung(Zellergebnisse_raw,
                                                                       Zellergebnisse, #Zellergebnisse: Ergebnisse der Zellberechnung
                                                                       Zellchemie, #die Zellchemie
                                                                       Materialinfos, #Infos zu den Materialien
-                                                                      schritt_dictionary #schritt_dictionary: die Parameter die zwischen den Schritten übergeben werden
+                                                                      schritt_dictionary, #schritt_dictionary: die Parameter die zwischen den Schritten übergeben werden
+                                                                      rueckgewinnung #dictionary zu den Anteilen die zurück gewonnen werden können
                                                                       )  
 
         #die Informationen jedes Prozessschrittes in das df einfügen
@@ -208,22 +231,21 @@ def Kostenberechnung(Zellergebnisse_raw,
 
     flaeche_normalraum = sum(list(df.loc["Flächenbedarf"]))
     flaeche_trockenraum = sum(list(df.loc["Flächenbedarf Trockenraum"]))
+    flaeche_labor = sum(list(df.loc["Flächenbedarf Labor"]))
 
-    flaechenergebnisse = flaechenberechnung(flaeche_normalraum, flaeche_trockenraum, Gebaeude, Oekonomische_Parameter)
+    flaechenergebnisse = flaechenberechnung(flaeche_normalraum, flaeche_trockenraum, Gebaeude, Oekonomische_Parameter,flaeche_labor)
     grundstueckskosten = flaechenergebnisse[0]
     flaechenverteilung = flaechenergebnisse[1]
     flaechenkosten_jaehrlich = flaechenergebnisse[2]
     fabrikflaeche = flaechenergebnisse[3]
     Fabrikflaeche_ohne_Produktion = flaechenergebnisse[4]
     
-    
-    
-    
+
     #____________________________________
     #Anterograde Wertstromkalkulation  
     #Bestimmen der Einzelkosten
     #Betriebstage = Mitarbeiter_und_Logistik["Wert"]["Betriebstage"]
-    Betriebstage = 365
+    Betriebstage = 360
     
     Materialkosten = {
         "Anodenbeschichtung_kosten":Zellergebnisse["Wert"]["Kilopreis Anodenbeschichtung"], #[€/kg]
@@ -231,8 +253,10 @@ def Kostenberechnung(Zellergebnisse_raw,
         "Anodenkollektor_kosten":read_materialinfo(Anodenkollektor)["Wert"]["Preis"], #[€/m²]
         "Kathodenkollektor_kosten":read_materialinfo(Kathodenkollektor)["Wert"]["Preis"], #[€/m²]
         "Separator_kosten":read_materialinfo(Separator)["Wert"]["Preis"], #[€/m²]
-        "Elektrolyt_kosten":read_materialinfo(Elektrolyt)["Wert"]["Preis"] #[€/kg]
+        "Elektrolyt_kosten":read_materialinfo(Elektrolyt)["Wert"]["Preis"], #[€/kg]
+        "Hülle_kosten":read_materialinfo(Huelle)["Wert"]["Preis"] #[€/m²]
         }
+    print(Materialkosten)
     
     Strompreis = Oekonomische_Parameter["Wert"]["Energiekosten"] #[€/kWh]
     Stundensatz_hilfskraft = Mitarbeiter_und_Logistik["Wert"]["Stundensatz Hilfskraft"] #[€/h]
@@ -253,10 +277,12 @@ def Kostenberechnung(Zellergebnisse_raw,
             kosten = 0
             for material in liste:
                 print(material)
+                print(df[schritt][material])
+
                 cost = df[schritt][material]*Materialkosten[material+"_kosten"] 
-                print(cost)
+
                 kosten += df[schritt][material]*Materialkosten[material+"_kosten"] 
-                print(kosten)
+
                 Materialkosten_dict.update({material:round(cost,2)})
                 
                 for rueck_material in rueckgewinnung_dict_temp:
@@ -299,7 +325,7 @@ def Kostenberechnung(Zellergebnisse_raw,
         Mitarbeiter_und_Logistik["Wert"]["Stundensatz Indirekte"]*1/Mitarbeiter_und_Logistik["Wert"]["Führunggspanne"]+
         Mitarbeiter_und_Logistik["Wert"]["Stundensatz Reinigungskräfte"]*1/Mitarbeiter_und_Logistik["Wert"]["Spanne Reinigungskräfte"])
 
-    Klimatisierung_overhead = fabrikflaeche*Gebaeude["Wert"]["Mediengrundversorgung"]*24*Betriebstage*Oekonomische_Parameter["Wert"]["Energiekosten"]/1000
+    Klimatisierung_overhead = fabrikflaeche*Gebaeude["Wert"]["Mediengrundversorgung"]*Oekonomische_Parameter["Wert"]["Energiekosten"]/1000
 
     Flaechenkosten_overhead = Fabrikflaeche_ohne_Produktion*flaechenkosten_jaehrlich
         
@@ -390,7 +416,11 @@ def Kostenberechnung(Zellergebnisse_raw,
     #____________________________________
     #Umformen des df
     
-    print(Materialkosten_dict)
+    Materialkosten_mit_rueckgewinnung = {}
+    for Material in Materialkosten_dict:
+        Materialkosten_mit_rueckgewinnung[Material]=Materialkosten_dict[Material]-sum(list(df.loc[Material+" Rückgewinnung"]))*Materialkosten[Material+"_kosten"]
+
+
     
     #Einheiten einfügen
     df["Einheit"] = df.index.to_series().map(schritt_dictionary_einheiten)
@@ -401,5 +431,5 @@ def Kostenberechnung(Zellergebnisse_raw,
     #Reihenfolge im df drehen
     df = df.iloc[:, ::-1] 
     
-    return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result, overhead_kosten)
+    return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result, overhead_kosten,Materialkosten_mit_rueckgewinnung)
 #Kostenberechnung()
