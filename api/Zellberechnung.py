@@ -538,10 +538,10 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #Auflistung aller Kosten einer Zelle
     Gesamtkosten_Anodenbeschichtung = Kosten_Anodenbeschichtung * gew_AB_ges/1000 #[€]
     Gesamtkosten_Kathodenbeschichtung = Kosten_Kathodenbeschichtung * gew_KB_ges/1000 #[€]
-    Gesamtkosten_Anodenkollektor = Kosten_Anodenkollektor * A_AK_ges / Breite_Anodenkollektor /1000 #[€]
-    Gesamtkosten_Kathodenkollektor = Kosten_Kathodenkollektor * A_KK_ges / Breite_Kathodenkollektor / 1000 #[€]
+    Gesamtkosten_Anodenkollektor = Kosten_Anodenkollektor * A_AK_ges / 1000000 #[€]
+    Gesamtkosten_Kathodenkollektor = Kosten_Kathodenkollektor * A_KK_ges / 1000000 #[€]
     Gesamtkosten_Huelle = Kosten_Huelle * A_Huelle /1e6
-    Gesamtkosten_Separator = Kosten_Separator * A_Sep_ges / Breite_Separator / 1000
+    Gesamtkosten_Separator = Kosten_Separator * A_Sep_ges / 1000000
     Gesamtkosten_Elektrolyt = Kosten_Elektrolyt * gew_elyt/1000 #[€]
     Gesamtkosten_Zelle = (Gesamtkosten_Anodenbeschichtung 
                         + Gesamtkosten_Kathodenbeschichtung 
@@ -606,7 +606,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         {"Beschreibung":"Sheets/ Meter Kathode","Wert":S_MK,"Einheit":"Sheet/m","Kategorie":"Flächennutzung Elektrode"},
             ]
     
-    print(export_zellberechnung)
     return (pd.DataFrame(export_zellberechnung))
 
 

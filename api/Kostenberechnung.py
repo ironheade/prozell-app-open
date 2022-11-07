@@ -256,7 +256,6 @@ def Kostenberechnung(Zellergebnisse_raw,
         "Elektrolyt_kosten":read_materialinfo(Elektrolyt)["Wert"]["Preis"], #[€/kg]
         "Hülle_kosten":read_materialinfo(Huelle)["Wert"]["Preis"] #[€/m²]
         }
-    print(Materialkosten)
     
     Strompreis = Oekonomische_Parameter["Wert"]["Energiekosten"] #[€/kWh]
     Stundensatz_hilfskraft = Mitarbeiter_und_Logistik["Wert"]["Stundensatz Hilfskraft"] #[€/h]
@@ -388,6 +387,11 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     #Abschluss Ramp up    
 
+    Materialkosten_mit_rueckgewinnung = {}
+    for Material in Materialkosten_dict:
+        Materialkosten_mit_rueckgewinnung[Material]=Materialkosten_dict[Material]-sum(list(df.loc[Material+" Rückgewinnung"]))*Materialkosten[Material+"_kosten"]
+
+
 
     #____________________________________
     #Levelized costs
@@ -397,15 +401,16 @@ def Kostenberechnung(Zellergebnisse_raw,
         lifetime_factory = Gebaeude["Wert"]["Nutzungsdauer"],
         interest_rate = Oekonomische_Parameter["Wert"]["Kapitalkosten"]/100,
         tax_rate = Oekonomische_Parameter["Wert"]["Umsatzsteuer"]/100,
-        variable_cost = sum([sum(list(df.loc[x])) for x in ["Materialkosten",
-                                                        "Personalkosten",
-                                                        "Energiekosten",
+        #variable_cost = sum([sum(list(df.loc[x])) for x in ["Materialkosten",
+        #                                                "Personalkosten",
+        #                                                "Energiekosten",
                                                         #"Instandhaltungskosten",
                                                         #"Flächenkosten",
                                                         #"Kalkulatorische Zinsen",
                                                         #"Ökonomische Abschreibung"
-                                                        ]]),
+        #                                                ]]),
         Materialkosten = sum(list(df.loc["Materialkosten"])),
+        Materialkosten_mit_rueckgewinnung = sum(Materialkosten_mit_rueckgewinnung.values()),
         Personalkosten = sum(list(df.loc["Personalkosten"])),
         Energiekosten = sum(list(df.loc["Energiekosten"])),
         fix_cost = fix_cost,
@@ -425,10 +430,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     #____________________________________
     #Umformen des df
 
-    Materialkosten_mit_rueckgewinnung = {}
-    for Material in Materialkosten_dict:
-        Materialkosten_mit_rueckgewinnung[Material]=Materialkosten_dict[Material]-sum(list(df.loc[Material+" Rückgewinnung"]))*Materialkosten[Material+"_kosten"]
-
+  
     
     #Einheiten einfügen
     df["Einheit"] = df.index.to_series().map(schritt_dictionary_einheiten)
@@ -442,12 +444,6 @@ def Kostenberechnung(Zellergebnisse_raw,
 
     levelized_cost_aufgeteilt_rueckgewinnung = copy.deepcopy(levelized_cost_aufgeteilt)
     levelized_cost_aufgeteilt_rueckgewinnung[0]["value"] = sum(Materialkosten_mit_rueckgewinnung.values())
-
-    print("blabla")
-    print(levelized_cost_aufgeteilt)
-    print(levelized_cost_aufgeteilt_rueckgewinnung)
-    
-    
 
     return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result, overhead_kosten,Materialkosten_mit_rueckgewinnung,levelized_cost_aufgeteilt,levelized_cost_aufgeteilt_rueckgewinnung)
 #Kostenberechnung()

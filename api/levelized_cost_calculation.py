@@ -17,8 +17,8 @@ def levelized_cost(construction_cost_factory,
                    lifetime_factory,
                    interest_rate,
                    tax_rate,
-                   variable_cost,
                    Materialkosten,
+                   Materialkosten_mit_rueckgewinnung,
                    Personalkosten,
                    Energiekosten,
                    fix_cost,
@@ -28,6 +28,7 @@ def levelized_cost(construction_cost_factory,
                    machine_depreciation
                    ):
         
+    variable_cost = Materialkosten+Personalkosten+Personalkosten
     output_kWh = int(output_kWh)
     machine_invest = int(machine_invest)
     factory_depreciation = int(factory_depreciation)

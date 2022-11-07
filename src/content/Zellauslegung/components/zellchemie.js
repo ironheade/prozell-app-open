@@ -349,7 +349,7 @@ export default function Zellchemie({ click }) {
               </TableRow>
             </TableHead>
 
-            <TableHead key="b">
+            <TableHead >
               <TableRow>
                 <TableHeader style={{ backgroundColor: 'white' }} />
                 <TableHeader>
@@ -454,9 +454,9 @@ export default function Zellchemie({ click }) {
           <h2>Materialdetails</h2>
           {materialInfos !== null && (
             <Accordion >
-              {materialInfos.map(item => (
+              {materialInfos.map((item, index) => (
                 <MaterialInfoTable
-                  key={Object.keys(item)[0]}
+                  key={index}
                   header={Object.keys(item)[0]}
                   content={item[Object.keys(item)[0]]}
                   onChange={material_anpassen}
