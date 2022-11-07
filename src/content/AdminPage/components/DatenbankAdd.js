@@ -22,10 +22,7 @@ export default function DatenbankAdd() {
           items={Array.from(new Set(zellformate.map(item => item.Zellformat)))}
         />
       )}
-      {zellformate !== null &&
-        console.log(
-          Array.from(new Set(zellformate.map(item => item.Zellformat)))
-        )}
+
     </>
   );
 }

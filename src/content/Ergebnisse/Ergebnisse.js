@@ -42,6 +42,8 @@ export default function Ergebnisse() {
   const [levelizedCost, setLevelizedCost] = useState(null)
   const [overheadKosten, setOverheadKosten] = useState(null)
   const [isLoading, setIsLoading] = useState(true) 
+  const [levelized_cost_aufgeteilt,setlevelized_cost_aufgeteilt] = useState(null)
+  const [levelized_cost_aufgeteilt_rueckgewinnung,setlevelized_cost_aufgeteilt_rueckgewinnung] = useState(null)
 
 
 
@@ -74,14 +76,14 @@ export default function Ergebnisse() {
         setBaukosten(JSON.parse(data.Baukosten));
         setFlaechenverteilung(JSON.parse(data.Flächenverteilung));
         setLevelizedCost(JSON.parse(data.levelized_cost_total));
-        setOverheadKosten(JSON.parse(data.overhead_kosten))
+        setOverheadKosten(JSON.parse(data.overhead_kosten));
+        setlevelized_cost_aufgeteilt(JSON.parse(data.levelized_cost_aufgeteilt));
+        setlevelized_cost_aufgeteilt_rueckgewinnung(JSON.parse(data.levelized_cost_aufgeteilt_rueckgewinnung));
       });
     setHintergrundDatenHidden(false)
     setIsLoading(false)
   }
 
-  console.log(materialRückgewinnung)
-  overheadKosten !== null && console.log(overheadKosten)
 
   //Erstellt einen Array mit den Prozessschritten in der richtigen Reihenfolge
   function create_ProzessschrittArray() {
@@ -128,7 +130,7 @@ export default function Ergebnisse() {
       {Zellergebnisse === null && <h3>Zellberechnung nicht vollständig</h3>}
       {prozessschrittDaten === null && <h3>Prozessroute nicht vollständig</h3>}
 
-      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null && overheadKosten !== null &&  materialRückgewinnung !== null &&
+      {ergebnisTabelle !== null && materialkosten !== null && baukosten !== null && overheadKosten !== null &&  materialRückgewinnung !== null && levelized_cost_aufgeteilt !== null && levelized_cost_aufgeteilt_rueckgewinnung !== null &&
         <>
 
           <h1>Produktionskosten</h1>
@@ -170,6 +172,8 @@ export default function Ergebnisse() {
             baukosten={baukosten}
             overheadKosten = {overheadKosten}
             materialkosten_rueckgewinnung={materialRückgewinnung}
+            levelizedCost = {levelized_cost_aufgeteilt}
+            levelized_cost_aufgeteilt_rueckgewinnung = {levelized_cost_aufgeteilt_rueckgewinnung}
             />
 
           {flaechenverteilung !== null && <Treemap data={flaechenverteilung} ergebnisTabelle={ergebnisTabelle}/>}

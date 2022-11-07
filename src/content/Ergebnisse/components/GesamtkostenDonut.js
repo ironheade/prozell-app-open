@@ -13,8 +13,8 @@ export default function GesamtkostenDonut(props) {
     const Materialkosten = []
     const Rückgewinnung = []
 
-    console.table(props.data_kosten)
-    console.table(props.materialkosten_rueckgewinnung)
+    //const levelized_cost = props.levelized_cost
+    const levelized_cost = props.levelizedCost
 
     Object.keys(props.data_kosten).map(item =>
         Materialkosten.push({
@@ -41,6 +41,7 @@ export default function GesamtkostenDonut(props) {
         ))
 
     Produktionskosten.map(item => Produktionskosten_gesamt = Produktionskosten_gesamt + item.value) //Aufsummieren der Produktionskosten für die gesamten Produktionskosten
+
 
     const OverheadKosten = [
         {
@@ -115,16 +116,13 @@ export default function GesamtkostenDonut(props) {
             <div className="bx--grid bx--grid--full-width">
                 <div className="bx--row">
                     <div className="bx--col-lg-5">
-                        <DonutChart data={Gesamtkosten} options={{...Options, title: "Gesamtkosten"}} />
+                        <DonutChart data={levelized_cost} options={{...Options, title: "Produktionskosten (Full Cost) ohne Rückgewinnung"}} />
                     </div>
                     <div className="bx--col-lg-5">
-                        <DonutChart data={Produktionskosten} options={{...Options, title: "Produktionskosten"}} />
+                        <DonutChart data={props.levelized_cost_aufgeteilt_rueckgewinnung} options={{...Options, title: "Produktionskosten (Full Cost) mit Rückgewinnung"}} />
                     </div>
                     <div className="bx--col-lg-5">
-                        <DonutChart data={props.overheadKosten} options={{...Options, title: "Overheadkosten"}} />
-                    </div>
-                    <div className="bx--col-lg-5">
-                        <DonutChart data={Materialkosten} options={{...Options, title: "Materialkosten"}} />
+                        <DonutChart data={Materialkosten} options={{...Options, title: "Materialkosten ohne Rückgewinnung"}} />
                     </div>
                     <div className="bx--col-lg-5">
                         <DonutChart data={Rückgewinnung} options={{...Options, title: "Material mit Rückgewinnung"}} />
@@ -136,5 +134,4 @@ export default function GesamtkostenDonut(props) {
             </div>
         </>
     )
-
 }

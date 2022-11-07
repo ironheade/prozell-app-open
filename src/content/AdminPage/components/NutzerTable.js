@@ -3,7 +3,7 @@ import { interpolateWarm } from "d3";
 import React, {useState} from "react";
 
 export default function NutzerTable(props){
-    console.table(props.data)
+
     const [isChecked, setIsChecked] = useState(false)
 
     const headers=[

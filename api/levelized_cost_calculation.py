@@ -18,6 +18,9 @@ def levelized_cost(construction_cost_factory,
                    interest_rate,
                    tax_rate,
                    variable_cost,
+                   Materialkosten,
+                   Personalkosten,
+                   Energiekosten,
                    fix_cost,
                    output_kWh,
                    machine_invest,
@@ -117,9 +120,31 @@ def levelized_cost(construction_cost_factory,
 
     #print('FC = ', round(fc_b, 4), ' EUR / kWh')
 
-    
+    full_cost_aufgeteilt = [
+        {
+            "group": "Material",
+            "value":  Materialkosten,
 
-    return {"levelized_cost":round(lc_b,2),"marginal_cost":round(mc_b,2), "full_cost":round(fc_b, 2)}
+        },
+        {
+            "group": "Personal",
+            "value":  Personalkosten
+        },
+        {
+            "group": "Energie",
+            "value":  Energiekosten
+        },
+        {
+            "group": "Abschreibung",
+            "value": construction_cost_factory/factory_depreciation + machine_invest / machine_depreciation
+        },
+        {
+            "group": "Overhead",
+            "value": fix_cost
+        }
+    ]
+
+    return {"levelized_cost":round(lc_b,2),"marginal_cost":round(mc_b,2), "full_cost":round(fc_b, 2)},full_cost_aufgeteilt
 
     # ToDo: depending on factory lifetime add remaining value of machines at end of 
     # life of factory (i.e. if not fully depreciated)

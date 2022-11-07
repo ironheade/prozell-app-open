@@ -7,7 +7,7 @@ Created on Tue Feb 22 18:06:34 2022
 import pandas as pd
 import json
 import math
-import ast
+import copy
 import Prozessfunktionen
 from Flaechenberechnung import flaechenberechnung
 from levelized_cost_calculation import levelized_cost
@@ -405,21 +405,29 @@ def Kostenberechnung(Zellergebnisse_raw,
                                                         #"Kalkulatorische Zinsen",
                                                         #"Ökonomische Abschreibung"
                                                         ]]),
+        Materialkosten = sum(list(df.loc["Materialkosten"])),
+        Personalkosten = sum(list(df.loc["Personalkosten"])),
+        Energiekosten = sum(list(df.loc["Energiekosten"])),
         fix_cost = fix_cost,
         output_kWh = float(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])*1000000,
         machine_invest = sum(list(df.loc["Investition"])),
         factory_depreciation = Oekonomische_Parameter["Wert"]["Abschreibungsdauer Gebäude"],
         machine_depreciation = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"]
     )
+
+    
+    levelized_cost_aufgeteilt = levelized_cost_result[1]
+    levelized_cost_result = levelized_cost_result[0]
+
+    
     
     
     #____________________________________
     #Umformen des df
-    
+
     Materialkosten_mit_rueckgewinnung = {}
     for Material in Materialkosten_dict:
         Materialkosten_mit_rueckgewinnung[Material]=Materialkosten_dict[Material]-sum(list(df.loc[Material+" Rückgewinnung"]))*Materialkosten[Material+"_kosten"]
-
 
     
     #Einheiten einfügen
@@ -430,6 +438,16 @@ def Kostenberechnung(Zellergebnisse_raw,
     df = df.drop("Neue Materialien",axis=0)
     #Reihenfolge im df drehen
     df = df.iloc[:, ::-1] 
+
+
+    levelized_cost_aufgeteilt_rueckgewinnung = copy.deepcopy(levelized_cost_aufgeteilt)
+    levelized_cost_aufgeteilt_rueckgewinnung[0]["value"] = sum(Materialkosten_mit_rueckgewinnung.values())
+
+    print("blabla")
+    print(levelized_cost_aufgeteilt)
+    print(levelized_cost_aufgeteilt_rueckgewinnung)
     
-    return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result, overhead_kosten,Materialkosten_mit_rueckgewinnung)
+    
+
+    return(df,Materialkosten_dict, rueckgewinnung_dict, grundstueckskosten, flaechenverteilung, levelized_cost_result, overhead_kosten,Materialkosten_mit_rueckgewinnung,levelized_cost_aufgeteilt,levelized_cost_aufgeteilt_rueckgewinnung)
 #Kostenberechnung()
