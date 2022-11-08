@@ -84,8 +84,8 @@ class suspension_prozessschritt(basis_prozessschritt):
     def rueckgewinnung(self,dictionary,rueckgewinnung):
         dictionary["Anodenkollektor Rückgewinnung"]       = dictionary["Anodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
         dictionary["Kathodenkollektor Rückgewinnung"]     = dictionary["Kathodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
-        dictionary["Anodenbeschichtung Rückgewinnung"]    = dictionary["Anodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Slurry-Rohmaterialien Anode"] #[kg]
-        dictionary["Kathodenbeschichtung Rückgewinnung"]  = dictionary["Kathodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Slurry-Rohmaterialien Kathode"] #[kg]
+        dictionary["Anodenbeschichtung Rückgewinnung"]    = dictionary["Anodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Slurry-Rohmaterialien Anode"]/100 #[kg]
+        dictionary["Kathodenbeschichtung Rückgewinnung"]  = dictionary["Kathodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Slurry-Rohmaterialien Kathode"]/100 #[kg]
         dictionary["Separator Rückgewinnung"]             = dictionary["Separator"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
         dictionary["Hülle Rückgewinnung"]                 = dictionary["Hülle"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[l]
         dictionary["Elektrolyt Rückgewinnung"]            = dictionary["Elektrolyt"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[l]
@@ -188,10 +188,10 @@ class coil_prozessschritt(basis_prozessschritt):
 #Prozessschritte für Elektrodenblätter     
 class sheet_prozessschritt(basis_prozessschritt):
     def rueckgewinnung(self,dictionary,rueckgewinnung):
-        dictionary["Anodenkollektor Rückgewinnung"]       = dictionary["Anodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Anode"] #[m]
-        dictionary["Kathodenkollektor Rückgewinnung"]     = dictionary["Kathodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Kathode"] #[m]
-        dictionary["Anodenbeschichtung Rückgewinnung"]    = dictionary["Anodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Anode"] #[kg]
-        dictionary["Kathodenbeschichtung Rückgewinnung"]  = dictionary["Kathodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Kathode"] #[kg]
+        dictionary["Anodenkollektor Rückgewinnung"]       = dictionary["Anodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Anode"]/100 #[m]
+        dictionary["Kathodenkollektor Rückgewinnung"]     = dictionary["Kathodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Kathode"]/100 #[m]
+        dictionary["Anodenbeschichtung Rückgewinnung"]    = dictionary["Anodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Anode"]/100 #[kg]
+        dictionary["Kathodenbeschichtung Rückgewinnung"]  = dictionary["Kathodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Kathode"]/100 #[kg]
         dictionary["Separator Rückgewinnung"]             = dictionary["Separator"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[m]
         dictionary["Hülle Rückgewinnung"]                 = dictionary["Hülle"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[l]
         dictionary["Elektrolyt Rückgewinnung"]            = dictionary["Elektrolyt"]*(self.df["Wert"]["Variabler Ausschuss"]/100) #[l]
@@ -255,13 +255,13 @@ class sheet_prozessschritt(basis_prozessschritt):
 #Prozessschritte für Zellen         
 class zelle_prozessschritt(basis_prozessschritt):
     def rueckgewinnung(self,dictionary,rueckgewinnung):
-        dictionary["Anodenkollektor Rückgewinnung"]       = dictionary["Anodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[m]
-        dictionary["Kathodenkollektor Rückgewinnung"]     = dictionary["Kathodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[m]
-        dictionary["Anodenbeschichtung Rückgewinnung"]    = dictionary["Anodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[kg]
-        dictionary["Kathodenbeschichtung Rückgewinnung"]  = dictionary["Kathodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[kg]
-        dictionary["Separator Rückgewinnung"]             = dictionary["Separator"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[m]
-        dictionary["Hülle Rückgewinnung"]                 = dictionary["Hülle"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[l]
-        dictionary["Elektrolyt Rückgewinnung"]            = dictionary["Elektrolyt"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"] #[l]
+        dictionary["Anodenkollektor Rückgewinnung"]       = dictionary["Anodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[m]
+        dictionary["Kathodenkollektor Rückgewinnung"]     = dictionary["Kathodenkollektor"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[m]
+        dictionary["Anodenbeschichtung Rückgewinnung"]    = dictionary["Anodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[kg]
+        dictionary["Kathodenbeschichtung Rückgewinnung"]  = dictionary["Kathodenbeschichtung"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[kg]
+        dictionary["Separator Rückgewinnung"]             = dictionary["Separator"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[m]
+        dictionary["Hülle Rückgewinnung"]                 = dictionary["Hülle"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[l]
+        dictionary["Elektrolyt Rückgewinnung"]            = dictionary["Elektrolyt"]*(self.df["Wert"]["Variabler Ausschuss"]/100)*rueckgewinnung["Wert"]["Befüllte Zelle"]/100 #[l]
         
         return dictionary
 
@@ -1771,7 +1771,7 @@ def Tesla_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
     schritt_dictionary["Flächenbedarf Labor"] = process.Anlagen*df["Wert"]["Anlagengrundfläche Labor"]
     
     return schritt_dictionary
-    
+
 def Tesla_Befüllöffnung_verschließen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,rueckgewinnung):
     process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos,rueckgewinnung)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
