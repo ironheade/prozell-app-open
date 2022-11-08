@@ -28,7 +28,7 @@ def levelized_cost(construction_cost_factory,
                    machine_depreciation
                    ):
         
-    variable_cost = Materialkosten+Personalkosten+Personalkosten
+    variable_cost = Materialkosten+Energiekosten+Personalkosten
     output_kWh = int(output_kWh)
     machine_invest = int(machine_invest)
     factory_depreciation = int(factory_depreciation)
