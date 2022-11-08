@@ -1407,10 +1407,13 @@ def PHEV2_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
 
     kanaele_3_monats_test = df["Wert"]["Stichproben pro Schicht 3 Monatstest"] *3*3*30 #3 Schichten pro Tag (HARDCODED) * 3 Monate * 30 Tage
     kanaele_6_monats_test = df["Wert"]["Stichproben pro Schicht 6 Monatstest"] *3*6*30 #3 Schichten pro Tag (HARDCODED) * 6 Monate * 30 Tage
-    kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"] * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
+    #kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"] * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
+    kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"]*3 * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
     lebensdauer_kanaele_gesamt = kanaele_3_monats_test + kanaele_6_monats_test + kanaele_80_cutoff_test
     anzahl_test_anlagen = math.ceil(lebensdauer_kanaele_gesamt/ df["Wert"]["Anzahl Zellen/Formierturm"])
 
+    print("anzahl_test_anlagen")
+    print(anzahl_test_anlagen)
     energiebedarf_lebensdauertest = lebensdauer_kanaele_gesamt * Q_Z * U_OCV * df["Wert"]["C-Rate Lebensdauertest"] * 0.5 * (1-rueckgewinnungsfaktor/100)*365*24 #[Wh]
 
     process.Anlagen = process.Anlagen + anzahl_test_anlagen
@@ -1754,10 +1757,12 @@ def Tesla_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
 
     kanaele_3_monats_test = df["Wert"]["Stichproben pro Schicht 3 Monatstest"] *3*3*30 #3 Schichten pro Tag (HARDCODED) * 3 Monate * 30 Tage
     kanaele_6_monats_test = df["Wert"]["Stichproben pro Schicht 6 Monatstest"] *3*6*30 #3 Schichten pro Tag (HARDCODED) * 6 Monate * 30 Tage
-    kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"] * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
+    #kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"] * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
+    kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"]*3 * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
     lebensdauer_kanaele_gesamt = kanaele_3_monats_test + kanaele_6_monats_test + kanaele_80_cutoff_test
     anzahl_test_anlagen = math.ceil(lebensdauer_kanaele_gesamt/ df["Wert"]["Anzahl Zellen/Formierturm"])
-
+    print("anzahl_test_anlagen")
+    print(anzahl_test_anlagen)
     energiebedarf_lebensdauertest = lebensdauer_kanaele_gesamt * Q_Z * U_OCV * df["Wert"]["C-Rate Lebensdauertest"] * 0.5 * (1-rueckgewinnungsfaktor/100)*365*24 #[Wh]
 
     process.Anlagen = process.Anlagen + anzahl_test_anlagen
