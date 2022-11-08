@@ -329,7 +329,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         radius_rundzelle = Zellformat["Wert"]["Radius Rundzelle"]-Wandstärke #[mm]
         hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"]-2*Wandstärke #[mm]
 
-        A_Huelle = 2*math.pi*radius_rundzelle*hoehe_rundzelle+math.pi*radius_rundzelle**2
+        A_Huelle = 2*math.pi*radius_rundzelle*hoehe_rundzelle+math.pi*2*radius_rundzelle**2
 
         #Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
         #Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
@@ -441,12 +441,19 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_wickel_querschnitt = Breite_Kern*2*Anz_wick*d_WHE/1000+( (r_w+2*sep_wick+Anz_wick*d_WHE/1000)**2 - (r_w+2*sep_wick)**2)*math.pi #[mm]
         l_bahn = A_wickel_querschnitt/d_WHE*1000 #[mm]
 
-        A_KK = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
-        A_KB = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
-        A_AK = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
-        A_AB = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+        #A_KK = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
+        #A_KB = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        #A_AK = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
+        #A_AB = (l_bahn)*(breite_festhuelle-2*ueberstand_separator_anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
 
-        A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
+        A_KK = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-ueberstand_anode_kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        A_KB = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-ueberstand_anode_kathode-Abl_in_Zelle_K-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+        A_AK = (l_bahn)*(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        A_AB = (l_bahn)*(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+
+
+        #A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
+        A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode)
 
         l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
@@ -461,7 +468,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #Meter Elektrode/Sheet
         #Anzahl Sheets übereinander (beschichtete Bahnen), normal (für Ausnutzungsgrad) und abgerundet & Sheets pro meter Elektrode (S_MA & S_MK)
         #Anode
-        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode+Beschichtungsabstand_Anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+        #bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode+Beschichtungsabstand_Anode-Abl_in_Zelle_A-abs_ableiter_huelle*2)
+        bahnen_bes_A_ausn = (Breite_Anodenkollektor)/(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-Abl_in_Zelle_A-abs_ableiter_huelle*2+Beschichtungsabstand_Anode)
+        
         bahnen_bes_A = math.floor(bahnen_bes_A_ausn)
         if (bahnen_bes_A % 2) != 0 and bahnen_bes_A != 1:
             bahnen_bes_A = bahnen_bes_A-1
@@ -469,7 +478,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         S_MA = 1000/(l_bahn)*bahnen_bes_A
 
         #Kathode
-        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode+Beschichtungsabstand_Kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        #bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(breite_festhuelle-2*ueberstand_separator_anode-2*ueberstand_anode_kathode+Beschichtungsabstand_Kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
+        bahnen_bes_K_ausn = (Breite_Kathodenkollektor)/(breite_festhuelle-ueberstand_anode_kathode-Abl_in_Zelle_K-Abl_in_Zelle_A-abs_ableiter_huelle*2+Beschichtungsabstand_Kathode)
+        
         bahnen_bes_K = math.floor(bahnen_bes_K_ausn)
         if (bahnen_bes_K % 2) != 0 and bahnen_bes_K != 1:
             bahnen_bes_K = bahnen_bes_K-1

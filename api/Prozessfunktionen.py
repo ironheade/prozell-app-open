@@ -1405,7 +1405,17 @@ def PHEV2_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
     E_L50=0.5*Q_Z*U_OCV/Eta_Z #Energiebedarf des letzten Ladevorgangs auf 50% SOC [Wh]
     E_FormZ=E_L1+E_L2+E_L50-(E_E1+E_E2)*rueckgewinnungsfaktor/100 #Energiebedarf Formierung einer Zelle [Wh]
 
-    schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 #[kWh]
+    kanaele_3_monats_test = df["Wert"]["Stichproben pro Schicht 3 Monatstest"] *3*3*30 #3 Schichten pro Tag (HARDCODED) * 3 Monate * 30 Tage
+    kanaele_6_monats_test = df["Wert"]["Stichproben pro Schicht 6 Monatstest"] *3*6*30 #3 Schichten pro Tag (HARDCODED) * 6 Monate * 30 Tage
+    kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"] * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
+    lebensdauer_kanaele_gesamt = kanaele_3_monats_test + kanaele_6_monats_test + kanaele_80_cutoff_test
+    anzahl_test_anlagen = math.ceil(lebensdauer_kanaele_gesamt/ df["Wert"]["Anzahl Zellen/Formierturm"])
+
+    energiebedarf_lebensdauertest = lebensdauer_kanaele_gesamt * Q_Z * U_OCV * df["Wert"]["C-Rate Lebensdauertest"] * 0.5 * (1-rueckgewinnungsfaktor/100)*365*24 #[Wh]
+
+    process.Anlagen = process.Anlagen + anzahl_test_anlagen
+
+    schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 + energiebedarf_lebensdauertest/1000 #[kWh]
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
     schritt_dictionary = process.ueberkapazitaet(schritt_dictionary)    
     schritt_dictionary = process.flaechen(schritt_dictionary)
@@ -1742,7 +1752,17 @@ def Tesla_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
     E_L50=0.5*Q_Z*U_OCV/Eta_Z #Energiebedarf des letzten Ladevorgangs auf 50% SOC [Wh]
     E_FormZ=E_L1+E_L2+E_L50-(E_E1+E_E2)*rueckgewinnungsfaktor/100 #Energiebedarf Formierung einer Zelle [Wh]
 
-    schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 #[kWh]
+    kanaele_3_monats_test = df["Wert"]["Stichproben pro Schicht 3 Monatstest"] *3*3*30 #3 Schichten pro Tag (HARDCODED) * 3 Monate * 30 Tage
+    kanaele_6_monats_test = df["Wert"]["Stichproben pro Schicht 6 Monatstest"] *3*6*30 #3 Schichten pro Tag (HARDCODED) * 6 Monate * 30 Tage
+    kanaele_80_cutoff_test = df["Wert"]["Stichproben pro Schicht Cutoff"] * 2/df["Wert"]["C-Rate Lebensdauertest"]*df["Wert"]["Zyklenzahl"]/24
+    lebensdauer_kanaele_gesamt = kanaele_3_monats_test + kanaele_6_monats_test + kanaele_80_cutoff_test
+    anzahl_test_anlagen = math.ceil(lebensdauer_kanaele_gesamt/ df["Wert"]["Anzahl Zellen/Formierturm"])
+
+    energiebedarf_lebensdauertest = lebensdauer_kanaele_gesamt * Q_Z * U_OCV * df["Wert"]["C-Rate Lebensdauertest"] * 0.5 * (1-rueckgewinnungsfaktor/100)*365*24 #[Wh]
+
+    process.Anlagen = process.Anlagen + anzahl_test_anlagen
+
+    schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 + energiebedarf_lebensdauertest/1000 #[kWh]
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
     schritt_dictionary = process.ueberkapazitaet(schritt_dictionary)    
     schritt_dictionary = process.flaechen(schritt_dictionary)
@@ -1751,7 +1771,7 @@ def Tesla_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
     schritt_dictionary["Flächenbedarf Labor"] = process.Anlagen*df["Wert"]["Anlagengrundfläche Labor"]
     
     return schritt_dictionary
-
+    
 def Tesla_Befüllöffnung_verschließen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,rueckgewinnung):
     process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos,rueckgewinnung)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
