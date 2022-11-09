@@ -150,14 +150,17 @@ export default function Ergebnisse() {
           <Alluvial data={materialverlust} data_kosten={materialkosten} rueckgewinnung={rueckgewinnung} />*/}
           <div style={{ "height": "100px" }}></div>
           <h1>Gesamtkosten Jahresproduktion</h1>
-
+          
           {levelizedCost !== null && 
             <Tile style={{margin:"20px", width:"500px"}}>
               <h5>Levelized cost: </h5><p>{levelizedCost["levelized_cost"]} €/kWh</p>
+              <p>(mit Rückgewinnung: {levelizedCost["levelized_cost_rueckgewinnung"]} €/kWh)</p>
               <p style={{fontStyle:"italic"}}>Beschreibt die Produktionskosten unter Berücksichtigung der Abschreibung und Steuer.</p><br/>
               <h5>Marginal cost: </h5><p>{levelizedCost["marginal_cost"]} €/kWh</p>
+              <p>(mit Rückgewinnung: {levelizedCost["marginal_cost_rueckgewinnung"]}) €/kWh</p>
               <p style={{fontStyle:"italic"}}>Beschreibt die laufenden Produktionskosten.</p><br/>
               <h5>Full cost: </h5><p>{levelizedCost["full_cost"]} €/kWh</p>
+              <p>(mit Rückgewinnung: {levelizedCost["full_cost_rueckgewinnung"]} €/kWh)</p>
               <p style={{fontStyle:"italic"}}>Beschreibt die Vollkosten inklusive Abschreibung ohne Kapitalkosten.</p><br/>
               <h5>Jährliche Produktionskosten: </h5>
               <p>Siehe Donutdiagramme unten</p>

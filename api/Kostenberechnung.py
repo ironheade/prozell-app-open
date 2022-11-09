@@ -417,7 +417,9 @@ def Kostenberechnung(Zellergebnisse_raw,
         output_kWh = float(GWh_Jahr_Ah_Zelle_raw["GWh_pro_jahr"])*1000000,
         machine_invest = sum(list(df.loc["Investition"])),
         factory_depreciation = Oekonomische_Parameter["Wert"]["Abschreibungsdauer Gebäude"],
-        machine_depreciation = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"]
+        machine_depreciation = Oekonomische_Parameter["Wert"]["technische Nutzungsdauer"],
+        ramp_up_material = Oekonomische_Parameter["Wert"]["Ramp-up cost Material"],
+        ramp_up_personal_overhead = Oekonomische_Parameter["Wert"]["Ramp-up cost Mitarbeiter und Overhead"]
     )
 
     

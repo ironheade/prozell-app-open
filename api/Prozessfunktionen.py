@@ -1412,11 +1412,12 @@ def PHEV2_Formieren_und_Entgasen(df,Zellergebnisse,Zellchemie,Materialinfos,schr
     lebensdauer_kanaele_gesamt = kanaele_3_monats_test + kanaele_6_monats_test + kanaele_80_cutoff_test
     anzahl_test_anlagen = math.ceil(lebensdauer_kanaele_gesamt/ df["Wert"]["Anzahl Zellen/Formierturm"])
 
-    print("anzahl_test_anlagen")
-    print(anzahl_test_anlagen)
     energiebedarf_lebensdauertest = lebensdauer_kanaele_gesamt * Q_Z * U_OCV * df["Wert"]["C-Rate Lebensdauertest"] * 0.5 * (1-rueckgewinnungsfaktor/100)*365*24 #[Wh]
-
+    schritt_dictionary["Anzahl Maschinen"] = "{} Anlagen, {} Testanlagen".format(process.Anlagen,anzahl_test_anlagen)
+    
     process.Anlagen = process.Anlagen + anzahl_test_anlagen
+
+    
 
     schritt_dictionary["Energiebedarf"]=E_FormZ*schritt_dictionary["Zelläquivalent"]/1000 + energiebedarf_lebensdauertest/1000 #[kWh]
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
@@ -1454,6 +1455,7 @@ def PHEV2_Reifelagern(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_diction
     Zellen_pro_Minute = 1/(1/Zellen_pro_Minute+float(df["Wert"]["Nebenzeit"]))
     Durchsatz_pro_Minute = 1/(float(df["Wert"]["Reifelagerdauer"])*24*60/float(df["Wert"]["Anzahl Zellen/Anlage"]))
     process.Anlagen = math.ceil(Zellen_pro_Minute/Durchsatz_pro_Minute)
+    schritt_dictionary["Anzahl Maschinen"] = process.Anlagen
 
     schritt_dictionary = process.energie(schritt_dictionary)
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
@@ -1467,8 +1469,7 @@ def PHEV2_Reifelagern(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_diction
 
 def PHEV2_Prüfen_und_Klassifizieren(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,rueckgewinnung):
     process = zelle_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos,rueckgewinnung)
-    print("rueckgewinnung2")
-    print(rueckgewinnung)
+
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.anlagen(schritt_dictionary)
