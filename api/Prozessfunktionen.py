@@ -1637,6 +1637,7 @@ def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)   
+
     Zellen_pro_minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60
     Zellen_pro_minute = 1/(1/Zellen_pro_minute+df["Wert"]["Nebenzeit"])
     process.Anlagen = Zellen_pro_minute/df["Wert"]["Geschwindigkeit"]

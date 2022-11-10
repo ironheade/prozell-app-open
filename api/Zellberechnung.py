@@ -330,6 +330,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"]-2*Wandstärke #[mm]
 
         A_Huelle = 2*math.pi*radius_rundzelle*hoehe_rundzelle+math.pi*2*radius_rundzelle**2
+        print("A_Huelle")
+        print(A_Huelle)
 
         #Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
         #Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
@@ -410,6 +412,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
 
         A_Huelle = 2*breite_festhuelle*laenge_festhuelle+2*breite_festhuelle*hoehe_festhuelle+2*laenge_festhuelle*hoehe_festhuelle
+        print("A_Huelle")
+        print(A_Huelle)
 
         Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
         Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
@@ -489,7 +493,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         
         vol_nutz_zelle = breite_festhuelle * laenge_festhuelle * hoehe_festhuelle #[mm³]
         
- 
     #____________________________________
     # Ab hier wieder gesammelte Berechnung für alle Zelltypen
     
@@ -515,8 +518,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
 
     volumenfaktor = vol_elyt/(vol_sep*2 * phi_sep/100 + vol_AB*2 * phi_AB/100 + vol_KB*2 * phi_KB/100)
 
-    rho_huelle = read_zellinfo(Huelle)["Wert"]["Dichte"] #[g/cm³]
-    gew_huelle = A_Huelle*Wandstaerke*rho_huelle/1000
+    #rho_huelle = read_zellinfo(Huelle)["Wert"]["Dichte"] #[g/cm³]
+    #gew_huelle = A_Huelle*Wandstaerke*rho_huelle/1000
+    gew_huelle = read_zellinfo(Huelle)["Wert"]["Gewicht"] #[g]
     
     #die Gesamtgewichte der Einzelbestandteile 
     #gewickelte Zellen haben keine modifizierte Wiederholeinheit, gestapelte Zellen schon
@@ -551,7 +555,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Gesamtkosten_Kathodenbeschichtung = Kosten_Kathodenbeschichtung * gew_KB_ges/1000 #[€]
     Gesamtkosten_Anodenkollektor = Kosten_Anodenkollektor * A_AK_ges / 1000000 #[€]
     Gesamtkosten_Kathodenkollektor = Kosten_Kathodenkollektor * A_KK_ges / 1000000 #[€]
-    Gesamtkosten_Huelle = Kosten_Huelle * A_Huelle /1e6
+    Gesamtkosten_Huelle = Kosten_Huelle
+    #Gesamtkosten_Huelle = Kosten_Huelle * A_Huelle /1e6
     Gesamtkosten_Separator = Kosten_Separator * A_Sep_ges / 1000000
     Gesamtkosten_Elektrolyt = Kosten_Elektrolyt * gew_elyt/1000 #[€]
     Gesamtkosten_Zelle = (Gesamtkosten_Anodenbeschichtung 

@@ -111,7 +111,7 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     #Hülle
     Huelle = Zellchemie.loc[Zellchemie['Kategorie'] == "Hülle"].index.tolist()[0] #Raussuchen, welches Elektrolyt verwendet wurde
-    Huelle_menge = Zellergebnisse["Wert"]["Zellen pro Jahr"]*Zellergebnisse["Wert"]["Gewicht Hülle"]/read_materialinfo(Huelle)["Wert"]["Dichte"]/(read_materialinfo(Huelle)["Wert"]["Dicke"]/10)/10000 #[m²]
+    Huelle_menge = Zellergebnisse["Wert"]["Zellen pro Jahr"] #[-]
 
 
     schritt_dictionary={
@@ -157,7 +157,7 @@ def Kostenberechnung(Zellergebnisse_raw,
          "Anodenkollektor":"m",
          "Kathodenkollektor":"m",
          "Separator":"m",
-         "Hülle":"m²",
+         "Hülle":"-",
          "Elektrolyt":"l",
          "Anodenbeschichtung Rückgewinnung":"kg",
          "Kathodenbeschichtung Rückgewinnung":"kg",
