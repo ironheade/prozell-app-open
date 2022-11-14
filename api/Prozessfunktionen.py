@@ -1286,15 +1286,23 @@ def PHEV2_Flachwickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)   
-    Zellen_pro_minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60
-    Zellen_pro_minute = 1/(1/Zellen_pro_minute+df["Wert"]["Nebenzeit"])
-    process.Anlagen = Zellen_pro_minute/df["Wert"]["Geschwindigkeit"]
     
+    laenge_anodensheet = Zellergebnisse["Wert"]["Sheets/ Meter Anode"]*Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"] #[m/Zelle]
+    Zellen_pro_Minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60 #[Zellen/min]
+
+    #Meter_Anode_pro_minute = laenge_anodensheet * Zellen_pro_Minute #[m/min]
+    Kapazitaet_Anlage = df["Wert"]["Geschwindigkeit"]/laenge_anodensheet #[Zellen/min]
+    Zeit_pro_Zelle = 1/Kapazitaet_Anlage
+    Zeit_pro_Zelle_mit_nebenzeit = Zeit_pro_Zelle+df["Wert"]["Nebenzeit"]
+    Kapazitaet_Anlage_mit_nebenzeit = 1/Zeit_pro_Zelle_mit_nebenzeit
+
+    process.Anlagen = math.ceil(Zellen_pro_Minute/Kapazitaet_Anlage_mit_nebenzeit)
+
     schritt_dictionary["Personlabedarf Facharbeiter"] = process.Anlagen*df["Wert"]["Personal Facharbeiter"]
     schritt_dictionary["Personalbedarf Hilfskraft"] = process.Anlagen*df["Wert"]["Personal Hilfskräfte"]
     schritt_dictionary["Energiebedarf"] = process.Anlagen*df["Wert"]["Leistungsaufnahme"]*arbeitstage_pro_jahr*24
 
-    process.Anlagen = process.Anlagen * (1+df["Wert"]["Überkapazität"]/100)
+    process.Anlagen = math.ceil(process.Anlagen * (1+df["Wert"]["Überkapazität"]/100))
 
     schritt_dictionary["Anzahl Maschinen"] = process.Anlagen
     schritt_dictionary["Flächenbedarf"] = process.Anlagen*df["Wert"]["Anlagengrundfläche"]
@@ -1637,16 +1645,23 @@ def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)   
-
-    Zellen_pro_minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60
-    Zellen_pro_minute = 1/(1/Zellen_pro_minute+df["Wert"]["Nebenzeit"])
-    process.Anlagen = Zellen_pro_minute/df["Wert"]["Geschwindigkeit"]
     
+    laenge_anodensheet = Zellergebnisse["Wert"]["Sheets/ Meter Anode"]*Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"] #[m/Zelle]
+    Zellen_pro_Minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60 #[Zellen/min]
+
+    #Meter_Anode_pro_minute = laenge_anodensheet * Zellen_pro_Minute #[m/min]
+    Kapazitaet_Anlage = df["Wert"]["Geschwindigkeit"]/laenge_anodensheet #[Zellen/min]
+    Zeit_pro_Zelle = 1/Kapazitaet_Anlage
+    Zeit_pro_Zelle_mit_nebenzeit = Zeit_pro_Zelle+df["Wert"]["Nebenzeit"]
+    Kapazitaet_Anlage_mit_nebenzeit = 1/Zeit_pro_Zelle_mit_nebenzeit
+
+    process.Anlagen = math.ceil(Zellen_pro_Minute/Kapazitaet_Anlage_mit_nebenzeit)
+
     schritt_dictionary["Personlabedarf Facharbeiter"] = process.Anlagen*df["Wert"]["Personal Facharbeiter"]
     schritt_dictionary["Personalbedarf Hilfskraft"] = process.Anlagen*df["Wert"]["Personal Hilfskräfte"]
     schritt_dictionary["Energiebedarf"] = process.Anlagen*df["Wert"]["Leistungsaufnahme"]*arbeitstage_pro_jahr*24
 
-    process.Anlagen = process.Anlagen * (1+df["Wert"]["Überkapazität"]/100)
+    process.Anlagen = math.ceil(process.Anlagen * (1+df["Wert"]["Überkapazität"]/100))
 
     schritt_dictionary["Anzahl Maschinen"] = process.Anlagen
     schritt_dictionary["Flächenbedarf"] = process.Anlagen*df["Wert"]["Anlagengrundfläche"]

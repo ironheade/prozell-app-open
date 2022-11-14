@@ -125,7 +125,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #____________________________________
     #Zusammensetzung der Suspension auslesen, Kosten/ Dichte berechnen
     
-    
+    Bestandteile_Loesemittel_Anode =  Zellchemie.loc[Zellchemie['Kategorie'] == "Lösemittel Anode"].index.to_list() #Liste
+    Kosten_Loesemittel_Anode = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*(1-read_zellinfo(x)["Wert"]["Wiederverwendungsanteil"]/100) for x in Bestandteile_Loesemittel_Anode)
+
     Bestandteile_Anodenbeschichtung = Additive_Anode #ohne Lösemittel
     Bestandteile_Anodenbeschichtung.append(Aktivmaterial_Anode) #ohne Lösemittel
     #Gesamtdichte_Anodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Anodenbeschichtung)
@@ -136,6 +138,9 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Kosten_Anodenbeschichtung = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"] for x in Bestandteile_Anodenbeschichtung) #€/kg
     Kosten_Anodenkollektor = read_zellinfo(Kollektorfolie_Anode)["Wert"]["Preis"] #[€/m]
         
+    Bestandteile_Loesemittel_Kathode =  Zellchemie.loc[Zellchemie['Kategorie'] == "Lösemittel Kathode"].index.to_list() #Liste
+    Kosten_Loesemittel_Kathode = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Preis"]*(1-read_zellinfo(x)["Wert"]["Wiederverwendungsanteil"]/100) for x in Bestandteile_Loesemittel_Kathode)
+
     Bestandteile_Kathodenbeschichtung=Additive_Kathode #ohne Lösemittel
     Bestandteile_Kathodenbeschichtung.append(Aktivmaterial_Kathode) 
     #Gesamtdichte_Kathodenfeststoffe = sum(Zellchemie["Wert"][x]/100*read_zellinfo(x)["Wert"]["Dichte"] for x in Bestandteile_Kathodenbeschichtung)
@@ -551,8 +556,12 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     Kosten_Huelle = read_zellinfo(Huelle)["Wert"]["Preis"] #[€/m²]
     
     #Auflistung aller Kosten einer Zelle
-    Gesamtkosten_Anodenbeschichtung = Kosten_Anodenbeschichtung * gew_AB_ges/1000 #[€]
-    Gesamtkosten_Kathodenbeschichtung = Kosten_Kathodenbeschichtung * gew_KB_ges/1000 #[€]
+    Gesamtkosten_Loesemittel_Anode = Kosten_Loesemittel_Anode * gew_AB_ges/1000 * ((1/(Zellchemie["Wert"]["Feststoffgehalt Anode"]/100))-1)
+    Gesamtkosten_Loesemittel_Kathode = Kosten_Loesemittel_Kathode * gew_KB_ges/1000 * ((1/(Zellchemie["Wert"]["Feststoffgehalt Kathode"]/100))-1)
+
+    Gesamtkosten_Anodenbeschichtung = Kosten_Anodenbeschichtung * gew_AB_ges/1000 + Gesamtkosten_Loesemittel_Anode #[€]
+    Gesamtkosten_Kathodenbeschichtung = Kosten_Kathodenbeschichtung * gew_KB_ges/1000 + Gesamtkosten_Loesemittel_Kathode #[€]
+
     Gesamtkosten_Anodenkollektor = Kosten_Anodenkollektor * A_AK_ges / 1000000 #[€]
     Gesamtkosten_Kathodenkollektor = Kosten_Kathodenkollektor * A_KK_ges / 1000000 #[€]
     Gesamtkosten_Huelle = Kosten_Huelle

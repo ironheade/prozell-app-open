@@ -37,24 +37,24 @@ const LandingPage = () => {
       });
   }, []);
 
-  const Unterstützer = ["Max Mitrenga",
+  const Unterstützer = [
+    "Max Mitrenga",
     "Patrick Berghäuser",
-    "Mona Kabus",
-    "Felix Buck",
     "Anna Kollenda",
     "Lukas Kemmer",
     "Maximilian Blaschke",
     "Josef Keilhofer",
     "Maximilian Lechner",
-    "Julian Mayer",
-    "Usama Khalid"]
+    "Julian Mayer"]
 
   const Versionskontrolle = [
     {
       Version: "V1.0 - Release",
-      Datum: "11.03.2022",
-      Änderungen: []
-    },
+      Datum: "14.11.2022",
+      Änderungen: ["Paper Veröffentlichung"]
+    }
+    /*
+    ,
     {
       Version: "V1.1",
       Datum: "28.03.2022",
@@ -88,6 +88,7 @@ const LandingPage = () => {
         "Platzhalter für weitere Graphen in dern Ergebnissen eingefügt"
       ]
     }
+    */
   ]
 
 
@@ -167,7 +168,7 @@ const LandingPage = () => {
                   </div>
                   <div className="bx--col-lg-4">
                     <p>
-                      <span style={{ fontWeight: "bold" }}>Kontakt:</span><br />Konrad Bendzuck <br /> k.bendzuck@tu-braunschweig.de <br /> 0531/ 391 94648
+                      <span style={{ fontWeight: "bold" }}>Kontakt:</span><br />Konrad Bendzuck <br /> k.bendzuck@web.de 
                     </p>
                     <br />
                     <p><span style={{ fontWeight: "bold" }}>Unterstützung durch:</span></p>

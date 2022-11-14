@@ -45,8 +45,8 @@ export default function Zellauslegung() {
                 <div className="bx--col-lg-6">
                   <Zellformate />
                 </div>
-                <div className="bx--col-lg-2"></div>
-                <div className="bx--col-lg-6">
+                <div className="bx--col-lg-1"></div>
+                <div className="bx--col-lg-7">
                   <Zellchemie click={Ergebnisse}/>
                 </div>
                 <div className="bx--col-lg-1"></div>
