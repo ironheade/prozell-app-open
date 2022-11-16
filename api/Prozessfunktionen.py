@@ -1270,7 +1270,41 @@ def PHEV2_Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)
-    schritt_dictionary = process.anlagen(schritt_dictionary)
+    #schritt_dictionary = process.anlagen(schritt_dictionary)
+
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+
+    Anodenkollektorfolie = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Anode"].index.tolist()[0]
+    Kathodenkollektorfolie = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Kathode"].index.tolist()[0]
+
+    Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
+    Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
+
+    Meter_Anode_pro_Minute = Meter_Anode_pro_Tag/(24*60)
+    Meter_Kathode_pro_Minute = Meter_Kathode_pro_Tag/(24*60)
+
+    Geschwindigkeit_Anode = float(df["Wert"]["Geschwindigkeit Anode"])/(read_zellinfo(Anodenkollektorfolie,Materialinfos)["Wert"]["Breite"]/1000)/(8*60)
+    Geschwindigkeit_Kathode = float(df["Wert"]["Geschwindigkeit Kathode"])/(read_zellinfo(Kathodenkollektorfolie,Materialinfos)["Wert"]["Breite"]/1000)/(8*60)
+    
+    meter_anodenkollektorfolie_pro_rolle = read_zellinfo(Anodenkollektorfolie,Materialinfos)["Wert"]["Rollenlänge"]
+    meter_kathodenkollektorfolie_pro_rolle = read_zellinfo(Kathodenkollektorfolie,Materialinfos)["Wert"]["Rollenlänge"]
+    
+    Zeit_pro_Coil_Anode = meter_anodenkollektorfolie_pro_rolle/Geschwindigkeit_Anode #[min]
+    Verlust_durch_Nebenzeit_Anode = df["Wert"]["Nebenzeit Anode"]/Zeit_pro_Coil_Anode #[%]
+    
+    Zeit_pro_Coil_Kathode = meter_kathodenkollektorfolie_pro_rolle/Geschwindigkeit_Kathode
+    Verlust_durch_Nebenzeit_Kathode = float(df["Wert"]["Nebenzeit Kathode"])/Zeit_pro_Coil_Kathode #[%]
+    
+    Anlagen_Anode = math.ceil(Meter_Anode_pro_Minute/Geschwindigkeit_Anode*(1+Verlust_durch_Nebenzeit_Anode))
+    Anlagen_Kathode = math.ceil(Meter_Kathode_pro_Minute/Geschwindigkeit_Kathode*(1+Verlust_durch_Nebenzeit_Kathode))
+
+    Anz_Maschinen = "{} Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode)
+
+    process.Anlagen_Anode = Anlagen_Anode
+    process.Anlagen_Kathode = Anlagen_Kathode
+
+    schritt_dictionary["Anzahl Maschinen"] = Anz_Maschinen
+
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
     schritt_dictionary = process.energie(schritt_dictionary)
     schritt_dictionary = process.ueberkapazitaet(schritt_dictionary)
@@ -1629,7 +1663,42 @@ def Tesla_Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
     process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos,rueckgewinnung)
     schritt_dictionary = process.variabler_aussschuss(schritt_dictionary)
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
-    schritt_dictionary = process.anlagen(schritt_dictionary)   
+    schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)
+    #schritt_dictionary = process.anlagen(schritt_dictionary)
+
+    Zellen_pro_Tag = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr
+
+    Anodenkollektorfolie = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Anode"].index.tolist()[0]
+    Kathodenkollektorfolie = Zellchemie.loc[Zellchemie['Kategorie'] == "Kollektorfolie Kathode"].index.tolist()[0]
+
+    Meter_Anode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"] #[m]
+    Meter_Kathode_pro_Tag = Zellen_pro_Tag*Zellergebnisse["Wert"]["Anzahl Wiederholeinheiten"]/Zellergebnisse["Wert"]["Sheets/ Meter Kathode"] #[m]
+
+    Meter_Anode_pro_Minute = Meter_Anode_pro_Tag/(24*60)
+    Meter_Kathode_pro_Minute = Meter_Kathode_pro_Tag/(24*60)
+
+    Geschwindigkeit_Anode = float(df["Wert"]["Geschwindigkeit Anode"])/(read_zellinfo(Anodenkollektorfolie,Materialinfos)["Wert"]["Breite"]/1000)/(8*60)
+    Geschwindigkeit_Kathode = float(df["Wert"]["Geschwindigkeit Kathode"])/(read_zellinfo(Kathodenkollektorfolie,Materialinfos)["Wert"]["Breite"]/1000)/(8*60)
+    
+    meter_anodenkollektorfolie_pro_rolle = read_zellinfo(Anodenkollektorfolie,Materialinfos)["Wert"]["Rollenlänge"]
+    meter_kathodenkollektorfolie_pro_rolle = read_zellinfo(Kathodenkollektorfolie,Materialinfos)["Wert"]["Rollenlänge"]
+    
+    Zeit_pro_Coil_Anode = meter_anodenkollektorfolie_pro_rolle/Geschwindigkeit_Anode #[min]
+    Verlust_durch_Nebenzeit_Anode = df["Wert"]["Nebenzeit Anode"]/Zeit_pro_Coil_Anode #[%]
+    
+    Zeit_pro_Coil_Kathode = meter_kathodenkollektorfolie_pro_rolle/Geschwindigkeit_Kathode
+    Verlust_durch_Nebenzeit_Kathode = float(df["Wert"]["Nebenzeit Kathode"])/Zeit_pro_Coil_Kathode #[%]
+    
+    Anlagen_Anode = math.ceil(Meter_Anode_pro_Minute/Geschwindigkeit_Anode*(1+Verlust_durch_Nebenzeit_Anode))
+    Anlagen_Kathode = math.ceil(Meter_Kathode_pro_Minute/Geschwindigkeit_Kathode*(1+Verlust_durch_Nebenzeit_Kathode))
+
+    Anz_Maschinen = "{} Anode, {} Kathode".format(Anlagen_Anode,Anlagen_Kathode)
+
+    process.Anlagen_Anode = Anlagen_Anode
+    process.Anlagen_Kathode = Anlagen_Kathode
+
+    schritt_dictionary["Anzahl Maschinen"] = Anz_Maschinen
+
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
     schritt_dictionary = process.energie(schritt_dictionary)
     schritt_dictionary = process.ueberkapazitaet(schritt_dictionary)
@@ -1639,6 +1708,7 @@ def Tesla_Nachtrocknen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
     schritt_dictionary["Flächenbedarf Labor"] = 0
     
     return schritt_dictionary
+
 
 def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,rueckgewinnung):
     process = coil_prozessschritt(df,Zellergebnisse,Zellchemie,Materialinfos,rueckgewinnung)
