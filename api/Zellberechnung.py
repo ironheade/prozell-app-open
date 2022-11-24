@@ -335,8 +335,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         hoehe_rundzelle = Zellformat["Wert"]["Höhe Rundzelle"]-2*Wandstärke #[mm]
 
         A_Huelle = 2*math.pi*radius_rundzelle*hoehe_rundzelle+math.pi*2*radius_rundzelle**2
-        print("A_Huelle")
-        print(A_Huelle)
 
         #Abl_in_Zelle_A = Zellformat["Wert"]["Länge Ableiter in Zelle Anode"] #[mm]
         #Abl_in_Zelle_K = Zellformat["Wert"]["Länge Ableiter in Zelle Kathode"] #[mm]
@@ -417,8 +415,6 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         hoehe_festhuelle = Zellformat["Wert"]["Höhe Festhülle"]-2*Wandstärke #[mm]
 
         A_Huelle = 2*breite_festhuelle*laenge_festhuelle+2*breite_festhuelle*hoehe_festhuelle+2*laenge_festhuelle*hoehe_festhuelle
-        print("A_Huelle")
-        print(A_Huelle)
 
         Beschichtungsabstand_Kathode = Zellformat["Wert"]["Beschichtungsabstand Kathode"] #[mm]
         Beschichtungsabstand_Anode = Zellformat["Wert"]["Beschichtungsabstand Anode"] #[mm]
