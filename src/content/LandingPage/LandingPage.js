@@ -50,7 +50,7 @@ const LandingPage = () => {
   const Versionskontrolle = [
     {
       Version: "V1.0 - Release",
-      Datum: "14.11.2022",
+      Datum: "01.12.2022",
       Änderungen: ["Paper Veröffentlichung"]
     }
     /*
@@ -122,7 +122,7 @@ const LandingPage = () => {
                       Prozessschritte und zur weiteren Optimierung der
                       Prozessroute.
                     </p>
-                    
+
 
 
 
@@ -168,7 +168,7 @@ const LandingPage = () => {
                   </div>
                   <div className="bx--col-lg-4">
                     <p>
-                      <span style={{ fontWeight: "bold" }}>Kontakt:</span><br />Konrad Bendzuck <br /> k.bendzuck@web.de 
+                      <span style={{ fontWeight: "bold" }}>Kontakt:</span><br />Konrad Bendzuck <br /> k.bendzuck@web.de
                     </p>
                     <br />
                     <p><span style={{ fontWeight: "bold" }}>Unterstützung durch:</span></p>
