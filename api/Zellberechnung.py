@@ -531,7 +531,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         gew_KK_ges = gew_KK*anzahl_WHE #[g]
         gew_KB_ges = gew_KB*anzahl_WHE*2 #[g] *2 für die doppelseitige Beschichtung 
         gew_Sep_ges = gew_Sep*(anzahl_WHE+1)*2 #[g] +1 für die modifizierte Wiederholeinheit, *2, da eine WHE 2 Separator Blätter enthält
-        gew_ges = gew_elyt + gew_WHE*anzahl_WHE + gew_MWHE
+        gew_ges = gew_elyt + gew_WHE*anzahl_WHE + gew_MWHE + gew_huelle
     
     if Zelltyp == "Rundzelle" or Zelltyp == "Hardcase gewickelt":
         gew_AK_ges = gew_AK*anzahl_WHE #[g] 
@@ -539,7 +539,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         gew_KK_ges = gew_KK*anzahl_WHE #[g]
         gew_KB_ges = gew_KB*anzahl_WHE*2 #[g] *2 für die doppelseitige Beschichtung 
         gew_Sep_ges = gew_Sep*anzahl_WHE*2 #[g] *2, da eine WHE 2 Separator Blätter enthält
-        gew_ges = gew_elyt + gew_WHE * anzahl_WHE
+        gew_ges = gew_elyt + gew_WHE * anzahl_WHE + gew_huelle
        
     
     #Gesamtladung einer Zelle, Anzahl zu produzierender Zellen/ Jahr, spezifische Ladungsdichte einer Zelle

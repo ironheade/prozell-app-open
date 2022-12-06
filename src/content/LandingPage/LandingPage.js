@@ -168,7 +168,7 @@ const LandingPage = () => {
                   </div>
                   <div className="bx--col-lg-4">
                     <p>
-                      <span style={{ fontWeight: "bold" }}>Kontakt:</span><br />Konrad Bendzuck <br /> k.bendzuck@web.de
+                      <span style={{ fontWeight: "bold" }}>Kontakt:</span><br />Kashfia Mahin <br /> kashfia.mahin@tu-braunschweig.de
                     </p>
                     <br />
                     <p><span style={{ fontWeight: "bold" }}>Unterstützung durch:</span></p>
