@@ -103,7 +103,8 @@ def Kostenberechnung(Zellergebnisse_raw,
     
     # Separator NOCH ÜBERARBEITEN
     Separator = Zellchemie.loc[Zellchemie['Kategorie'] == "Separator"].index.tolist()[0] #Raussuchen, welcher Separator verwendet wurde
-    Separator_menge = Kathodenkollektor_menge*2
+    Separator_menge = Zellergebnisse["Wert"]["Zellen pro Jahr"]*Zellergebnisse["Wert"]["Fläche Separator gesamt"]/1e6 #[m²]
+    #Separator_menge = Anodenkollektor_menge*2
     
     #Elektrolyt
     Elektrolyt = Zellchemie.loc[Zellchemie['Kategorie'] == "Elektrolyt"].index.tolist()[0] #Raussuchen, welches Elektrolyt verwendet wurde
@@ -156,14 +157,14 @@ def Kostenberechnung(Zellergebnisse_raw,
          "Kathodenbeschichtung":"kg",
          "Anodenkollektor":"m",
          "Kathodenkollektor":"m",
-         "Separator":"m",
+         "Separator":"m²",
          "Hülle":"-",
          "Elektrolyt":"l",
          "Anodenbeschichtung Rückgewinnung":"kg",
          "Kathodenbeschichtung Rückgewinnung":"kg",
          "Anodenkollektor Rückgewinnung":"m",
          "Kathodenkollektor Rückgewinnung":"m",
-         "Separator Rückgewinnung":"m",
+         "Separator Rückgewinnung":"m²",
          "Hülle Rückgewinnung":"m²",
          "Elektrolyt Rückgewinnung":"l",
          "Anzahl Maschinen":"-",
