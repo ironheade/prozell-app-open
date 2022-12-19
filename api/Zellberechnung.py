@@ -157,8 +157,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
     #GWh_pro_jahr = float(massemodell_eingaben["GWH_pro_jahr"]) #[-]
     GWh_pro_jahr = GWh_Jahr_Ah_Zelle["GWh_pro_jahr"] #[-]
     
-    roh_KB = Gesamtdichte_Kathodenbeschichtung*(1-phi_KB/100) #[g/cm³]
-    roh_AB = Gesamtdichte_Anodenbeschichtung*(1-phi_AB/100) #[g/cm³]
+    roh_KB = Gesamtdichte_Kathodenfeststoffe*(1-phi_KB/100) #[g/cm³]
+    roh_AB = Gesamtdichte_Anodenfeststoffe*(1-phi_AB/100) #[g/cm³]
 
     
     #____________________________________
