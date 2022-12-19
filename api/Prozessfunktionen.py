@@ -171,16 +171,8 @@ class coil_prozessschritt(basis_prozessschritt):
         dictionary["Hülle"]                 = dictionary["Hülle"]/(1-Zusatzverlust)
         dictionary["Elektrolyt"]            = dictionary["Elektrolyt"]/(1-Zusatzverlust)
 
-        print("Rückgewinnung davor")
-        print(dictionary["Anodenkollektor Rückgewinnung"])
-        print(dictionary["Kathodenkollektor Rückgewinnung"])
-
-        dictionary["Anodenkollektor Rückgewinnung"] = dictionary["Anodenkollektor Rückgewinnung"]*Zusatzverlust_Anode*rueckgewinnung["Wert"]["Anodenkollektor"]/100
-        dictionary["Kathodenkollektor Rückgewinnung"] = dictionary["Kathodenkollektor Rückgewinnung"]*Zusatzverlust_Kathode*rueckgewinnung["Wert"]["Kathodenkollektor"]/100
-
-        print("Rückgewinnung danach")
-        print(dictionary["Anodenkollektor Rückgewinnung"])
-        print(dictionary["Kathodenkollektor Rückgewinnung"])
+        dictionary["Anodenkollektor Rückgewinnung"] = dictionary["Anodenkollektor Rückgewinnung"]+dictionary["Anodenkollektor"]*Zusatzverlust_Anode*rueckgewinnung["Wert"]["Anodenkollektor"]/100
+        dictionary["Kathodenkollektor Rückgewinnung"] = dictionary["Kathodenkollektor Rückgewinnung"]+dictionary["Kathodenkollektor"]*Zusatzverlust_Kathode*rueckgewinnung["Wert"]["Kathodenkollektor"]/100
         
         return dictionary
     
@@ -212,7 +204,12 @@ class sheet_prozessschritt(basis_prozessschritt):
         dictionary["Kathodenbeschichtung"]  = dictionary["Kathodenbeschichtung"]/(1-Zusatzverlust)
         dictionary["Separator"]             = dictionary["Separator"]/(1-Zusatzverlust)
         dictionary["Elektrolyt"]            = dictionary["Elektrolyt"]/(1-Zusatzverlust)
-        
+
+        dictionary["Anodenkollektor Rückgewinnung"] = dictionary["Anodenkollektor Rückgewinnung"]+dictionary["Anodenkollektor"]*Zusatzverlust*rueckgewinnung["Wert"]["Anodenkollektor"]/100
+        dictionary["Kathodenkollektor Rückgewinnung"] = dictionary["Kathodenkollektor Rückgewinnung"]+dictionary["Kathodenkollektor"]*Zusatzverlust*rueckgewinnung["Wert"]["Kathodenkollektor"]/100
+        dictionary["Anodenbeschichtung Rückgewinnung"] = dictionary["Anodenbeschichtung Rückgewinnung"]+dictionary["Anodenbeschichtung"]*Zusatzverlust*rueckgewinnung["Wert"]["Anodenbeschichtung"]/100
+        dictionary["Kathodenbeschichtung Rückgewinnung"] = dictionary["Kathodenbeschichtung Rückgewinnung"]+dictionary["Kathodenbeschichtung"]*Zusatzverlust*rueckgewinnung["Wert"]["Kathodenbeschichtung"]/100
+
         return dictionary
     
     def anlagen(self,dictionary):
