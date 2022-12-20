@@ -1457,8 +1457,8 @@ def PHEV2_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,
     schritt_dictionary["Energiebedarf"] = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
 
-    process.Anlagen_Anode = math.ceil(process.Anlagen_Anode*(1+df["Wert"]["Leistungsaufnahme Anode"]/100))
-    process.Anlagen_Kathode = math.ceil(process.Anlagen_Kathode*(1+df["Wert"]["Leistungsaufnahme Anode"]/100))
+    process.Anlagen_Anode = math.ceil(process.Anlagen_Anode*(1+df["Wert"]["Überkapazität"]/100))
+    process.Anlagen_Kathode = math.ceil(process.Anlagen_Kathode*(1+df["Wert"]["Überkapazität"]/100))
 
     Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Anzahl Anoden-Mischer pro Dosierer"]))
     Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Anzahl Kathoden-Mischer pro Dosierer"]))
@@ -1851,8 +1851,8 @@ def Tesla_Mischen(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,
     schritt_dictionary["Energiebedarf"] = (Anlagen_Anode*float(df["Wert"]["Leistungsaufnahme Anode"])+Anlagen_Kathode*float(df["Wert"]["Leistungsaufnahme Kathode"]))*24*arbeitstage_pro_jahr
     schritt_dictionary = process.mitarbeiter_anlagen(schritt_dictionary)
 
-    process.Anlagen_Anode = process.Anlagen_Anode*(1+df["Wert"]["Leistungsaufnahme Anode"]/100)
-    process.Anlagen_Kathode = process.Anlagen_Kathode*(1+df["Wert"]["Leistungsaufnahme Anode"]/100)
+    process.Anlagen_Anode = process.Anlagen_Anode*(1+df["Wert"]["Überkapazität"]/100)
+    process.Anlagen_Kathode = process.Anlagen_Kathode*(1+df["Wert"]["Überkapazität"]/100)
 
     Anlagen_Dosierer_Anode = math.ceil(Anlagen_Anode/float(df["Wert"]["Anzahl Anoden-Mischer pro Dosierer"]))
     Anlagen_Dosierer_Kathode = math.ceil(Anlagen_Kathode/float(df["Wert"]["Anzahl Kathoden-Mischer pro Dosierer"]))
