@@ -443,7 +443,8 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         #U_plus = 2*math.pi*d_WHE/1000 #Zunahme jeder Wicklung [mm]
         
         #l_bahn = (U_a-U_plus)*Anz_wick + U_a #[mm]
-        A_wickel_querschnitt = Breite_Kern*2*Anz_wick*d_WHE/1000+( (r_w+2*sep_wick+Anz_wick*d_WHE/1000)**2 - (r_w+2*sep_wick)**2)*math.pi #[mm]
+        #A_wickel_querschnitt = Breite_Kern*2*Anz_wick*d_WHE/1000+( (r_w+2*sep_wick+Anz_wick*d_WHE/1000)**2 - (r_w+2*sep_wick)**2)*math.pi #[mm]
+        A_wickel_querschnitt = Breite_Kern*2*Anz_wick*d_WHE/1000+( (r_w+2*sep_wick*d_Sep/1000+Anz_wick*d_WHE/1000)**2 - (r_w+2*sep_wick*d_Sep/1000)**2)*math.pi #[mm^2]
         l_bahn = A_wickel_querschnitt/d_WHE*1000 #[mm]
 
         #A_KK = (l_bahn-2*ueberstand_anode_kathode)*(breite_festhuelle-2*ueberstand_anode_kathode-2*ueberstand_separator_anode-abs_ableiter_huelle*2)
@@ -456,12 +457,14 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AK = (l_bahn)*(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
         A_AB = (l_bahn)*(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-Abl_in_Zelle_A-abs_ableiter_huelle*2)
 
-
-        #A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
-        A_Sep_inner = (Breite_Kern*2*d_Sep/1000*sep_wick + ((r_w+2*d_Sep/1000*sep_wick)**2 - r_w**2)*math.pi)/(d_Sep/1000)
-        A_Sep_outer = (Breite_Kern*2*d_Sep/1000*sep_wick + ((laenge_festhuelle/2)**2 - (laenge_festhuelle/2-2*d_Sep/1000*sep_wick)**2)*math.pi)/(d_Sep/1000)
+        breite_sep = breite_festhuelle-abs_ableiter_huelle*2-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
         
-        A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode)
+        #A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
+        A_Sep_inner = (Breite_Kern*4*d_Sep/1000*sep_wick + ((r_w+2*d_Sep/1000*sep_wick)**2 - r_w**2)*math.pi)/(d_Sep/1000)*breite_sep
+        A_Sep_outer = (Breite_Kern*4*d_Sep/1000*sep_wick + ((laenge_festhuelle/2)**2 - (laenge_festhuelle/2-2*d_Sep/1000*sep_wick)**2)*math.pi)/(d_Sep/1000)*breite_sep
+        
+    
+        A_Sep = l_bahn*breite_sep
 
         l_WHE = C_flsp*A_KB*2/100 #[mAh] Ladung einer Wiederholeinheit (doppelt beschichtete Kathode -> *2)
 
