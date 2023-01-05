@@ -1613,7 +1613,8 @@ def PHEV2_Flachwickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictio
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)   
     
-    laenge_anodensheet = Zellergebnisse["Wert"]["Sheets/ Meter Anode"]*Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"] #[m/Zelle]
+    #laenge_anodensheet = Zellergebnisse["Wert"]["Sheets/ Meter Anode"]*Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"] #[m/Zelle]
+    laenge_anodensheet = Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"]*Zellergebnisse["Wert"]["Sheets/ Meter Anode"]  
     Zellen_pro_Minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60 #[Zellen/min]
 
     #Meter_Anode_pro_minute = laenge_anodensheet * Zellen_pro_Minute #[m/min]
@@ -2008,7 +2009,8 @@ def Tesla_Wickeln(df,Zellergebnisse,Zellchemie,Materialinfos,schritt_dictionary,
     schritt_dictionary = process.rueckgewinnung(schritt_dictionary,rueckgewinnung)
     schritt_dictionary = process.fixausschuss(schritt_dictionary,rueckgewinnung)   
     
-    laenge_anodensheet = Zellergebnisse["Wert"]["Sheets/ Meter Anode"]*Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"] #[m/Zelle]
+    #laenge_anodensheet = Zellergebnisse["Wert"]["Sheets/ Meter Anode"]*Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"] #[m/Zelle]
+    laenge_anodensheet = Zellergebnisse["Wert"]["Beschichtete Bahnen Anode"]/Zellergebnisse["Wert"]["Sheets/ Meter Anode"]
     Zellen_pro_Minute = schritt_dictionary["Zelläquivalent"]/arbeitstage_pro_jahr/24/60 #[Zellen/min]
 
     #Meter_Anode_pro_minute = laenge_anodensheet * Zellen_pro_Minute #[m/min]

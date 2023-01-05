@@ -457,8 +457,7 @@ def zellberechnung(Zellchemie_raw, Materialinfos_raw, Zellformat_raw, weitere_Ze
         A_AK = (l_bahn)*(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-abs_ableiter_huelle*2)
         A_AB = (l_bahn)*(breite_festhuelle+ueberstand_anode_kathode-Abl_in_Zelle_K-Abl_in_Zelle_A-abs_ableiter_huelle*2)
 
-        breite_sep = breite_festhuelle-abs_ableiter_huelle*2-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
-        
+        breite_sep = breite_festhuelle-abs_ableiter_huelle*2-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+ueberstand_anode_kathode        
         #A_Sep = l_bahn*(breite_festhuelle-abs_ableiter_huelle*2)-Abl_in_Zelle_A-Abl_in_Zelle_K+2*ueberstand_separator_anode+2*ueberstand_anode_kathode
         A_Sep_inner = (Breite_Kern*4*d_Sep/1000*sep_wick + ((r_w+2*d_Sep/1000*sep_wick)**2 - r_w**2)*math.pi)/(d_Sep/1000)*breite_sep
         A_Sep_outer = (Breite_Kern*4*d_Sep/1000*sep_wick + ((laenge_festhuelle/2)**2 - (laenge_festhuelle/2-2*d_Sep/1000*sep_wick)**2)*math.pi)/(d_Sep/1000)*breite_sep

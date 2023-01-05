@@ -251,8 +251,10 @@ def Kostenberechnung(Zellergebnisse_raw,
     Materialkosten = {
         "Anodenbeschichtung_kosten":Zellergebnisse["Wert"]["Kilopreis Anodenbeschichtung"], #[€/kg]
         "Kathodenbeschichtung_kosten":Zellergebnisse["Wert"]["Kilopreis Kathodenbeschichtung"], #[€/kg]
-        "Anodenkollektor_kosten":read_materialinfo(Anodenkollektor)["Wert"]["Preis"], #[€/m²]
-        "Kathodenkollektor_kosten":read_materialinfo(Kathodenkollektor)["Wert"]["Preis"], #[€/m²]
+        #"Anodenkollektor_kosten":read_materialinfo(Anodenkollektor)["Wert"]["Preis"], #[€/m²]
+        #"Kathodenkollektor_kosten":read_materialinfo(Kathodenkollektor)["Wert"]["Preis"], #[€/m²]
+        "Anodenkollektor_kosten":read_materialinfo(Anodenkollektor)["Wert"]["Preis"]*read_materialinfo(Anodenkollektor)["Wert"]["Breite"]/1000, #[€/m]
+        "Kathodenkollektor_kosten":read_materialinfo(Kathodenkollektor)["Wert"]["Preis"]*read_materialinfo(Kathodenkollektor)["Wert"]["Breite"]/1000, #[€/m]
         "Separator_kosten":read_materialinfo(Separator)["Wert"]["Preis"], #[€/m²]
         "Elektrolyt_kosten":read_materialinfo(Elektrolyt)["Wert"]["Preis"], #[€/kg]
         "Hülle_kosten":read_materialinfo(Huelle)["Wert"]["Preis"] #[€/m²]
@@ -295,7 +297,7 @@ def Kostenberechnung(Zellergebnisse_raw,
             df[schritt]["Materialkosten"]=0
             
         #Energiekosten
-        df[schritt]["Energiekosten"] = df[schritt]["Energiebedarf"]*Strompreis+df[schritt]["Flächenbedarf Trockenraum"]*Stromverbrauch_Trockenraum_Flächennormiert*Betriebstage
+        df[schritt]["Energiekosten"] = df[schritt]["Energiebedarf"]*Strompreis+df[schritt]["Flächenbedarf Trockenraum"]*Stromverbrauch_Trockenraum_Flächennormiert*Betriebstage+df[schritt]["Flächenbedarf Labor"]*Betriebstage*Gebaeude["Wert"]["Energie Labor flächennormiert"]
         
         #Personalkosten
         df[schritt]["Personalkosten"] = (df[schritt]["Personlabedarf Facharbeiter"]*Stundensatz_facharbeiter + df[schritt]["Personalbedarf Hilfskraft"]*Stundensatz_hilfskraft)*Betriebstage*24
@@ -304,7 +306,7 @@ def Kostenberechnung(Zellergebnisse_raw,
         df[schritt]["Instandhaltungskosten"] = df[schritt]["Investition"]*(Instandhaltungskostensatz/100)
         
         #Flächenkosten
-        df[schritt]["Flächenkosten"] = df[schritt]["Flächenbedarf"]*Flächenkosten_Produktionshalle+df[schritt]["Flächenbedarf Trockenraum"]*Flächenkosten_Trockenraum
+        df[schritt]["Flächenkosten"] = df[schritt]["Flächenbedarf"]*Flächenkosten_Produktionshalle+df[schritt]["Flächenbedarf Trockenraum"]*Flächenkosten_Trockenraum+df[schritt]["Flächenbedarf Labor"]*flaechenkosten_jaehrlich
     
         #Kalkulatorische Zinsen
         df[schritt]["Kalkulatorische Zinsen"]=df[schritt]["Investition"]*1.1*Zinssatz_Kapitalmarkt/100/0.5
