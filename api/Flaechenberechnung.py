@@ -41,8 +41,9 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
     
     #Berechnung Produktionsfläche
     
-    produktionsflaeche =  anlagengrundflaeche*(1+(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent)/(100-(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent)))
-    
+    #produktionsflaeche =  anlagengrundflaeche*(1+(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent)/(100-(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent)))
+    produktionsflaeche =  anlagengrundflaeche/(100-(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent))
+
     maschinenplatz_flaeche = maschinenplatz_flaeche_prozent*produktionsflaeche/100
     zwischenlager_flaeche = zwischenlager_flaeche_prozent*produktionsflaeche/100
     zusatz_flaeche = zusatz_flaeche_prozent/100*produktionsflaeche
@@ -50,13 +51,15 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
     
     #Berechnung Nutzfläche
     
-    nutzflaeche =  produktionsflaeche*(1+(verwaltungs_flaeche_prozent+lager_versand_flaeche_prozent)/(100-(verwaltungs_flaeche_prozent+lager_versand_flaeche_prozent)))
+    #nutzflaeche =  produktionsflaeche*(1+(verwaltungs_flaeche_prozent+lager_versand_flaeche_prozent)/(100-(verwaltungs_flaeche_prozent+lager_versand_flaeche_prozent)))
+    nutzflaeche =  produktionsflaeche/(100-(verwaltungs_flaeche_prozent+lager_versand_flaeche_prozent))
     verwaltungs_flaeche = verwaltungs_flaeche_prozent*nutzflaeche/100
     lager_versand_flaeche = lager_versand_flaeche_prozent*nutzflaeche/100
     
     #Berechnung Gebäudefläche
     
-    gebaeudeflaeche = nutzflaeche*(1+(neben_funktions_sozial_flaeche_prozent/(100-neben_funktions_sozial_flaeche_prozent)))
+    #gebaeudeflaeche = nutzflaeche*(1+(neben_funktions_sozial_flaeche_prozent/(100-neben_funktions_sozial_flaeche_prozent)))
+    gebaeudeflaeche = nutzflaeche/(100-neben_funktions_sozial_flaeche_prozent)
     neben_funktions_sozial_flaeche = neben_funktions_sozial_flaeche_prozent*gebaeudeflaeche/100
     
     #Berechnung Grundstücksfläche
@@ -78,11 +81,13 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
         },
         {
             "group": "Trockenraumkosten",
-            "value": round(flaeche_trockenraum*quadratmeter_preis_trockenraum)
+            #"value": round(flaeche_trockenraum*quadratmeter_preis_trockenraum)
+            "value": round(flaeche_trockenraum/(100-(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent))*quadratmeter_preis_trockenraum)
         },
         {
             "group": "Laborkosten",
-            "value": round(flaeche_labor*quadratmeter_preis_labor)
+            #"value": round(flaeche_labor*quadratmeter_preis_labor)
+            "value": round(flaeche_labor/(100-(maschinenplatz_flaeche_prozent+zwischenlager_flaeche_prozent+zusatz_flaeche_prozent))*quadratmeter_preis_labor)
         }
         
                               ]
@@ -158,14 +163,17 @@ def flaechenberechnung(flaeche_normalraum,flaeche_trockenraum,Gebaeude,Oekonomis
         flaeche_labor
     )
     
-    Fabrikflaeche_ohne_Produktion = round(
-        Fabrikflaeche-
-        flaeche_trockenraum-
-        flaeche_normalraum-
-        flaeche_labor
-    )
+    #Fabrikflaeche_ohne_Produktion = round(
+    #    Fabrikflaeche-
+    #    flaeche_trockenraum-
+    #    flaeche_normalraum-
+    #    flaeche_labor
+    #)
+
+    Fabrikflaeche_ohne_Produktion = round(Fabrikflaeche-produktionsflaeche)
     
-    jaehrliche_flaechenkosten = quadratmeter_preis_gebaeude*Zinssatz_kapitalmarkt/100+quadratmeter_preis_gebaeude/nutzungsdauer_gebaeude+quadratmeter_preis_gebaeude/100
+    jaehrliche_flaechenkosten = quadratmeter_preis_gebaeude*Zinssatz_kapitalmarkt/100+quadratmeter_preis_gebaeude/nutzungsdauer_gebaeude
+    #+quadratmeter_preis_gebaeude/100
     
     return investition_kosten_bau, flaechen_verteilung, jaehrliche_flaechenkosten, Fabrikflaeche, Fabrikflaeche_ohne_Produktion
     
